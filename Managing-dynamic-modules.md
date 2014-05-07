@@ -22,8 +22,9 @@ For each module defined within a part, KSP will:
 1. Call `OnAwake`
 1. Call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config
 1. Then call `GetInfo` on each one
-1. Clone the part, strip off all functionality except models, and store the model for use as an icon.
 1. Store the constructed part in the `PartLoader` class, within the `AvailablePart` object.
+
+The stored part is then cloned and turned into an icon for display in the VAB. If you want to fiddle with how the icon looks, do it within `GetInfo`.
 
 ### Adding a part in the editor (either VAB or SPH)
 
