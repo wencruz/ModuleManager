@@ -27,6 +27,31 @@ For each module defined within a part, KSP will:
 
 ### Adding a part in the editor (either VAB or SPH)
 
+1. Clone the part that is the result from above
+1. Call `OnInitialize` on each module - this is called in the same order as they appear in the stored part
+1. Call `OnStart` on each module, again in the same order
+
+There's no chance for extra modules to sneak in here, since it's a direct clone and there's no loading.
+
+Once the part is actually created and running, one could call `AddModule` on the part to add in extra modules at any stage. This will add modules at the end of the list.
+
+You then go an attach parts to your ship - but how that happens is outside the scope of this document.
+
+### Saving a ship (or a subassembly)
+
+The same process is used to save ships in every scene - both in the editors and in flight mode. For every part on the ship, and for each module in the part (in order):
+
+1. `OnSave` gets called to save the data for the part.
+
+This is generally only the data that can change over time for the part - its state. For example an engine will store its current throttle setting and a docking clamp will store if it is connected.
+
+### Loading a ship
+
+Both in the editor (for saved ships and subassemblies) and in flight mode the same process occurs:
+
+1. The part is cloned from the stored part in the LOADING scene
+1. `OnLoad` is called with the persistent state from the save file for each module *in the same order as in the stored part*
+
 
 
 ## The problem
