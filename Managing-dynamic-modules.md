@@ -18,11 +18,11 @@ This is when the Squad monkey is shown up on the screen.
 
 For each module defined within a part, KSP will:
 1. Construct the object and the modules within it
-2. Call `OnAwake`
-3. Call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config
-4. Then call `GetInfo` on each one
-5. Clone the part, strip off all functionality except models, and store the model for use as an icon.
-6. Store the constructed part in the `PartLoader` class, within the `AvailablePart` object.
+1. Call `OnAwake`
+1. Call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config
+1. Then call `GetInfo` on each one
+1. Clone the part, strip off all functionality except models, and store the model for use as an icon.
+1. Store the constructed part in the `PartLoader` class, within the `AvailablePart` object.
 
 ### Adding a part in the editor (either VAB or SPH)
 
