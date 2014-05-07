@@ -8,12 +8,23 @@ Parts contain two things - the logic for the part itself, plus a number of modul
 
 KSP loads parts in a few phases:
 
+### IMMEDIATLY
+
+During this phase all the .cfg files, including those for PART files are loaded up by the game. After this, any `KSPAddon` modules that are declared as being run during this phase are run. This includes module manager, which gives it a chance to edit the loaded .cfg files 
+
 ### The LOADING scene
 
-This is when the Squad monkey is shown up on the screen, right as soon as you start up KSP. During this phase all the .cfg files, including those for PART files are loaded up by the game.
+This is when the Squad monkey is shown up on the screen. 
 
-For each module defined within a part, KSP will construct the object, call `OnAwake` to get things going, and then call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config, and finally call `GetInfo` for each module.
+For each module defined within a part, KSP will:
+1. Construct the object and the modules within it
+2. Call `OnAwake`
+3. Call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config
+4. Then call `GetInfo` on each one
+5. Clone the part, strip off all functionality except models, and store the model for use as an icon.
+6. Store the constructed part in the `PartLoader` class, within the `AvailablePart` object.
 
+### Adding a part in the editor (either VAB or SPH)
 
 
 
