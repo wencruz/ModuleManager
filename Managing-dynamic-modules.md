@@ -17,6 +17,7 @@ During this phase all the .cfg files, including those for PART files are loaded 
 This is when the Squad monkey is shown up on the screen. 
 
 For each module defined within a part, KSP will:
+
 1. Construct the object and the modules within it
 1. Call `OnAwake`
 1. Call `OnLoad`, passing in the `ConfigNode` for all the MODULEs as defined in the PART config
