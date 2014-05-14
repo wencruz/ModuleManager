@@ -34,13 +34,13 @@ PART
 ```
 
 == Top level Node ==
-<Soon>
+(Soon)
 === Selection ===
-<Soon>
+(Soon)
 === Patch order === 
-<Soon>
+(Soon)
 === Dependency ===
-<Soon>
+(Soon)
 (copy/move some of the next section)
 
 == Mod dependency checking ==
