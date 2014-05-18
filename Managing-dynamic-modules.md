@@ -50,4 +50,21 @@ This would cause for example docking ports to think they were detached, when the
 
 Previously we've managed by just adding modules to the end of the list. This will work okay-ish - at least the core modules don't end up broken, but you never know when some other mod would go adding its own module to the list, potentially ahead of yours, and messing everything up. 
 
+## The fix
+
+The new version of MM has two things in place to prevent this:
+
+1. The order of definition of things is no longer changed when you edit (@) them
+1. SaveGameFixer runs through all previous save games and fixes them whenever KSP starts up
+
+Both of these steps were needed - this makes it robust to any config change.
+
+SaveGameFixer runs in the main menu scene, so the version of the part database it works with is whatever is the result of any MM patches. It will run through all the saved games and saved craft files and perform the following actions:
+
+1. Reorder the modules in the save file to match the part in the part database
+1. If there's any modules present in the save file, present in memory (as in a mod exists that defines that module), but not in the part database these will be discarded.
+1. If there's modules present in the save, not present in memory, and not in the part database then these modules configs will be backed up internally inside the save, and the save will be backed up.
+1. If there's any backups from above now present in the part, they will be restored and the save will be backed up
+1. If a part is completely missing, the save will be backed up.
+
 
