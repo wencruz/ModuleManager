@@ -6,7 +6,7 @@ It's targeted really towards mod developers, however I guess could be of interes
 
 ## The problem
 
-With the update to module manager that I'm about to release, there's much better support for adding and removing modules to parts. Before this you would have some issues with save games.
+With module manager 2.1.0 and above, there's much better support for adding and removing modules to parts. Before this you would have some issues with save games.
 
 The way KSP handles module loading is somewhat fragile. If you create a part like this:
 
