@@ -67,4 +67,56 @@ SaveGameFixer runs in the main menu scene, so the version of the part database i
 1. If there's any backups from above now present in the part, they will be restored and the save will be backed up
 1. If a part is completely missing, the save will be backed up.
 
+As a mod developer, there's a couple of things you can do to make this run smoothly:
 
+### Dynamic modules
+
+Dynamic modules are added to a part at runtime, that is either in flight or in the VAB. Generally SaveGameFixer will detect this and silently discard the persisted data, which is what would have happened previously.
+
+In the case where your mod gets deleted, SaveGameFixer can't know if this was just because it's a dynamic module, or because it's because your mod is deleted. 
+
+To help this along, if you have a dynamic module then please do something like this:
+
+````c#
+    public override void OnSave (ConfigNode node)
+    {
+        node.SetValue("MM_DYNAMIC", "true");
+    }
+````
+
+This will avoid the backup being created, which saves time later.
+
+### Reinitialized modules
+
+If you add a new mod or MM patch that adds a module to an existing part, MM will detect this and create an empty persisted state for the module:
+
+````
+    MODULE
+    {
+        name = YourModuleNameHere
+        MM_REINITIALIZE = true
+    }
+````
+
+If you want to do something fancy with this condition - say initializing state or something, then you can detect the flag like this:
+
+````c#
+    public override void OnLoad(ConfigNode node)
+    {
+        if (node.GetValue("MM_REINITIALIZE") != null)
+        {
+            // Do whatever
+        }
+    }
+````
+
+### Reload from module state backup
+
+The final case is when a user has uninstalled your mod, and then reinstalled it again. The module state will be saved and restored when this happens. The contents of the module state will be exactly as it was at the time of uninstallation, but there'll be an extra flag MM_RESTORED.
+
+Depending on your mod, you might want to reinitialize or otherwise do something special. 
+
+
+## Conclusion
+
+The new features of save game fixing make MM and modding far more flexible. Most of the time the behaviour is what you'd expect it to bed, but it's a good idea to have an awareness of these features.
