@@ -1,4 +1,4 @@
-==A primer on how KSP configures itself==
+#A primer on how KSP configures itself
 
 KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [http://wiki.kerbalspaceprogram.com/wiki/User:Greys There's a fair bit of documentation about this elsewhere], but for the purposes of this document we will define a few things:
 
@@ -33,17 +33,17 @@ PART
 }
 ```
 
-== Top level Node ==
+###Top level Node
 (Soon)
-=== Selection ===
+###Selection
 (Soon)
-=== Patch order === 
+###Patch order
 (Soon)
-=== Dependency ===
+###Dependency
 (Soon)
 (copy/move some of the next section)
 
-== Mod dependency checking ==
+##Mod dependency checking
 
 You can now put a NEEDS section on any section of your file. This isn't just MM patches, it can be literally anywhere - on values, on nodes, on patches, wherever you like. (this enhanced behaviour is new)
 
@@ -53,7 +53,7 @@ An example:
 PART:NEEDS[RealFuels|ModularFuelSystem]
 {
     name = myPartName
-    
+
     description:NEEDS[RealFuels] = This part is used in real fuels
     description:NEEDS[ModularFuelSystem] = This part is used in modular fuel system
 }
@@ -64,7 +64,7 @@ There's two alternatives for the description field, based on what's present.
 
 This is handy if you're a mod developer and you want to create parts that vary a bit depending on what's installed.
 
-The stuff within the needs section is based on either: 
+The stuff within the needs section is based on either:
 * A plugin .dll with the same name (not including dotted extensions) so you'd always get ModuleManager.
 * A FOR&#91;Blah&#93; defined would allow NEEDS&#91;Blah&#93;
 
@@ -72,13 +72,13 @@ The old , listed operator is still supported, and is treated as an alias for & (
 
 In the below stuff, I've not put in the NEEDS section for clarity, however you can use it wherever you like.
 
-== Operators available in patches - and their ordering ==
+## Operators available in patches - and their ordering
 
 The general form of a patch for values is
 &#60;Op&#62;&#60;Name-With-Wildcards&#62;&#40;,&#60;index&#62;&#41;?
 
 So breaking this down:
-* &#60;Op&#62; : One of: 
+* &#60;Op&#62; : One of:
 ** nothing for insert
 ** '@' for edit
 ** '+' or '$' for copy
@@ -99,7 +99,7 @@ The general form for nodes is:
 * &#40;,&#60;index-or-*&#62;&#41;? : Index to select particular match zero based. 0 is the first node, -1 is last node. Values 'off the end' will match the end, so large positive matches the end and large negative matches the beginning. Again this matches ''against everything the wildcard selects in order''. * here will match everything.
 
 
-=== Insert ===
+### Insert
 
 Insert is the default operator - it's what you get if you don't specify anything. You can now specify the index at which you'd like to insert your bit of config, otherwise it defaults to the end of the list
 
@@ -121,7 +121,7 @@ This will add an extra value called node_stack_atend at the end of the list, ano
 
 Obviously wildcards, * indexes, and other stuff isn't available. Just the value or node name.
 
-=== Edit  - @===
+### Edit  - @
 
 Edits the node or value in place. The order [I]will not change[/I] &#40;new since 2.0.9 ish&#41;. 
 
@@ -172,7 +172,7 @@ Anyhow, here's some useful regexps:
 * ":^: Preamble :"  Similar to above. ^ matches the start of a string
 * ":^.*$: Preamble $0 Some extra stuff:"   Combining the above. ^.*$ matches the entire input, and $0 will stick it in in the output.
 
-=== Delete - ! or - ===
+### Delete - ! or -
 
 Delete a node or value. The order of everything afterwards will obviously drop back one step.
 
@@ -188,7 +188,7 @@ Example:
 	// Delete the first copy
 	-MODULE[module2] {}
 	// Indexed delete
-	-MODULE,2 { }	
+	-MODULE,2 { }
 	// Indexed delete from end
 	-MODULE,-2 { }
 	// Indexed delete off end
@@ -208,20 +208,20 @@ Example:
 Note that you still need to use &#123; and &#125; for nodes, and a dummy value for values. If you don't do this then the parser doesn't know what it's dealing with.
 
 
-=== Copy - + or $ ===
+###Copy - + or $
 
 Copy behaves identically to Edit, however rather than editing the node or value it copies it. It will always put the copy at the end of the list.
 
 Note that for parts, you must always give a new name or it's a bit pointless:
 
 ```
-+PART[myPartName] 
++PART[myPartName]
 {
     @name = myNewPartCopy
 }
 ```
 
-=== Replace - % ===
+###Replace - %
 
 This will edit the value it it exists, otherwise it will create a new value as though this was an insert.
 
@@ -229,6 +229,6 @@ For existing nodes this will be identical to edit if the node exists, otherwise 
 
 For values this is identical to doing a delete and then an insert. Wildcards and indexes are not supported. The delete will delete all matches. This command has quite limited functionality, but it's there.
 
-==== Test cases / examples ===
+## Test cases / examples
 
 Some automated test cases for this build [https://github.com/sarbian/ModuleManager/tree/master/Tests are here]. These also double as good examples of how it works.
