@@ -1,16 +1,16 @@
-# A primer on how KSP configures itself
+#A primer on how KSP configures itself
 
-KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [http://wiki.kerbalspaceprogram.com/wiki/User:Greys There's a fair bit of documentation about this elsewhere], but for the purposes of this document we will define a few things:
+KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [There's a fair bit of documentation about this elsewhere](http://wiki.kerbalspaceprogram.com/wiki/User:Greys), but for the purposes of this document we will define a few things:
 
 ```
 // This is a top level node. Note the name with curly brackets afterwards.
 PART
 {
-    // This is the name value. It's just a standard name/value pair, but any of these named 'name' 
+    // This is the name value. It's just a standard name/value pair, but any of these named 'name'
     // is treated a bit special by MM
     name = myPart
 
-    // This is another value. Note name = value . You can't have a name without a value, 
+    // This is another value. Note name = value . You can't have a name without a value,
     // but you can have a value without a name (treated as the empty string for name )
     module = Part
 
@@ -21,7 +21,7 @@ PART
     }
 }
 
-// This is a patch. Note the prefix - this will be one of  '@' for edit, '+' or '$' for copy, 
+// This is a patch. Note the prefix - this will be one of  '@' for edit, '+' or '$' for copy,
 // '-' or '!' for delete, '%' for replace. A patch takes some pre-existing top level node, and modifies it
 @PART[myPart]
 {
@@ -66,37 +66,39 @@ This is handy if you're a mod developer and you want to create parts that vary a
 
 The stuff within the needs section is based on either:
 * A plugin .dll with the same name (not including dotted extensions) so you'd always get ModuleManager.
-* A FOR&#91;Blah&#93; defined would allow NEEDS&#91;Blah&#93;
+* A FOR[Blah] defined would allow NEEDS[Blah]
 
-The old , listed operator is still supported, and is treated as an alias for & (AND). If you combine several | and &, eg NEEDS&#91;Mod1|Mod2&Mod3|Mod4&#93; this is treated as &#40; Mod1 OR Mod2 &#41; AND &#40; Mod3 OR Mod4 &#41;.  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
+The old , listed operator is still supported, and is treated as an alias for & (AND). If you combine several | and &, eg NEEDS[Mod1|Mod2&Mod3|Mod4] this is treated as &( Mod1 OR Mod2 &) AND &( Mod3 OR Mod4 &).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
 
 In the below stuff, I've not put in the NEEDS section for clarity, however you can use it wherever you like.
 
 ## Operators available in patches - and their ordering
 
 The general form of a patch for values is
-&#60;Op&#62;&#60;Name-With-Wildcards&#62;&#40;,&#60;index&#62;&#41;?
 
-So breaking this down:
-* &#60;Op&#62; : One of:
-** nothing for insert
-** '@' for edit
-** '+' or '$' for copy
-** '-' or '!' for delete
-** '%' for replace.
-* &#60;Name-With-Wildcards&#62; :  The name of the value you'll be messing with. Wildcards are not always available for every Op. 
-* &#40;,&#60;index&#62;&#41;? : Optional index. Again, not available with every option. Not that these indexes are ''with respect to all name matches'' not the total index in the node. I will support negative indexes for running backwards through the list soon. Also * is not yet supported.
-Wildcards include ? for any character, and * for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a ? to match it. 
+`<Op><Name-With-Wildcards>(,<index>)?`
+
+So breaking this down
+
+- `<Op>` One of
+ - nothing for insert
+ - `@` for edit
+ - `+` or `$` for copy
+ - `-` or `!` for delete
+ - `%` for replace.
+- `<Name-With-Wildcards>` :  The name of the value you'll be messing with. Wildcards are not always available for every Op.
+- `(,<index>)?` : Optional index. Again, not available with every option. Not that these indexes are ''with respect to all name matches'' not the total index in the node. I will support negative indexes for running backwards through the list soon. Also `*` is not yet supported.
+Wildcards include `?` for any character, and `*` for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a `?` to match it.
 
 The general form for nodes is:
 
-&#60;Op&#62;&#60;NodeType&#62;&#40;&#91;&#60;NodeNameWithWildcards&#62;&#93;&#41;?&#40;:HAS&#91;&#60;has block&#62;&#93;&#41;?&#40;,&#60;index-or-*&#62;&#41;?
+`<Op><NodeType>([<NodeNameWithWildcards>])?(:HAS[<has block>])?(,<index-or-*>)?`
 
-* &#60;Op&#62; : Operator, as above
-* &#60;NodeType&#62; : typically MODULE or something like it. Wildcards not allowed (I can't imagine you'd need them)
-* &#40;&#91;&#60;NodeNameWithWildcards&#62;&#93;&#41;? : This is a wildcard match for the name = &#60;name&#62; value within the node. Optional.
-* &#40;:HAS&#91;&#60;has block&#62;&#93;&#41;? : Optional has block. You can't &#40;currently&#41; use indexes with HAS. This has been described previously. If this is present then all matches will be matched, there's no indexing available currently.
-* &#40;,&#60;index-or-*&#62;&#41;? : Index to select particular match zero based. 0 is the first node, -1 is last node. Values 'off the end' will match the end, so large positive matches the end and large negative matches the beginning. Again this matches ''against everything the wildcard selects in order''. * here will match everything.
+- `<Op>` : Operator, as above
+- `<NodeType>` : typically MODULE or something like it. Wildcards not allowed (I can't imagine you'd need them)
+- `([<NodeNameWithWildcards>])?` : This is a wildcard match for the `name = <name>` value within the node. Optional.
+- `(:HAS[<has block>])?` : Optional has block. You can't (currently) use indexes with HAS. This has been described previously. If this is present then all matches will be matched, there's no indexing available currently.
+- `(,<index-or-*>)?` : Index to select particular match zero based. 0 is the first node, -1 is last node. Values 'off the end' will match the end, so large positive matches the end and large negative matches the beginning. Again this matches ''against everything the wildcard selects in order''. `*` here will match everything.
 
 
 ### Insert
@@ -123,7 +125,7 @@ Obviously wildcards, * indexes, and other stuff isn't available. Just the value 
 
 ### Edit  - @
 
-Edits the node or value in place. The order [I]will not change[/I] &#40;new since 2.0.9 ish&#41;. 
+Edits the node or value in place. The order *will not change* (new since 2.0.9 ish). 
 
 For nodes, all options are available to select the node, including indexes, * index, HAS, and wildcards in the name. If there are multiple matches and the index is not supplied, this will default editing all matches. 
 
@@ -164,21 +166,21 @@ Example:
 
 For regexp, the first character in the list is used as the separator. You can use whatever you like, but : is often a good choice. Obviously ensure that this isn't present in the regexp expression.
 
-Please note that regex are not easy. It is assumed that if you want to use this feature you're well versed with how regexps work, including the various variants. Please refer to the .net [http://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx documentaton] and/or copious other documentation available on the Internet.
+Please note that regex are not easy. It is assumed that if you want to use this feature you're well versed with how regexps work, including the various variants. Please refer to the .net [documentaton](http://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx) and/or copious other documentation available on the Internet.
 
 Anyhow, here's some useful regexps:
 
-* ":$: Some Extra Stuff:"   $ matches the end of the string, so this is an easy way to add suffixes
-* ":^: Preamble :"  Similar to above. ^ matches the start of a string
-* ":^.*$: Preamble $0 Some extra stuff:"   Combining the above. ^.*$ matches the entire input, and $0 will stick it in in the output.
+* `:$: Some Extra Stuff:` `$` matches the end of the string, so this is an easy way to add suffixes
+* `:^: Preamble :` Similar to above. `^` matches the start of a string
+* `:^.*$: Preamble $0 Some extra stuff:`   Combining the above. `^.*$` matches the entire input, and `$0` will stick it in in the output.
 
 ### Delete - ! or -
 
 Delete a node or value. The order of everything afterwards will obviously drop back one step.
 
-For nodes, all options are available to select the node, including indexes, * index, HAS, and wildcards in the name. If there are multiple matches and the index is not supplied, this will default to again to all nodes. 
+For nodes, all options are available to select the node, including indexes, * index, HAS, and wildcards in the name. If there are multiple matches and the index is not supplied, this will default to again to all nodes.
 
-For values, again all options available. If no index is specified then all matching values are deleted - ''This differs in behavior to edit''. I will likely change edit to doing this in the future.
+For values, again all options available. If no index is specified then all matching values are deleted - **This differs in behavior to edit**. I will likely change edit to doing this in the future.
 
 Example:
 
@@ -205,7 +207,7 @@ Example:
 }
 ```
 
-Note that you still need to use &#123; and &#125; for nodes, and a dummy value for values. If you don't do this then the parser doesn't know what it's dealing with.
+Note that you still need to use { and } for nodes, and a dummy value for values. If you don't do this then the parser doesn't know what it's dealing with.
 
 
 ###Copy - + or $
@@ -225,10 +227,10 @@ Note that for parts, you must always give a new name or it's a bit pointless:
 
 This will edit the value it it exists, otherwise it will create a new value as though this was an insert.
 
-For existing nodes this will be identical to edit if the node exists, otherwise it will create an empty node, named as per the node name, and run it through the patch. Obviously because of the insert part, wildcards aren't allowed because the result wouldn't make sense. &#40;although this is not flagged as an error in the current build for nodes&#42;
+For existing nodes this will be identical to edit if the node exists, otherwise it will create an empty node, named as per the node name, and run it through the patch. Obviously because of the insert part, wildcards aren't allowed because the result wouldn't make sense. &(although this is not flagged as an error in the current build for nodes&#42;
 
 For values this is identical to doing a delete and then an insert. Wildcards and indexes are not supported. The delete will delete all matches. This command has quite limited functionality, but it's there.
 
 ## Test cases / examples
 
-Some automated test cases for this build [https://github.com/sarbian/ModuleManager/tree/master/Tests are here]. These also double as good examples of how it works.
+Some automated test cases for this build [are here](https://github.com/sarbian/ModuleManager/tree/master/Tests). These also double as good examples of how it works.
