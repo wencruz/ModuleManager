@@ -1,4 +1,4 @@
-#A primer on how KSP configures itself
+# A primer on how KSP configures itself
 
 KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [http://wiki.kerbalspaceprogram.com/wiki/User:Greys There's a fair bit of documentation about this elsewhere], but for the purposes of this document we will define a few things:
 
