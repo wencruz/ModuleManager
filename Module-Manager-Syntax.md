@@ -127,7 +127,7 @@ Obviously wildcards, * indexes, and other stuff isn't available. Just the value 
 
 Edits the node or value in place. The order *will not change* (new since 2.0.9 ish). 
 
-For nodes, all options are available to select the node, including indexes, * index, HAS, and wildcards in the name. If there are multiple matches and the index is not supplied, this will default editing all matches. 
+For nodes, all options are available to select the node, including indexes, * index, HAS, and wildcards in the name. If there are multiple matches and the index is not supplied, this will edit the first match. 
 
 Example
 ```
@@ -146,7 +146,7 @@ Example
 }
 ```
 
-For values you additionally have the option of a replacement based on the existing node value, including standard arithmetic operators plus regular expressions for strings. Note: ''if no index is specified, only the first match will be edited''. Once ,* is implemented, then this behaviour should really change to all matches by default to stay consistent with nodes, so maybe would be a good idea for patch maintainers to move to using ,0 explicitly.
+For values you additionally have the option of a replacement based on the existing node value, including standard arithmetic operators plus regular expressions for strings. Note: ''if no index is specified, only the first match will be edited''. Once ,* is implemented, then this behaviour should really change to all matches by default, so maybe would be a good idea for patch maintainers to move to using ,0 explicitly.
 
 Example:
 
@@ -164,11 +164,11 @@ Example:
 }
 ```
 
-For regexp, the first character in the list is used as the separator. You can use whatever you like, but : is often a good choice. Obviously ensure that this isn't present in the regexp expression.
+When using regexp replacements, the first character in the list is used as the separator. You can use whatever you like, but : is often a good choice. Obviously ensure that this isn't present in the regexp expression.
 
-Please note that regex are not easy. It is assumed that if you want to use this feature you're well versed with how regexps work, including the various variants. Please refer to the .net [documentaton](http://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx) and/or copious other documentation available on the Internet.
+Please note that regex generation is often tricky and requires some experimentation to get right. It is assumed that if you want to use this feature you're well versed with how regexps work, including the various variants. Please refer to the .net [documentaton](http://msdn.microsoft.com/en-us/library/az24scfc(v=vs.110).aspx) and/or copious other documentation available on the Internet. I won't support questions about 'how do I do a regex to do xxx' on the list, you'll have to figure it out or look for help elsewhere.
 
-Anyhow, here's some useful regexps:
+Here's some useful regexps:
 
 * `:$: Some Extra Stuff:` `$` matches the end of the string, so this is an easy way to add suffixes
 * `:^: Preamble :` Similar to above. `^` matches the start of a string
