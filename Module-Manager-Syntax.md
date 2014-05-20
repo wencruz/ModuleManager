@@ -86,9 +86,8 @@ So breaking this down
  - `+` or `$` for copy
  - `-` or `!` for delete
  - `%` for replace.
-- `<Name-With-Wildcards>` :  The name of the value you'll be messing with. Wildcards are not always available for every Op.
+- `<Name-With-Wildcards>` :  The name of the value you'll be messing with. Wildcards are not always available for every Op. Wildcards include `?` for any character, and `*` for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a `?` to match it.
 - `(,<index>)?` : Optional index. Again, not available with every option. Not that these indexes are ''with respect to all name matches'' not the total index in the node. I will support negative indexes for running backwards through the list soon. Also `*` is not yet supported.
-Wildcards include `?` for any character, and `*` for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a `?` to match it.
 
 The general form for nodes is:
 
@@ -112,6 +111,7 @@ Example:
 {
     node_stack_atend = 0.0, 7.21461, 0.0, 0.0, 1.0, 0.0
     node_stack_atstart,0 =0.0, -7.21461, 0.0, 0.0, -1.0, 0.0  
+    // Insert at the start
     MODULE,0 
     {
         name = ModuleSomething
@@ -146,7 +146,7 @@ Example
 }
 ```
 
-For values you additionally have the option of a replacement based on the existing node value, including standard arithmetic operators plus regular expressions for strings. Note: ''if no index is specified, only the first match will be edited''. Once ,* is implemented, then this behavior should really change to all matches by default, so maybe would be a good idea for patch maintainers to move to using ,0 explicitly.
+For values you additionally have the option of a replacement based on the existing node value, including standard arithmetic operators plus regular expressions for strings. Note: ''if no index is specified, only the first match will be edited''. Once ,* is implemented, then this behaviour should really change to all matches by default to stay consistent with nodes, so maybe would be a good idea for patch maintainers to move to using ,0 explicitly.
 
 Example:
 
