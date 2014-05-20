@@ -121,7 +121,7 @@ Example:
 
 This will add an extra value called node_stack_atend at the end of the list, another value node_stack_atstart at the start, and insert a new module first in the list. 
 
-Obviously wildcards, * indexes, and other stuff isn't available. Just the value or node name.
+Obviously wildcards, * indexes, and other stuff isn't available. Just the value or node name. If you do put in a wildcard it will end up in the output verbatim.
 
 ### Edit  - @
 
