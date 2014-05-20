@@ -54,8 +54,8 @@ PART:NEEDS[RealFuels|ModularFuelSystem]
 {
     name = myPartName
 
-    description:NEEDS[RealFuels] = This part is used in real fuels
-    description:NEEDS[ModularFuelSystem] = This part is used in modular fuel system
+    description:NEEDS[RealFuels&!ModularFuelSystem] = This part is used in real fuels
+    description:NEEDS[ModularFuelSystem&!RealFuels] = This part is used in modular fuel system
 }
 ```
 
@@ -65,10 +65,13 @@ There's two alternatives for the description field, based on what's present.
 This is handy if you're a mod developer and you want to create parts that vary a bit depending on what's installed.
 
 The stuff within the needs section is based on either:
-* A plugin .dll with the same name (not including dotted extensions) so you'd always get ModuleManager.
+* A plugin .dll with the same assembly name. 
+* A subdirectory name under GameData.
 * A FOR[Blah] defined would allow NEEDS[Blah]
 
-The old , listed operator is still supported, and is treated as an alias for & (AND). If you combine several | and &, eg NEEDS[Mod1|Mod2&Mod3|Mod4] this is treated as &( Mod1 OR Mod2 &) AND &( Mod3 OR Mod4 &).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
+As this uses the assembly name (which is compiled into the DLL)  so you'd always get ModuleManager even if you rename the dll. It's usually going to be the same as the DLL name but it's not always. If you find the DLL in exporer, go to the properties right-click menu, and look in the Details tab the name is there under File Description.
+
+You can use & for AND, | for OR and ! for NOT in the needs listing. To allow backwards compatibility , is treated as an alias for & (AND). If you combine several | and &, eg NEEDS[Mod1|Mod2&!Mod3|Mod4] this is treated as &( Mod1 OR Mod2 &) AND &( ( NOT Mod3 ) OR Mod4 &).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
 
 In the below stuff, I've not put in the NEEDS section for clarity, however you can use it wherever you like.
 
