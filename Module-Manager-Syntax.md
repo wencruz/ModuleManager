@@ -71,7 +71,7 @@ The stuff within the needs section is based on either:
 
 As this uses the assembly name (which is compiled into the DLL)  so you'd always get ModuleManager even if you rename the dll. It's usually going to be the same as the DLL name but it's not always. If you find the DLL in exporer, go to the properties right-click menu, and look in the Details tab the name is there under File Description.
 
-You can use & for AND, | for OR and ! for NOT in the needs listing. To allow backwards compatibility , is treated as an alias for & (AND). If you combine several | and &, eg @NEEDS[Mod1|Mod2&!Mod3|Mod4]@ this is treated as &( Mod1 OR Mod2 &) AND &( ( NOT Mod3 ) OR Mod4 &).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
+You can use & for AND, | for OR and ! for NOT in the needs listing. To allow backwards compatibility , is treated as an alias for & (AND). If you combine several | and &, eg `NEEDS[Mod1|Mod2&!Mod3|Mod4]` this is treated as &( Mod1 OR Mod2 &) AND &( ( NOT Mod3 ) OR Mod4 &).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
 
 In the below stuff, I've not put in the NEEDS section for clarity, however you can use it wherever you like.
 
