@@ -227,7 +227,7 @@ Note that for parts, you must always give a new name or it's a bit pointless:
 
 This will edit the value it it exists, otherwise it will create a new value as though this was an insert.
 
-For existing nodes this will be identical to edit if the node exists, otherwise it will create an empty node, named as per the node name, and run it through the patch. Obviously because of the insert part, wildcards aren't allowed because the result wouldn't make sense. &(although this is not flagged as an error in the current build for nodes&#42;
+For existing nodes this will be identical to edit if the node exists, otherwise it will create an empty node, named as per the node name, and run it through the patch. Obviously because of the insert part, wildcards aren't allowed because the result wouldn't make sense. *this is not flagged as an error in the current build for nodes*;
 
 For values this is identical to doing a delete and then an insert. Wildcards and indexes are not supported. The delete will delete all matches. This command has quite limited functionality, but it's there.
 
