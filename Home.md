@@ -1,4 +1,6 @@
 Module Manager wiki.
 
-This is a WIP!
+Useful pages:
+
+[Module manager syntax](Module Manager Syntax)
 
