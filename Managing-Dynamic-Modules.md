@@ -2,6 +2,12 @@ This is an overview of how to manage modules in KSP dynamically, that is to be a
 
 It's targeted really towards mod developers, however I guess could be of interest to others also.
 
+## In a nutshell
+
+* If you create a mod, and you add and remove modules dynamically (as in in the Editor or Flight scenes) then please save `MM_DYNAMIC=true` in your module state.
+* If you create a mod, and you add modules to parts with MM or in the LOADING scene, and you want to know when your module is added a vessel from a pre-existing save, check for `MM_REINITIALIZE=true` in `OnLoad` for your module.
+* If you have state that changes over the lifetime of a vessel, and you want to know when your mod has been deleted and reinstalled, check for `MM_RESTORED=true` in `OnLoad` for your module.
+
 ## The problem
 
 With module manager 2.1.0 and above, there's much better support for adding and removing modules to parts. Before this you would have some issues with save games.
