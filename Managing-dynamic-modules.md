@@ -2,8 +2,6 @@ This is an overview of how to manage modules in KSP dynamically, that is to be a
 
 It's targeted really towards mod developers, however I guess could be of interest to others also.
 
-
-
 ## The problem
 
 With module manager 2.1.0 and above, there's much better support for adding and removing modules to parts. Before this you would have some issues with save games.
@@ -61,13 +59,11 @@ Both of these steps were needed - this makes it robust to any config change.
 
 SaveGameFixer runs in the main menu scene, so the version of the part database it works with is whatever is the result of any MM patches. It will run through all the saved games and saved craft files and perform the following actions:
 
-
-
-1. Reorder the modules in the save file to match the part in the part database
-1. If there's any modules present in the save file, present in memory (as in a mod exists that defines that module), but not in the part database the stored state will be discarded. This allows you to add dynamic modules to the end of the list (dynamic module definition to follow)
-1. If there's modules present in the save, not present in memory, and not in the part database then these modules configs will be backed up internally inside the save, and the save will be backed up. This occurs when a mod is uninstalled.
-1. If there's any backups from above now present in the part, they will be restored and the save will be backed up
-1. If a part is completely missing, the save will be backed up.
+1. *Modules reordered:* either in the PART file or by a MM patch. Reorder the modules in the save file to match the part in the part database
+1. *Module added in flight or VAB:* If there's any modules present in the save file, present in memory (as in a mod exists that defines that module), but not in the part database the stored state will be discarded. This allows you to add dynamic modules to the end of the list (dynamic module definition to follow)
+1. *Mod with module deleted:* If there's modules present in the save, not present in memory, and not in the part database then these modules's persistence data will be stored inside the save, and the save will also be backed up. This occurs when a mod is uninstalled with a module still being in use on a ship.
+1. *Mod from above reinstalled:* If there's any backups from above now present in the part, they will be restored from the internal vessel  and the save will be backed up
+1. *Part not found:* KSP will just destroy any ship with a missing part, SaveGameFixer will back up the save file (but not the quicksave) to protect from this issue.
 
 As a mod developer, there's a couple of things you can do to make this run smoothly:
 
@@ -82,7 +78,7 @@ To help this along, if you have a dynamic module then please do something like t
 ````c#
     public override void OnSave (ConfigNode node)
     {
-        node.SetValue("MM_DYNAMIC", "true");
+        node.AddValue("MM_DYNAMIC", "true");
     }
 ````
 
@@ -121,4 +117,4 @@ Depending on your mod, you might want to reinitialize or otherwise do something 
 
 ## Conclusion
 
-The new features of save game fixing make MM and modding far more flexible. Most of the time the behaviour is what you'd expect it to bed, but it's a good idea to have an awareness of these features.
+The new features of save game fixing make MM and modding far more flexible. Most of the time the behaviour is what you'd expect it to be, but it's a good idea to have an awareness of these features.
