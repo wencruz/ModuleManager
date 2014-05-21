@@ -46,13 +46,13 @@ Then when MM did its thing it would modify module1, and then place the module *a
 
 Any saves or craft you had prior to this point would then be broken - that is anything saved to the persistence file from a module, any form of persistence state, would not be able to be retrieved. KSP would just plod along anyhow, leaving everything at the settings they began with in the LOADING scene. 
 
-This would cause for example docking ports to think they were detached, when they were actually attached and thus you not to be able to undock ships. All sorts of other obscure issues can occur. It depends very much on the module how exactly this affects it. Stateless modules such as those for FAR it wouldn't matter at all. Statefull ones would be affected to varying degrees.
+This caused various difficult to identify errors - for example docking ports save their 'docked' or 'undocked' state in the save, so after any module order change they would think they were detached, when they were actually attached and thus you not to be able to undock ships. All sorts of other obscure issues can occur. It depends very much on the module how exactly this affects it. Stateless modules such as those for FAR it wouldn't matter at all. Statefull ones would be affected to varying degrees. Even if your MM patch didn't directly affect a module, since the order of definition of modules changed then any module defined after that one would not load up properly.
 
 Previously we've managed by just adding modules to the end of the list. This will work okay-ish - at least the core modules don't end up broken, but you never know when some other mod would go adding its own module to the list, potentially ahead of yours, and messing everything up. 
 
 ## The fix
 
-The new version of MM has two things in place to prevent this:
+The new version of MM has things in place to prevent this:
 
 1. The order of definition of things is no longer changed when you edit (@) them
 1. SaveGameFixer runs through all previous save games and fixes them whenever KSP starts up
@@ -61,9 +61,11 @@ Both of these steps were needed - this makes it robust to any config change.
 
 SaveGameFixer runs in the main menu scene, so the version of the part database it works with is whatever is the result of any MM patches. It will run through all the saved games and saved craft files and perform the following actions:
 
+
+
 1. Reorder the modules in the save file to match the part in the part database
-1. If there's any modules present in the save file, present in memory (as in a mod exists that defines that module), but not in the part database these will be discarded.
-1. If there's modules present in the save, not present in memory, and not in the part database then these modules configs will be backed up internally inside the save, and the save will be backed up.
+1. If there's any modules present in the save file, present in memory (as in a mod exists that defines that module), but not in the part database the stored state will be discarded. This allows you to add dynamic modules to the end of the list (dynamic module definition to follow)
+1. If there's modules present in the save, not present in memory, and not in the part database then these modules configs will be backed up internally inside the save, and the save will be backed up. This occurs when a mod is uninstalled.
 1. If there's any backups from above now present in the part, they will be restored and the save will be backed up
 1. If a part is completely missing, the save will be backed up.
 
