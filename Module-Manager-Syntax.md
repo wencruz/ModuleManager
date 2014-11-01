@@ -237,3 +237,6 @@ For values this is identical to doing a delete and then an insert. Wildcards and
 ## Test cases / examples
 
 Some automated test cases for this build [are here](https://github.com/sarbian/ModuleManager/tree/master/Tests). These also double as good examples of how it works.
+
+## Variables ##
+[Forum Post](http://forum.kerbalspaceprogram.com/threads/55219-Module-Manager-2-3-5-%28Sept-14%29-Loading-Speed-Fix?p=1416253&viewfull=1#post1416253)
