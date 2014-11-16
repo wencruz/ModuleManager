@@ -84,11 +84,11 @@ The general form of a patch for values is
 So breaking this down
 
 - `<Op>` One of
- - nothing for insert
- - `@` for edit
- - `+` or `$` for copy
- - `-` or `!` for delete
- - `%` for replace.
+ - nothing for [insert](#insert)
+ - `@` for [edit](#edit----)
+ - `+` or `$` for [copy](#copy----or-)
+ - `-` or `!` for [delete](#delete----or--)
+ - `%` for [replace](#replace---).
 - `<Name-With-Wildcards>` :  The name of the value you'll be messing with. Wildcards are not always available for every Op. Wildcards include `?` for any character, and `*` for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a `?` to match it.
 - `(,<index>)?` : Optional index. Again, not available with every option. Not that these indexes are ''with respect to all name matches'' not the total index in the node. I will support negative indexes for running backwards through the list soon. Also `*` is not yet supported.
 
