@@ -22,7 +22,7 @@ PART
 }
 
 // This is a patch. Note the prefix - this will be one of  '@' for edit, '+' or '$' for copy,
-// '-' or '!' for delete, '%' for replace. A patch takes some pre-existing top level node, and modifies it
+// '-' or '!' for delete, '%' to edit-or-create. A patch takes some pre-existing top level node, and modifies it
 @PART[myPart]
 {
     // Edit the value with name 'module'
@@ -88,7 +88,7 @@ So breaking this down
  - `@` for [edit](#edit----)
  - `+` or `$` for [copy](#copy----or-)
  - `-` or `!` for [delete](#delete----or--)
- - `%` for [replace](#replace---).
+ - `%` for [edit-or-create](#edit-or-create---).
 - `<Name-With-Wildcards>` :  The name of the value you'll be messing with. Wildcards are not always available for every Op. Wildcards include `?` for any character, and `*` for any number of chars. Note that ''only alphanumeric chars'' are allowed in value names for patches. If you have spaces or any other char, use a `?` to match it.
 - `(,<index>)?` : Optional index. Again, not available with every option. Not that these indexes are ''with respect to all name matches'' not the total index in the node. I will support negative indexes for running backwards through the list soon. Also `*` is not yet supported.
 
@@ -226,7 +226,7 @@ Note that for parts, you must always give a new name or it's a bit pointless:
 }
 ```
 
-###Replace - %
+###Edit-or-Create - %
 
 This will edit the value it it exists, otherwise it will create a new value as though this was an insert.
 
