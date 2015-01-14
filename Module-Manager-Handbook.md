@@ -114,7 +114,7 @@ This way, now you have two PARTs named "myPart".
 
 ***
 
-
+<br>
 ##Filtering by numbers:
 It's also possible to filter nodes and variables by numbers. This is useful when there's multiple and nameless (or under the same name) nodes and variables on a config file.
 
@@ -133,6 +133,7 @@ If there are two or more variables with the same name, you can refer to them lik
 
 The same thing works for `!example,0`, etc.
 
+<br>
 - Nodes:
 The same is applied to nodes without names, as follows:
 
@@ -160,9 +161,11 @@ Looks for all the "Example" MODULES. Filters the second one and edits it. Note t
 
 ***
 
-
+<br>
 ##Editing Multiple Parts:
 You can apply changes to multiple parts at the same time, using the `*` filter. Examples:
+
+- Specific names
 
 >```
 @PART[B9_*]
@@ -173,12 +176,46 @@ You can apply changes to multiple parts at the same time, using the `*` filter. 
 This will edit all the PART nodes that has a name **beginning with "B9_", and have anything else after it**.  
 
 <br>
+- Specific nodes
+
 >```
 @PART[*]:HAS[@MODULE[ModuleEngines]]
 {
   ...(stuff)
 }
 ```
+This will look for all PART nodes, but will filter for only those who contain `MODULE[ModuleEngines]`.
+
+<br>
+>```
+@PART[*]:HAS[!MODULE[ModuleCommand]]
+{
+  ...(stuff)
+}
+```
+Like the previous one, this will look for all PART nodes, but will filter for only those who don't contain `MODULE[ModuleCommand]`.
+
+<br>
+- Specific variables
+
+>```
+@PART[*]:HAS[#category[Utility]]
+{
+  ...(stuff)
+}
+```
+This will look for all PART nodes, and filter for those who have a `category[Utility]` variable. Note that this category must not be inside any other node. It must be directly inside the mentioned PART.
+
+<br>
+```
+@PART[*]:HAS[@RESOURCE[MonoPropellant]:HAS[#maxAmount[750]]]
+{
+  ...(stuff)
+}
+```
+This will look for all PARTs that have a `RESOURCE[MonoPropellant]. And from these, it will filter again for only those RESOURCE nodes that have a `maxAmount[750]` variable.
+
+
 
 #WIP
 Do not edit until the sign above has been removed.
