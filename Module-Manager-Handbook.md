@@ -30,30 +30,30 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
 ###Examples and details:
 
 - Editing:
+```
+@PART[SomePart] // Edit a PART node named "SomePart".
+{
+    @mass = 0.625 // change SomePart's mass to 0.625
+    @description = SomePart: now uses Xenon! // Changes the value from the "description" item. In this case, a text.
 
-    @PART[SomePart] // Edit a PART node named "SomePart".
+    @MODULE[ModuleEngines] // Edit SomePart's node MODULE named "ModuleEngines"
     {
-        @mass = 0.625 // change SomePart's mass to 0.625
-        @description = SomePart: now uses Xenon! // Changes the value from the "description" item. In this case, a text.
+        @maxThrust = 2.25  // Changes maxThrust to 225
 
-        @MODULE[ModuleEngines] // Edit SomePart's node MODULE named "ModuleEngines"
-        {
-            @maxThrust = 2.25  // Changes maxThrust to 225
-    
             @PROPELLANT[LiquidFuel] // Edit SomePart's node PROPELLANT named "LiquidFuel"
             {
-                @name = XenonGas // Changes the PROPELLANT node name from LiquidFuel to XenonGas.
-                @ratio = 1.0 // Changes the ratio value.
-            }
-        !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
+            @name = XenonGas // Changes the PROPELLANT node name from LiquidFuel to XenonGas.
+            @ratio = 1.0 // Changes the ratio value.
         }
-
-        RESOURCE // Creates a new node RESOURCE in the PART.
-        {
-            name = ElectricCharge // Adds a name to the node RESOURCE
-            amount = 100 // Adds "amount" and its value to this node
-            maxAmount = 100 Adds "maxAmount" and its value to this node
-        }
+    !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
     }
 
+    RESOURCE // Creates a new node RESOURCE in the PART.
+    {
+        name = ElectricCharge // Adds a name to the node RESOURCE
+        amount = 100 // Adds "amount" and its value to this node
+        maxAmount = 100 Adds "maxAmount" and its value to this node
+    }
+}
+```
 #WIP
