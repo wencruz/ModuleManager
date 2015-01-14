@@ -184,7 +184,7 @@ This will edit all the PART nodes that has a name **beginning with "B9_", and ha
   ...(stuff)
 }
 ```
-This will look for all PART nodes, but will filter for only those who contain `MODULE[ModuleEngines]`.
+This will look for all PART nodes, but will filter for only those who contain `ModuleEngines` MODULE.
 
 <br>
 >```
@@ -193,7 +193,7 @@ This will look for all PART nodes, but will filter for only those who contain `M
   ...(stuff)
 }
 ```
-Like the previous one, this will look for all PART nodes, but will filter for only those who don't contain `MODULE[ModuleCommand]`.
+Like the previous one, this will look for all PART nodes, but will filter for only those who don't contain `ModuleCommand` MODULE.
 
 <br>
 - Specific variables
@@ -204,16 +204,73 @@ Like the previous one, this will look for all PART nodes, but will filter for on
   ...(stuff)
 }
 ```
-This will look for all PART nodes, and filter for those who have a `category[Utility]` variable. Note that this category must not be inside any other node. It must be directly inside the mentioned PART.
+This will look for all PART nodes, and filter for those who have a `category = Utility` variable. Note that this category must not be inside any other node. It must be directly inside the mentioned PART.
 
 <br>
+>```
+@PART[*]:HAS[~TechRequired[]]
+{
+  ...(stuff)
+}
 ```
+This will look for all PARTs that DON'T have any `TechRequired =` variable.
+
+<br>
+- Specific Configuration
+
+>```
 @PART[*]:HAS[@RESOURCE[MonoPropellant]:HAS[#maxAmount[750]]]
 {
   ...(stuff)
 }
 ```
-This will look for all PARTs that have a `RESOURCE[MonoPropellant]. And from these, it will filter again for only those RESOURCE nodes that have a `maxAmount[750]` variable.
+This will look for all PARTs that have the `MonoPropellant` RESOURCE. And from these, it will filter again for only those RESOURCE nodes that have a `maxAmount = 750` variable.
+
+<br>
+>```
+@PART[*]:HAS[@MODULE[ModuleEngines]:HAS[@PROPELLANT[XenonGas]]]
+{
+  ...(stuff)
+}
+This will look for all PARTs who have a `ModuleEngines` MODULE using XenonGas as a propellant.
+
+<br>
+- Combined Search
+
+>```
+@PART[*]:HAS[@MODULE[ModuleEngines] , @RESOURCE[SolidFuel]] 
+{
+  ...(stuff)
+}
+```
+This filters for all PARTs who have a `ModuleEngines` MODULE and have a `SolidFuel` RESOURCE at the same time. (Space added for clarity)
+
+<br>
+
+>```
+@PART[*]:HAS[  @MODULE[ModuleEngines] :HAS [ @PROPELLANT[XenonGas] , @PROPELLANT[ElectricCharge] ]  ]
+{
+  ...(stuff)
+}
+```
+This goes for all PART thats have `ModuleEngines` containing `XenonGas`, and `ElectricCharge` at the same time. (Space added for clarity)
+
+<br>
+- Even deeper:
+
+>```
+@PART[*]:HAS[!RESOURCE[ElectricCharge],@RESOURCE[*]]
+{
+  ...(stuff)
+}
+```
+All PARTs without ElectricCharge as a ressource but with any other.
+
+
+***
+
+<br>
+##Some Useful Examples:
 
 
 
