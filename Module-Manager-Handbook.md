@@ -29,7 +29,7 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
 
 ###Examples and details:
 
-- Editing:
+- Editing and creating:
 ```
 @PART[SomePart] // Edit a PART node named "SomePart".
 {
@@ -45,6 +45,11 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
             @name = XenonGas // Changes the PROPELLANT node name from LiquidFuel to XenonGas.
             @ratio = 1.0 // Changes the ratio value.
         }
+    @atmosphereCurve // Edit SomePart's node atmosphereCurve. Note that this node doesn't have a name.
+    {
+        @key,0 = 0 390 // Edits the FIRST variable "key" from atmosphereCurve
+        @key,1 = 1 320 // Edits the SECOND variable "key" from atmosphereCurve
+    }
     !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
     }
 
@@ -56,4 +61,35 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
     }
 }
 ```
+The code above is explained on each of its lines, but let's chew it even more:
+
+If you make a .cfg file with an entry that looks like this:
+```
+PART
+{
+  name = myPart
+  ...(stuff)
+}
+```
+You're defining a new part named 'myPart". Then, if another .cfg file somewhere does this:
+```
+@PART[myPart]
+{
+  ...(stuff)
+}
+```
+That is saying: **"at the PART named 'myPart', edit the following additional stuff..."**.
+
+
+
+If there are two or more variables with the same name, you can refer to them like this:
+
+`@example,0 = <...>` finds the first "example" variable or on the list (this is the same as "@example = <...>")
+
+`@example,1 = <...>` finds the second one.
+
+`@example,2 = <...>` finds the third, and so on.
+
+
+
 #WIP
