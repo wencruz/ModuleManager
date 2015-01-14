@@ -5,16 +5,16 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
 For future reference in this handbook, keep in mind of the following nomenclatures:
 - NODE
  - Their content is written between curly brackets. Examples:
- - MODULE { }
- - RESOURCE { }
- - PROP { }
+ - `MODULE { }`
+ - `RESOURCE { }`
+ - `PROP { }`
  - etc.
 
 - Variable
  - Items that can have a value after it. Examples:
- - name = mk2LanderCabin
- - maxThrust = 1500
- - description = The mobile processing lab was developed to (...)
+ - `name = mk2LanderCabin`
+ - `maxThrust = 1500`
+ - `description = The mobile processing lab was developed to (...)`
  - etc.
 
 ##Operations
@@ -27,6 +27,7 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `+` or `$` for copy
  - `-` or `!` for delete
  - `%` for edit-or-create.
+
 - Filters
  - `*` for any number of alphanumeric chars
  - `?` for any single alphanumeric character. This is also applied in case of "space" or special chars.
@@ -36,6 +37,7 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `~` for excluding variables from filter
  - `:HAS[<node>]` for searching only files that have <node> in filter
  - `:NEEDS[<modname>]` for searching only files that mess with certain mod.
+
 - Additional
  - `&` or `,` for "AND"
  - `|` for "OR"
@@ -81,7 +83,7 @@ For future reference in this handbook, keep in mind of the following nomenclatur
 The code above have explanations on each of its lines, but let's chew it even more:
 
 If you make a .cfg file with an entry that looks like this:
-```
+>```
 PART
 {
   name = myPart
@@ -89,7 +91,9 @@ PART
 }
 ```
 You're defining a new part named "myPart". Then, if another .cfg file somewhere does this:
-```
+
+<br>
+>```
 @PART[myPart]
 {
   ...(stuff)
@@ -97,7 +101,9 @@ You're defining a new part named "myPart". Then, if another .cfg file somewhere 
 ```
 That is saying: **"at the PART named 'myPart', edit the following additional stuff..."**.
 If you don't put the `@` operator before the NODE, instead of editing an existent one, you will create a new one:
-```
+
+<br>
+>```
 PART[myPart]
 {
  ...(stuff)
@@ -109,7 +115,7 @@ This way, now you have two PARTs named "myPart".
 ***
 
 
-###Filtering by numbers:
+##Filtering by numbers:
 It's also possible to filter nodes and variables by numbers. This is useful when there's multiple and nameless (or under the same name) nodes and variables on a config file.
 
 - Variables:
@@ -134,7 +140,7 @@ The same is applied to nodes without names, as follows:
 `!EXAMPLE,0 {}`
 Looks for the first "EXAMPLE" node in the section and deletes it.
 
-```
+>```
 @EXAMPLE,*
 {
 <...>
@@ -142,7 +148,8 @@ Looks for the first "EXAMPLE" node in the section and deletes it.
 ```
 Looks and edits all the "EXAMPLE" nodes in the section.
 
-```
+<br>
+>```
 @MODULE[Example],1
 {
 <...>
@@ -151,12 +158,27 @@ Looks and edits all the "EXAMPLE" nodes in the section.
 Looks for all the "Example" MODULES. Filters the second one and edits it. Note that this is a named MODULE, but this doesn't prevent you from filtering them by numbers.
 
 
-
 ***
 
 
-###Editing Multiple Parts:
+##Editing Multiple Parts:
+You can apply changes to multiple parts at the same time, using the `*` filter. Examples:
 
+>```
+@PART[B9_*]
+{
+  ...(stuff)
+}
+```
+This will edit all the PART nodes that has a name **beginning with "B9_", and have anything else after it**.  
+
+<br>
+>```
+@PART[*]:HAS[@MODULE[ModuleEngines]]
+{
+  ...(stuff)
+}
+```
 
 #WIP
 Do not edit until the sign above has been removed.
