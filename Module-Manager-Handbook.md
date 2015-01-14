@@ -28,8 +28,8 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
 
 
 ###Examples and details:
+- Creating or editing using Operators:
 
-- Editing and creating:
 ```
 @PART[SomePart] // Edit a PART node named "SomePart".
 {
@@ -47,8 +47,8 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
         }
     @atmosphereCurve // Edit SomePart's node atmosphereCurve. Note that this node doesn't have a name.
     {
-        @key,0 = 0 390 // Edits the FIRST variable "key" from atmosphereCurve
-        @key,1 = 1 320 // Edits the SECOND variable "key" from atmosphereCurve
+        @key,0 = 0 390 // Edits the FIRST variable "key" from the "atmosphereCurve"
+        @key,1 = 1 320 // Edits the SECOND variable "key" from the "atmosphereCurve" property
     }
     !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
     }
@@ -61,7 +61,7 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
     }
 }
 ```
-The code above is explained on each of its lines, but let's chew it even more:
+The code above have explanations on each of its lines, but let's chew it even more:
 
 If you make a .cfg file with an entry that looks like this:
 ```
@@ -71,7 +71,7 @@ PART
   ...(stuff)
 }
 ```
-You're defining a new part named 'myPart". Then, if another .cfg file somewhere does this:
+You're defining a new part named "myPart". Then, if another .cfg file somewhere does this:
 ```
 @PART[myPart]
 {
@@ -81,15 +81,49 @@ You're defining a new part named 'myPart". Then, if another .cfg file somewhere 
 That is saying: **"at the PART named 'myPart', edit the following additional stuff..."**.
 
 
+***
 
+
+###Nameless variables and multiple nodes:
+- Variables:
 If there are two or more variables with the same name, you can refer to them like this:
 
-`@example,0 = <...>` finds the first "example" variable or on the list (this is the same as "@example = <...>")
+`@example,0 = <...>` finds the first "example" variable or on the list (this is the same as `@example = <...>`)
 
 `@example,1 = <...>` finds the second one.
 
 `@example,2 = <...>` finds the third, and so on.
 
+`@example,* = <...>` finds all the "example" variables, and edits all of them.
+
+`@example,-1 = <...>` finds the last "example" variable.
+
+The same thing works for `!example,0`, etc.
+
+- Nodes:
+The same is applied to nodes without names, as follows:
+
+```
+@EXAMPLE,2
+{
+<...>
+}
+```
 
 
+***
+
+
+```
+@NODE[example]
+{
+...
+}
+```
+This modifies the node which has type 'NODE' and name = foo. 'NODE' is a MODULE {} or a RESOURCE {} or a PROP {} or something like that.
+!NODE[foo] {} deletes node foo completely.
+NODE {
+name = foo
+...(stuff)
+} creates a new node of type NODE. If there was already a node of type 'NODE', now there's two of them.
 #WIP
