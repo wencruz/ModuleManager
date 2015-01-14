@@ -6,8 +6,8 @@ For future reference in this handbook, keep in mind of the following nomenclatur
 - NODE
  - Their content is written between curly brackets. Examples:
  - MODULE { }
- -  RESOURCE { }
- -  PROP { }
+ - RESOURCE { }
+ - PROP { }
  - etc.
 
 - Variable
@@ -55,17 +55,19 @@ For future reference in this handbook, keep in mind of the following nomenclatur
     {
         @maxThrust = 2.25  // Changes maxThrust to 225
 
-            @PROPELLANT[LiquidFuel] // Edit SomePart's node PROPELLANT named "LiquidFuel"
-            {
+        @PROPELLANT[LiquidFuel] // Edit SomePart's node PROPELLANT named "LiquidFuel"
+        {
             @name = XenonGas // Changes the PROPELLANT node name from LiquidFuel to XenonGas.
             @ratio = 1.0 // Changes the ratio value.
         }
-    @atmosphereCurve // Edit SomePart's node atmosphereCurve. Note that this node doesn't have a name.
-    {
-        @key,0 = 0 390 // Edits the FIRST variable "key" from the "atmosphereCurve"
-        @key,1 = 1 320 // Edits the SECOND variable "key" from the "atmosphereCurve" property
-    }
-    !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
+
+        @atmosphereCurve // Edit SomePart's node atmosphereCurve. Note that this node doesn't have a name.
+        {
+            @key,0 = 0 390 // Edits the FIRST variable "key" from the "atmosphereCurve"
+            @key,1 = 1 320 // Edits the SECOND variable "key" from the "atmosphereCurve" property
+        }
+
+        !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
     }
 
     RESOURCE // Creates a new node RESOURCE in the PART.
@@ -94,6 +96,14 @@ You're defining a new part named "myPart". Then, if another .cfg file somewhere 
 }
 ```
 That is saying: **"at the PART named 'myPart', edit the following additional stuff..."**.
+If you don't put the `@` operator before the NODE, instead of editing an existent one, you will create a new one:
+```
+PART[myPart]
+{
+ ...(stuff)
+}
+```
+This way, now you have two PARTs named "myPart".
 
 
 ***
@@ -120,13 +130,9 @@ The same thing works for `!example,0`, etc.
 - Nodes:
 The same is applied to nodes without names, as follows:
 
-```
-@EXAMPLE,2
-{
-<...>
-}
-```
-Looks for the third "@EXAMPLE" node in the section.
+
+`!EXAMPLE,0 {}`
+Looks for the first "EXAMPLE" node in the section and deletes it.
 
 ```
 @EXAMPLE,*
@@ -134,23 +140,23 @@ Looks for the third "@EXAMPLE" node in the section.
 <...>
 }
 ```
-Looks and edits all the "@EXAMPLE" nodes in the section.
+Looks and edits all the "EXAMPLE" nodes in the section.
+
+```
+@MODULE[Example],1
+{
+<...>
+}
+```
+Looks for all the "Example" MODULES. Filters the second one and edits it. Note that this is a named MODULE, but this doesn't prevent you from filtering them by numbers.
+
 
 
 ***
 
 
-```
-@NODE[example]
-{
-...
-}
-```
-This modifies the node which has type 'NODE' and name = foo. 'NODE' is a MODULE {} or a RESOURCE {} or a PROP {} or something like that.
-!NODE[foo] {} deletes node foo completely.
-NODE {
-name = foo
-...(stuff)
-} creates a new node of type NODE. If there was already a node of type 'NODE', now there's two of them.
+###Editing Multiple Parts:
+
+
 #WIP
 Do not edit until the sign above has been removed.
