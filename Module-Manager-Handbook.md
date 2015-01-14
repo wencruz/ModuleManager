@@ -84,7 +84,9 @@ That is saying: **"at the PART named 'myPart', edit the following additional stu
 ***
 
 
-###Nameless variables and multiple nodes:
+###Filtering by numbers:
+It's also possible to filter nodes and variables by numbers. This is useful when there's multiple and nameless (or under the same name) nodes and variables on a config file.
+
 - Variables:
 If there are two or more variables with the same name, you can refer to them like this:
 
@@ -109,6 +111,15 @@ The same is applied to nodes without names, as follows:
 <...>
 }
 ```
+Looks for the third "@EXAMPLE" node in the section.
+
+```
+@EXAMPLE,*
+{
+<...>
+}
+```
+Looks and edits all the "@EXAMPLE" nodes in the section.
 
 
 ***
