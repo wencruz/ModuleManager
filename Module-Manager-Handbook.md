@@ -2,6 +2,21 @@
 This section covers the most basic applications of Module Manager, which tend to be the most asked questions in the [Module Manager Official Thread](http://forum.kerbalspaceprogram.com/threads/55219). It goes through the main operations in a quick and simple way.
 For a more detailed description, see [Module Manager Syntax](https://github.com/sarbian/ModuleManager/wiki/Module%20Manager%20Syntax).
 
+For future reference in this handbook, keep in mind of the following nomenclatures:
+- NODE
+ - Their content is written between curly brackets. Examples:
+ - MODULE { }
+ -  RESOURCE { }
+ -  PROP { }
+ - etc.
+
+- Variable
+ - Items that can have a value after it. Examples:
+ - name = mk2LanderCabin
+ - maxThrust = 1500
+ - description = The mobile processing lab was developed to (...)
+ - etc.
+
 ##Operations
 
 ###Common Syntaxes:
@@ -17,8 +32,8 @@ For a more detailed description, see [Module Manager Syntax](https://github.com/
  - `?` for any single alphanumeric character. This is also applied in case of "space" or special chars.
  - `@` for including nodes in filter
  - `-` or `!` for excluding nodes from filter
- - `#` for including "nodes with values" in filter
- - `~` for excluding "nodes with values" from filter
+ - `#` for including variables in filter
+ - `~` for excluding variables from filter
  - `:HAS[<node>]` for searching only files that have <node> in filter
  - `:NEEDS[<modname>]` for searching only files that mess with certain mod.
 - Additional
