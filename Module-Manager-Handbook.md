@@ -270,9 +270,55 @@ All PARTs without ElectricCharge as a ressource but with any other.
 ***
 
 <br>
-##Some Useful Examples:
+##Some useful examples:
 
+>```
+@PART[*]:HAS[~TechRequired[]]:Final
+{
+	TechRequired=advScienceTech
+}
+```
+Adds a tech level to all PARTs who don't have any.
 
+<br>
 
-#WIP
-Do not edit until the sign above has been removed.
+>```
+@PART[*]:HAS[@MODULE[ModuleCommand],!MODULE[MechJebCore]]:Final
+{    
+    MODULE
+    {
+        name = MechJebCore
+        MechJebLocalSettings 
+        {
+            MechJebModuleCustomWindowEditor {unlockTechs = flightControl}
+            MechJebModuleSmartASS {unlockTechs = flightControl}
+            MechJebModuleManeuverPlanner {unlockTechs = advFlightControl}
+            MechJebModuleNodeEditor {unlockTechs = advFlightControl}
+            MechJebModuleTranslatron {unlockTechs = advFlightControl}
+            MechJebModuleWarpHelper {unlockTechs = advFlightControl}
+            MechJebModuleAttitudeAdjustment {unlockTechs = advFlightControl}
+            MechJebModuleThrustWindow {unlockTechs = advFlightControl}
+            MechJebModuleRCSBalancerWindow {unlockTechs = advFlightControl}
+            MechJebModuleRoverWindow {unlockTechs = fieldScience}
+            MechJebModuleAscentGuidance {unlockTechs = unmannedTech}
+            MechJebModuleLandingGuidance {unlockTechs = unmannedTech}
+            MechJebModuleSpaceplaneGuidance {unlockTechs = unmannedTech}
+            MechJebModuleDockingGuidance {unlockTechs = advUnmanned}
+            MechJebModuleRendezvousAutopilotWindow {unlockTechs = advUnmanned}
+            MechJebModuleRendezvousGuidance {unlockTechs = advUnmanned}
+        }
+    }
+}
+```
+Enables MechJeb on all pods and probes. Respects the Tech-tree.
+
+<br>
+
+>```
+@EXPERIMENT_DEFINITION[*]:HAS[#id[gravityScan]]
+{
+    @baseValue = 5
+    @scienceCap = 10
+}
+```
+Most examples use PARTs, but it works on other nodes too.
