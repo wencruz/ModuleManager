@@ -10,7 +10,7 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `PROP { }`
  - etc.
 
-- Field
+- Key
  - Items that can have a value after it. Examples:
  - `name = mk2LanderCabin`
  - `maxThrust = 1500`
@@ -33,8 +33,8 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `?` for any single alphanumeric character. This is also applied in case of "space" or special chars.
  - `@` for including nodes in filter
  - `-` or `!` for excluding nodes from filter
- - `#` for including fields in filter
- - `~` for excluding fields from filter
+ - `#` for including keys in filter
+ - `~` for excluding keys from filter
  - `:HAS[<node>]` for searching only files that have <node> in filter
  - `:NEEDS[<modname>]` for searching only files that mess with certain mod.
 
@@ -65,8 +65,8 @@ For future reference in this handbook, keep in mind of the following nomenclatur
 
         @atmosphereCurve // Edit SomePart's node atmosphereCurve. Note that this node doesn't have a name.
         {
-            @key,0 = 0 390 // Edits the FIRST Field "key" from the "atmosphereCurve"
-            @key,1 = 1 320 // Edits the SECOND Field "key" from the "atmosphereCurve" property
+            @key,0 = 0 390 // Edits the FIRST "key" Key from the "atmosphereCurve"
+            @key,1 = 1 320 // Edits the SECOND "key" Key from the "atmosphereCurve" property
         }
 
         !PROPELLANT[Oxidizer] {} // Removes the node PROPELLANT named "Oxidizer" from the PART.
@@ -116,20 +116,20 @@ This way, now you have two PARTs named "myPart".
 
 <br>
 ##Filtering by numbers:
-It's also possible to filter Nodes and Fields by numbers. This is useful when there's multiple and nameless (or under the same name) nodes and Fields on a config file.
+It's also possible to filter Nodes and Keys by numbers. This is useful when there's multiple and nameless (or under the same name) nodes and Keys on a config file.
 
-- Fields:
-If there are two or more Fields with the same name, you can refer to them like this:
+- Keys:
+If there are two or more Keys with the same name, you can refer to them like this:
 
-`@example,0 = <...>` finds the first "example" Field or on the list (this is the same as `@example = <...>`)
+`@example,0 = <...>` finds the first "example" Key or on the list (this is the same as `@example = <...>`)
 
 `@example,1 = <...>` finds the second one.
 
 `@example,2 = <...>` finds the third, and so on.
 
-`@example,* = <...>` finds all the "example" Fields, and edits all of them.
+`@example,* = <...>` finds all the "example" Keys, and edits all of them.
 
-`@example,-1 = <...>` finds the last "example" Field.
+`@example,-1 = <...>` finds the last "example" Key.
 
 The same thing works for `!example,0`, etc.
 
@@ -196,7 +196,7 @@ This will look for all PART nodes, but will filter for only those who contain `M
 Like the previous one, this will look for all PART nodes, but will filter for only those who don't contain `ModuleCommand` MODULE.
 
 <br>
-- Specific Fields
+- Specific Keys
 
 >```
 @PART[*]:HAS[#category[Utility]]
@@ -204,7 +204,7 @@ Like the previous one, this will look for all PART nodes, but will filter for on
   ...(stuff)
 }
 ```
-This will look for all PART nodes, and filter for those who have a `category = Utility` Field. Note that this category must not be inside any other node. It must be directly inside the mentioned PART.
+This will look for all PART nodes, and filter for those who have a `category = Utility` Key. Note that this category must not be inside any other node. It must be directly inside the mentioned PART.
 
 <br>
 >```
@@ -213,7 +213,7 @@ This will look for all PART nodes, and filter for those who have a `category = U
   ...(stuff)
 }
 ```
-This will look for all PARTs that DON'T have any `TechRequired =` Field.
+This will look for all PARTs that DON'T have any `TechRequired =` Key.
 
 <br>
 - Specific Configuration
@@ -224,7 +224,7 @@ This will look for all PARTs that DON'T have any `TechRequired =` Field.
   ...(stuff)
 }
 ```
-This will look for all PARTs that have the `MonoPropellant` RESOURCE. And from these, it will filter again for only those RESOURCE nodes that have a `maxAmount = 750` Field.
+This will look for all PARTs that have the `MonoPropellant` RESOURCE. And from these, it will filter again for only those RESOURCE nodes that have a `maxAmount = 750` Key.
 
 <br>
 >```
