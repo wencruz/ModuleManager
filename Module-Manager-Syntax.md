@@ -98,7 +98,7 @@ The general form for nodes is:
 
 - `<Op>` : Operator, as above
 - `<NodeType>` : typically MODULE or something like it. Wildcards not allowed (I can't imagine you'd need them)
-- `([<NodeNameWithWildcards>])?` : This is a wildcard match for the `name = <name>` value within the node. Optional.  This is equivalent to `:HAS[#name[<NodeNameWithWildcards>]]`, which means it will exclude any nodes which do not have names (there aren't many, but they do exist).  This means that `FOOBAR[*]` will not select all nodes of type FOOBAR, but all nodes of type FOOBAR *which have a defined "name" field.*
+- `([<NodeNameWithWildcards>])?` : This is a wildcard match for the `name = <name>` value within the node. Optional.  This is equivalent to `:HAS[#name[<NodeNameWithWildcards>]]`, which means it will exclude any nodes which do not have names (there aren't many, but they do exist).  This means that `FOOBAR[*]` will not select all nodes of type FOOBAR, but all nodes of type FOOBAR *which have a defined "name" field.*  (If you want to select all FOOBAR nodes, use `FOOBAR,*`.)
 - `(:HAS[<has block>])?` : Optional has block. You can't (currently) use indexes with HAS. This has been described previously. If this is present then all matches will be matched, there's no indexing available currently.
 - `(,<index-or-*>)?` : Index to select particular match zero based. 0 is the first node, -1 is last node. Values 'off the end' will match the end, so large positive matches the end and large negative matches the beginning. Again this matches ''against everything the wildcard selects in order''. `*` here will match everything.
 
