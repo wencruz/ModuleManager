@@ -3,8 +3,8 @@
 KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [There's a fair bit of documentation about this elsewhere](http://wiki.kerbalspaceprogram.com/wiki/User:Greys), but for the purposes of this document we will define a few things:
 
 ```
-// This is a comment. Everything after // on a line is ignored by KSP. We'll use
-// comments to explain ConfigNodes.
+// This is a comment. Everything after // on a line is ignored by KSP. We'll
+// use comments to explain ConfigNodes.
 
 // This is a top level node. Note the name with curly brackets afterwards.
 PART
