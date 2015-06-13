@@ -164,6 +164,7 @@ Example:
 	// Arithmetic - add 5 and multiply by 20. Unindexed so edits the first one.
 	@numeric += 5
 	@numeric *= 20
+        @numeric != 2 //Squares the value of numeric
 	// Regexp expression. Replaces any instance of "tw" with "mo", so would turn "twotwo" into "moomoo"
         // Note also the index.
 	@multiVal,1 ^= :tw:mo:
