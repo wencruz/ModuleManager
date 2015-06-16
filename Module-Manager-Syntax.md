@@ -69,7 +69,7 @@ This is handy if you're a mod developer and you want to create parts that vary a
 
 The stuff within the needs section is based on either:
 * A plugin .dll with the same assembly name. 
-* A subdirectory name under GameData. (Names with spaces can be used, just remove the spaces: `/My Mod/` => `:NEEDS[MyMod]`
+* A subdirectory name under GameData. (Names with spaces can be used, just remove the spaces: `GameData/My Mod/` => `:NEEDS[MyMod]`
 * A FOR[Blah] defined would allow NEEDS[Blah]
 
 As this uses the assembly name (which is compiled into the DLL)  so you'd always get ModuleManager even if you rename the dll. It's usually going to be the same as the DLL name but it's not always. If you find the DLL in exporer, go to the properties right-click menu, and look in the Details tab the name is there under File Description.
@@ -244,3 +244,22 @@ Some automated test cases for this build [are here](https://github.com/sarbian/M
 
 ## Variables ##
 [Forum Post](http://forum.kerbalspaceprogram.com/threads/55219-Module-Manager-2-3-5-%28Sept-14%29-Loading-Speed-Fix?p=1416253&viewfull=1#post1416253)
+Overview:
+`#` signifies a variable of some kind.  
+`$` signifies the start and end of a variable identifier string.
+`@` signifies a different top-level node than the one you're currently in.  
+From here, you can navigate as if you were in a directory structure:  
+
+```
+//This would return 'RE-M3 "Mainsail" Liquid Engine':
+@title = #$@PART[liquidEngine1-2]/title$ 
+
+//This would return the mass of the current part:
+@MODULE[ModuleEngines]
+{
+    @PROPELLANT[LiquidFuel]
+    {
+        @mass = #$../../mass$
+    }
+}
+```
