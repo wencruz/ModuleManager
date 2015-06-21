@@ -41,7 +41,26 @@ PART
 ###Selection
 (Soon)
 ###Patch order
-(Soon)
+The BEFORE and AFTER (and FOR?) keywords can be used to control in what order your patch is applied. The value passed to BEFORE or AFTER is the name of the mod, defined as the name of the directory directly under GameData? This lets you patch patches or patch patches of patches, as deep as you'd like to go.
+
+### Example
+In `GameData/New_Horizons/.../SomePlanet.cfg`:
+```
+// This runs after Kopernicus
+@Kopernicus:AFTER[Kopernicus]
+{
+...
+}
+```
+In `GameData/MyMod/.../MyMod.cfg`:
+```
+// This runs after New_Horizons
+@Kopernicus:AFTER[New_Horizons]
+{
+...
+}
+```
+
 ###Dependency
 (Soon)
 (copy/move some of the next section)
@@ -77,6 +96,7 @@ As this uses the assembly name (which is compiled into the DLL)  so you'd always
 You can use & for AND, | for OR and ! for NOT in the needs listing. To allow backwards compatibility , is treated as an alias for & (AND). If you combine several | and &, eg `NEEDS[Mod1|Mod2&!Mod3|Mod4]` this is treated as ( Mod1 OR Mod2 ) AND ( ( NOT Mod3 ) OR Mod4 ).  I won't be implementing brackets, it would make the parser far too complicated. There's always a way to represent what you want in this form, although it might need a few repeated terms, but I'm not sure I can truly see much of a use case for anything super complex.
 
 In the below stuff, I've not put in the NEEDS section for clarity, however you can use it wherever you like.
+
 
 ## Operators available in patches - and their ordering
 
