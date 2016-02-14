@@ -36,7 +36,7 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `#` for including keys in filter
  - `~` for excluding keys from filter
  - `:HAS[<node>]` for searching only files that have <node> in filter
- - `:NEEDS[<modname>]` Patch is applied only if <modname> is installed.
+ - `:NEEDS[<modname>]` Patch is applied only if given mod is installed.
 
 - Additional
  - `&` or `,` for "AND"
