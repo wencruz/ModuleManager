@@ -234,7 +234,7 @@ Example:
 }
 ```
 
-Note that you still need to use { and } for nodes, and a dummy value for values. If you don't do this then the parser doesn't know what it's dealing with.
+Note that you still need to use { and } for nodes, and a dummy value for values. If you don't do this then KSP will evaluate the key or node as invalid and eat it before Module Manager gets a chance to evaluate it.
 
 
 ###Copy - + or $
