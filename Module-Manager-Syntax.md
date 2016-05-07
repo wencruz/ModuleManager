@@ -263,7 +263,7 @@ For values this is identical to doing a delete and then an insert. Wildcards and
 Some automated test cases for this build [are here](https://github.com/sarbian/ModuleManager/tree/master/Tests). These also double as good examples of how it works.
 
 ## Variables ##
-[Forum Post](forum.kerbalspaceprogram.com/index.php?/topic/50533-/&page=57#comment-1402467)
+[Forum Post](http://forum.kerbalspaceprogram.com/index.php?/topic/50533-/&page=57#comment-1402467)
 Overview:
 `#` signifies a variable of some kind.  
 `$` signifies the start and end of a variable identifier string.
