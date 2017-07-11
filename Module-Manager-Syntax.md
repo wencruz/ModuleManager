@@ -1,4 +1,4 @@
-#A primer on how KSP configures itself
+# A primer on how KSP configures itself
 
 KSP uses ConfigNodes extensively for all aspects of configuration. The main way in which modders interact with these is in the configuration of parts. [There's a fair bit of documentation about this elsewhere](http://wiki.kerbalspaceprogram.com/wiki/User:Greys), but for the purposes of this document we will define a few things:
 
@@ -36,11 +36,11 @@ PART
 }
 ```
 
-###Top level Node
+### Top level Node
 (Soon)
-###Selection
+### Selection
 (Soon)
-###Patch order
+### Patch order
 The BEFORE and AFTER (and FOR?) keywords can be used to control in what order your patch is applied. The value passed to BEFORE or AFTER is the name of the mod, defined as the name of the directory directly under GameData? This lets you patch patches or patch patches of patches, as deep as you'd like to go.
 
 ### Example
@@ -61,11 +61,11 @@ In `GameData/MyMod/.../MyMod.cfg`:
 }
 ```
 
-###Dependency
+### Dependency
 (Soon)
 (copy/move some of the next section)
 
-##Mod dependency checking
+## Mod dependency checking
 
 You can now put a NEEDS section on any section of your file. This isn't just MM patches, it can be literally anywhere - on values, on nodes, on patches, wherever you like. (this enhanced behaviour is new)
 
@@ -237,7 +237,7 @@ Example:
 Note that you still need to use { and } for nodes, and a dummy value for values. If you don't do this then KSP will evaluate the key or node as invalid and eat it before Module Manager gets a chance to evaluate it.
 
 
-###Copy - + or $
+### Copy - + or $
 
 Copy behaves identically to Edit, however rather than editing the node or value it copies it. It will always put the copy at the end of the list.
 
@@ -250,7 +250,7 @@ Note that for parts, you must always give a new name or it's a bit pointless:
 }
 ```
 
-###Edit-or-Create - %
+### Edit-or-Create - %
 
 This will edit the value it it exists, otherwise it will create a new value as though this was an insert.
 
