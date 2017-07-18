@@ -17,9 +17,9 @@ For future reference in this handbook, keep in mind of the following nomenclatur
  - `description = The mobile processing lab was developed to (...)`
  - etc.
 
-##Operations
+## Operations
 
-###Common Syntaxes:
+### Common Syntaxes:
 
 - Operators
  - "nothing", for creating a new node
