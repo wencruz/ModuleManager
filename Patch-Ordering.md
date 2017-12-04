@@ -78,7 +78,7 @@ This part copy will never happen because the part was deleted in the FIRST pass.
 
 ## The :BEFORE[_modname_], :FOR[_modname_], and :AFTER[_modname_] directives
 These directives cause patches with them specified to be loaded during the pass for the specific mod _modname_.
-Patches are applied by going through each _modname_ in alphabetical order, and applying the all BEFORE, then all FOR, then all AFTER patches. Within a specific patch group, patches will be applied in alphabetical order by folder / subfolder / filename.
+Patches are applied by going through each _modname_ in alphabetical order, and applying all BEFORE, all FOR, then all AFTER patches, within the _modname_. Within a specific patch group, patches will be applied in alphabetical order by folder / subfolder / filename.
 
 It is not recommended to use the FOR directive to refer to other mods than the one you are writing.
 
