@@ -85,13 +85,14 @@ It is not recommended to use the FOR directive to refer to other mods than the o
 Example:
 
 I have this part:
+
     PART
     {
         name = MyCoolPart
         value = ORIGINAL
     }
 
-I have some patches in two mods:
+I have some patches in two mods, MOD00 and MOD05
 MOD00/PATCH00.cfg
 
     @PART[MyCoolPart]
