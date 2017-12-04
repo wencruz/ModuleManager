@@ -131,7 +131,7 @@ When module manager processes these:
 - The patch in PATCH01.cfg is deleted because BEFORE can't be satifised (no MOD01)
 - value is set to PATCH00 in the 'legacy' pass (after :FIRST but before others)
 - value is then set to PATCH03 in the FOR[MOD00] pass
-- value is then set to PATCHMOD00FROMMOD05 in the FOR[MOD05] pass (alphabetical order)
+- value is then set to PATCHMOD00FROMMOD05 in the FOR[MOD00] pass (alphabetical order)
 - value is finally set to PATCH02 in the AFTER[MOD00] pass
 
 Figuring out what overwrote what can be a challenge in module manager, especially with mods that alter certain things globally on all PART nodes, for example.
