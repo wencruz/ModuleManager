@@ -16,9 +16,9 @@ Patches are applied in the following order:
 3. All patches with :FIRST are applied.
 4. All patches without an ordering directive (:FIRST, :BEFORE, :FOR, :AFTER, :LAST, :FINAL) are applied.
 5. For each item in the Unicode-sorted list of _modname_ values:
-    a. All patches with :BEFORE are applied
-    b. All patches with :FOR are applied
-    c. All patches with :AFTER are applied
+    * All patches with :BEFORE are applied
+    * All patches with :FOR are applied
+    * All patches with :AFTER are applied
 6. All patches with :FINAL are applied
 
 ## Nodes with no operator
@@ -91,30 +91,40 @@ I have this part:
 
 I have some patches in two mods:
 MOD00/PATCH00.cfg
+
     @PART[MyCoolPart]
     {
         @value = PATCH00
     }
+
 MOD00/PATCH01.cfg
+
     @PART[MyCoolPart]:BEFORE[MOD01]
     {
         @value = PATCH01
     }
+
 MOD00/PATCH02.cfg
+
     @PART[MyCoolPart]:AFTER[MOD00]
     {
         @value = PATCH02
     }
+
 MOD00/PATCH03.cfg
+
     @PART[MyCoolPart]:FOR[MOD00]
     {
         @value = PATCH03
     }
+
 MOD05/PATCHMOD00FROMMOD05.cfg
+
     @PART[MyCoolPart]:FOR[MOD00]
     {
         @value = PATCHMOD00FROMMOD05
     }
+
 When module manager processes these:
 - The patch in PATCH01.cfg is deleted because BEFORE can't be satifised (no MOD01)
 - value is set to PATCH00 in the 'legacy' pass (after :FIRST but before others)
