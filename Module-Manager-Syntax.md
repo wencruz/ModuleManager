@@ -264,6 +264,7 @@ Some automated test cases for this build [are here](https://github.com/sarbian/M
 
 ## Variables ##
 [Forum Post](http://forum.kerbalspaceprogram.com/index.php?/topic/50533-/&page=57#comment-1402467)
+
 [Forum Post](https://forum.kerbalspaceprogram.com/index.php?/topic/50533-141-module-manager-307-may-5th-2018-its-dangerous-to-go-alone-take-those-cats-with-you/&do=findComment&comment=1402467)
 Overview:
 `#` signifies a variable of some kind.  
