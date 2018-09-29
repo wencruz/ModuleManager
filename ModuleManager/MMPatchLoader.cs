@@ -464,7 +464,7 @@ namespace ModuleManager
                 sha.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
             }
 
-            byte[] godsFinalMessageToHisCreation = Encoding.UTF8.GetBytes("We apologize for the inconvenience.");
+            byte[] godsFinalMessageToHisCreation = Encoding.UTF8.GetBytes("Unofficial fork by Lisias.");
             sha.TransformFinalBlock(godsFinalMessageToHisCreation, 0, godsFinalMessageToHisCreation.Length);
 
             configSha = BitConverter.ToString(sha.Hash);
