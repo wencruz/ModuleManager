@@ -1,2 +1,56 @@
 # Module Manager :: Change Log
 
+* 2014-0504: 2.0.9 (Swamp-Ig) for KSP 0.23.5
+	+ So I've done my own enhancements to module manager.
+	+ They seem to work pretty nice!  I'd really appreciate ppl testing it out on their various MM files prior to me pushing it back to the MM repo.
+	+ Any issues you have - take them up with me not with sarbian
+	+ Features:
+	+ Order Preserving
+		- now preserves the original order, both for nodes and for values.
+	+ Use of NEEDS
+```
+PART:NEEDS[RealFuels] {
+    name = dummyPartIgnore
+    module = Part
+
+    DOG {
+        name = First
+        key1:NEEDS[ProceduralParts|StretchySRB] = Original Value
+        key2:NEEDS[!RealFuels] = Some other value
+    }
+}
+```
+	+ In the above, the part will only be defined if you have RealFuels loaded. You can do this on keys, values, patches, anywhere.
+	+ key1 will be defined if (ProceduralParts OR StretchySRB are loaded) and RealFuels is NOT loaded.  You can still use , and it is treated like &. Not has highest precedence, then or, then and.
+	+ Define an insertion point for any nodes or values
+```
+@PART[dummyPartIgnore]
+{
+    DOG {
+        name = AddLast
+        string = Will insert at the end
+    }
+
+    DOG,0 {
+        name = AddFirst
+        string = Will insert at the beginning
+    }
+
+    @DOG,0 { // Edits node zero as before, but ends up editing the above node
+        string,0 = Insert before the string already at the beginning
+    }          
+}
+```
+	+ The index after the comma is where it will be inserted, this is relative to other nodes or values with the same name.
+	+ Regexp replaces
+```
+@PART[dummyPartIgnore]
+{
+    @DOG[First] 
+    {
+        @string ^= :^.*$:First dog edit $& in place
+    }
+}
+```
+	+ Breaking this down, the first character defines the separator, the section between the first : and the second : is the match string, and the section following the second : is the replacement.
+	+ For details on how to use regexp [see the documentation here](http://msdn.microsoft.com/en-us/library/hs600312%28v=vs.110%29.aspx)
