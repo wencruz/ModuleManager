@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2014-0510: 2.1.2 (Swamp-Ig) for KSP 0.23.5
+	+ Lots of improvements and bug fixes in this release.
+	+ [Full details here](http://forum.kerbalspaceprogram.com/threads/55219-Module-Manager-2-1-0-%28May-04%29-please-read-the-orange-text-in-first-post?p=1149933&viewfull=1#post1149933)
 * 2014-0504: 2.0.9 (Swamp-Ig) for KSP 0.23.5
 	+ So I've done my own enhancements to module manager.
 	+ They seem to work pretty nice!  I'd really appreciate ppl testing it out on their various MM files prior to me pushing it back to the MM repo.
@@ -12,7 +15,6 @@
 PART:NEEDS[RealFuels] {
     name = dummyPartIgnore
     module = Part
-
     DOG {
         name = First
         key1:NEEDS[ProceduralParts|StretchySRB] = Original Value
@@ -30,12 +32,10 @@ PART:NEEDS[RealFuels] {
         name = AddLast
         string = Will insert at the end
     }
-
     DOG,0 {
         name = AddFirst
         string = Will insert at the beginning
     }
-
     @DOG,0 { // Edits node zero as before, but ends up editing the above node
         string,0 = Insert before the string already at the beginning
     }          
