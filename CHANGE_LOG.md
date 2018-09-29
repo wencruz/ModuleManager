@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2014-0522: 2.1.5 (sarbian) for KSP 0.23.5
+	+ Fix a bug when inserting a name less node
 * 2014-0518: 2.1.4 (Swamp-Ig) for KSP 0.23.5
 	+ Allow GameData subdir in NEEDS / BEFORE / AFTER
 * 2014-0517: 2.1.3 (Swamp-Ig) for KSP 0.23.5
