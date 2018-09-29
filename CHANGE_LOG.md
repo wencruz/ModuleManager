@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2014-0517: 2.1.3 (Swamp-Ig) for KSP 0.23.5
+	+ Removed non-essential backups
+	+ Improvements for if multiple copies of the same version are installed.
 * 2014-0510: 2.1.2 (Swamp-Ig) for KSP 0.23.5
 	+ Lots of improvements and bug fixes in this release.
 	+ [Full details here](http://forum.kerbalspaceprogram.com/threads/55219-Module-Manager-2-1-0-%28May-04%29-please-read-the-orange-text-in-first-post?p=1149933&viewfull=1#post1149933)
