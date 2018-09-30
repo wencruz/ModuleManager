@@ -1,5 +1,13 @@
 # Module Manager :: Change Log
 
+* 2015-1231: 2.6.14 (sarbian) for KSP 1.0.5
+	+ Implemented @key,* = something to resolve #37
+	+ Implemented Vector Editing, using @key,*[0]
+	+ There are options for editing all keys [*] and specifing a seperator
+	+ (defaults to ,): [0, ] (here we use a space as the seperator). Math also
+	+ works.
+	+ Fixed the Regex
+	+ Bumped AssemblyVersion
 * 2015-1109: 2.6.13 (sarbian) for KSP 1.0.5
 	+ 2.6.13 - let's just change the number and pretend all is fine for 1.0.5
 * 2015-1104: 2.6.12 (sarbian) for KSP 1.0.4
