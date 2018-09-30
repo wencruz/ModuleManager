@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2015-0217: 2.5.10 (sarbian) for KSP 1.0.1
+	+ Fix the NODE,*:HAS[xxxx] reported by NathanKell
+	+ More exception hunting and poor man debuging
 * 2015-0427: 2.2.0 (sarbian) for KSP 1.0.1
 	+ No changelog provided
 * 2014-0522: 2.1.5 (sarbian) for KSP 0.23.5
