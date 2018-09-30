@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2016-0330: 2.6.21 (sarbian) for KSP 1.0.5
+	+ No changelog provided
 * 2016-0218: 2.6.20 (sarbian) for KSP 1.0.5
 	+ Remove the debug spam of the out of node value edit
 	+ Prevents the creation of a cache if there were errors while patching
