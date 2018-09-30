@@ -1,5 +1,11 @@
 # Module Manager :: Change Log
 
+* 2015-0523: 2.6.5 (sarbian) for KSP 1.0.3
+	+ KSP "-nyan-nyan" option detection for the true believers
+	+ Clear the partDatabase if the cache is expired
+	+ Display the useful log info even if we use the cache
+	+ Do not use the cache if the techtree cache is not present
+	+ Format and cleanup
 * 2015-0514: 2.6.4 (sarbian) for KSP 1.0.2
 	+ Improve the loaded mod listing
 	+ Do not change the Tech & physic file patch if they are already OK
