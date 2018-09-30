@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2015-0625: 2.6.6 (sarbian) for KSP 1.0.4
+	+ Add a Quick Reload for ALT F11 menu (skip PartDatabase.cfg generation)
+	+ Ignore the cache (and force a PartDatabase.cfg generation) on KSP
 * 2015-0523: 2.6.5 (sarbian) for KSP 1.0.3
 	+ KSP "-nyan-nyan" option detection for the true believers
 	+ Clear the partDatabase if the cache is expired
