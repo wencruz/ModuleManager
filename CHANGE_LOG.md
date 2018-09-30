@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2016-1005: 2.7.0 (sarbian) for KSP 1.1.3
+	+ No changelog provided
 * 2016-0519: 2.6.25 (sarbian) for KSP 1.1.2
 	+ Fix Exception for variable searching a value that does not exist
 * 2016-0430: 2.6.24 (sarbian) for KSP 1.1.2
