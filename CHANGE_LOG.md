@@ -1,5 +1,9 @@
 # Module Manager :: Change Log
 
+* 2015-1231: 2.6.15 (sarbian) for KSP 1.0.5
+	+ Fix a bug with #34
+	+ remove some tabs
+	+ Comments are nice, let s update them
 * 2015-1231: 2.6.14 (sarbian) for KSP 1.0.5
 	+ Implemented @key,* = something to resolve #37
 	+ Implemented Vector Editing, using @key,*[0]
