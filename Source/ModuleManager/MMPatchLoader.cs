@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
+using KSPe;
 
 using ModuleManager.Logging;
 using ModuleManager.Extensions;
@@ -27,6 +28,13 @@ namespace ModuleManager
     [SuppressMessage("ReSharper", "StringIndexOfIsCultureSpecific.1")]
     public class MMPatchLoader : LoadingSystem
     {
+        private static readonly PluginConfig SHA_CONFIG = PluginConfig.ForType<ModuleManager>("ConfigSHA");
+        private static readonly PluginConfig CACHE_CONFIG = PluginConfig.ForType<ModuleManager>("ConfigCache");
+        internal static readonly PluginConfig TECHTREE_CONFIG = PluginConfig.ForType<ModuleManager>("TechTree");
+        internal static readonly PluginConfig PHYSICS_CONFIG = PluginConfig.ForType<ModuleManager>("Physics");
+        internal static readonly KspConfig PHYSICS_DEFAULT = new KspConfig("Physics");
+        internal static readonly KspConfig PART_DATABASE = new KspConfig("PartDatabase");
+
         public string status = "";
 
         public string errors = "";
@@ -36,19 +44,6 @@ namespace ModuleManager
         private string activity = "Module Manager";
 
         private static readonly Dictionary<string, Regex> regexCache = new Dictionary<string, Regex>();
-
-        private static string cachePath;
-
-        internal static string techTreeFile;
-        internal static string techTreePath;
-
-        internal static string physicsFile;
-        internal static string physicsPath;
-        private static string defaultPhysicsPath;
-
-        internal static string partDatabasePath;
-
-        private static string shaPath;
 
         private UrlDir.UrlFile physicsUrlFile;
 
@@ -78,15 +73,6 @@ namespace ModuleManager
             }
             Instance = this;
             DontDestroyOnLoad(gameObject);
-
-            cachePath = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ModuleManager.ConfigCache");
-            techTreeFile = Path.Combine("GameData", "ModuleManager.TechTree");
-            techTreePath = Path.Combine(KSPUtil.ApplicationRootPath, techTreeFile);
-            physicsFile = Path.Combine("GameData", "ModuleManager.Physics");
-            physicsPath = Path.Combine(KSPUtil.ApplicationRootPath, physicsFile);
-            defaultPhysicsPath = Path.Combine(KSPUtil.ApplicationRootPath, "Physics.cfg");
-            partDatabasePath = Path.Combine(KSPUtil.ApplicationRootPath, "PartDatabase.cfg");
-            shaPath = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "GameData"), "ModuleManager.ConfigSHA");
 
             logger = new ModLogger("ModuleManager", new UnityLogger(Debug.unityLogger));
         }
@@ -161,8 +147,8 @@ namespace ModuleManager
                 yield return null;
 
                 // If we don't use the cache then it is best to clean the PartDatabase.cfg
-                if (!keepPartDB && File.Exists(partDatabasePath))
-                    File.Delete(partDatabasePath);
+                if (!keepPartDB && PART_DATABASE.IsLoadable)
+                    File.Delete(PART_DATABASE.Path);
 
                 LoadPhysicsConfig();
 
@@ -270,10 +256,8 @@ namespace ModuleManager
                     logger.Warning("Errors in patch prevents the creation of the cache");
                     try
                     {
-                        if (File.Exists(cachePath))
-                            File.Delete(cachePath);
-                        if (File.Exists(shaPath))
-                            File.Delete(shaPath);
+                        CACHE_CONFIG.Destroy();
+                        SHA_CONFIG.Destroy();
                     }
                     catch (Exception e)
                     {
@@ -398,11 +382,11 @@ namespace ModuleManager
             logger.Info("Loading Physics.cfg");
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
+            physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_DEFAULT.Path));
             // Since it loaded the default config badly (sub node only) we clear it first
             physicsUrlFile.configs.Clear();
             // And reload it properly
-            ConfigNode physicsContent = ConfigNode.Load(defaultPhysicsPath);
+            ConfigNode physicsContent = ConfigNode.Load(PHYSICS_DEFAULT.Path);
             physicsContent.name = "PHYSICSGLOBALS";
             physicsUrlFile.AddConfig(physicsContent);
             gameDataDir.files.Add(physicsUrlFile);
@@ -424,7 +408,7 @@ namespace ModuleManager
                 logger.Info(configs.Count + " PHYSICSGLOBALS node found. A patch may be wrong. Using the first one");
             }
 
-            configs[0].config.Save(physicsPath);
+            configs[0].config.Save(PHYSICS_CONFIG.Path);
         }
 
         private void IsCacheUpToDate()
@@ -477,26 +461,41 @@ namespace ModuleManager
             logger.Info("      SHA = " + configSha);
 
             useCache = false;
-            if (File.Exists(shaPath))
+            try
             {
-                ConfigNode shaConfigNode = ConfigNode.Load(shaPath);
-                if (shaConfigNode != null && shaConfigNode.HasValue("SHA") && shaConfigNode.HasValue("version") && shaConfigNode.HasValue("KSPVersion"))
+                SHA_CONFIG.Load();
+                logger.Info("ConfigSHA loaded");
+                if (SHA_CONFIG.Node.HasValue("SHA") && SHA_CONFIG.Node.HasValue("version") && SHA_CONFIG.Node.HasValue("KSPVersion"))
                 {
-                    string storedSHA = shaConfigNode.GetValue("SHA");
-                    string version = shaConfigNode.GetValue("version");
-                    string kspVersion = shaConfigNode.GetValue("KSPVersion");
-                    ConfigNode filesShaNode = shaConfigNode.GetNode("FilesSHA");
+                    string storedSHA = SHA_CONFIG.Node.GetValue("SHA");
+                    string version = SHA_CONFIG.Node.GetValue("version");
+                    string kspVersion = SHA_CONFIG.Node.GetValue("KSPVersion");
+                    ConfigNode filesShaNode = SHA_CONFIG.Node.GetNode("FilesSHA");
                     useCache = CheckFilesChange(files, filesShaNode);
                     useCache = useCache && storedSHA.Equals(configSha);
                     useCache = useCache && version.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString());
                     useCache = useCache && kspVersion.Equals(Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-                    useCache = useCache && File.Exists(cachePath);
-                    useCache = useCache && File.Exists(physicsPath);
-                    useCache = useCache && File.Exists(techTreePath);
+                    useCache = useCache && CACHE_CONFIG.IsLoadable;
+                    useCache = useCache && PHYSICS_CONFIG.IsLoadable;
+                    useCache = useCache && TECHTREE_CONFIG.IsLoadable;
                     logger.Info("Cache SHA = " + storedSHA);
-                    logger.Info("useCache = " + useCache);
                 }
             }
+            catch (Exception e)
+            {
+                logger.Error("Error while checking cache: " + e.ToString());
+                useCache = false;
+            }
+#if false
+            // Check is this is really a good idea. Would make debugging very difficult on field...
+            if (!useCache) {
+                SHA_CONFIG.Destroy();
+                CACHE_CONFIG.Destroy();
+                PHYSICS_CONFIG.Destroy();
+                TECHTREE_CONFIG.Destroy();
+            }
+#endif
+            logger.Info("useCache = " + useCache);
         }
 
         private bool CheckFilesChange(UrlDir.UrlFile[] files, ConfigNode shaConfigNode)
@@ -590,7 +589,7 @@ namespace ModuleManager
 
             try
             {
-                shaConfigNode.Save(shaPath);
+                SHA_CONFIG.Save(shaConfigNode);
             }
             catch (Exception e)
             {
@@ -598,7 +597,7 @@ namespace ModuleManager
             }
             try
             {
-                cache.Save(cachePath);
+                CACHE_CONFIG.Save(cache);
                 return;
             }
             catch (NullReferenceException e)
@@ -613,10 +612,8 @@ namespace ModuleManager
             try
             {
                 logger.Error("An error occured while creating the cache. Deleting the cache files to avoid keeping a bad cache");
-                if (File.Exists(cachePath))
-                    File.Delete(cachePath);
-                if (File.Exists(shaPath))
-                    File.Delete(shaPath);
+                CACHE_CONFIG.Destroy();
+                SHA_CONFIG.Destroy();
             }
             catch (Exception e)
             {
@@ -641,7 +638,7 @@ namespace ModuleManager
 
             ConfigNode techNode = new ConfigNode("TechTree");
             techNode.AddNode(configs[0].config);
-            techNode.Save(techTreePath);
+            techNode.Save(TECHTREE_CONFIG.Path);
         }
 
         private void LoadCache()
@@ -653,18 +650,18 @@ namespace ModuleManager
             }
 
             // And then load all the cached configs
-            ConfigNode cache = ConfigNode.Load(cachePath);
-            
-            if (cache.HasValue("patchedNodeCount") && int.TryParse(cache.GetValue("patchedNodeCount"), out int patchedNodeCount))
+            CACHE_CONFIG.Load();
+
+            if (CACHE_CONFIG.Node.HasValue("patchedNodeCount") && int.TryParse(CACHE_CONFIG.Node.GetValue("patchedNodeCount"), out int patchedNodeCount))
                 status = "ModuleManager: " + patchedNodeCount + " patch" + (patchedNodeCount != 1 ? "es" : "") +  " loaded from cache";
 
             // Create the fake file where we load the physic config cache
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
+            physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_DEFAULT.Path));
             gameDataDir.files.Add(physicsUrlFile);
 
-            foreach (ConfigNode node in cache.nodes)
+            foreach (ConfigNode node in CACHE_CONFIG.Node.nodes)
             {
                 string name = node.GetValue("name");
                 string type = node.GetValue("type");

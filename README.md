@@ -15,13 +15,13 @@ ModuleManager is mod that let you write patch file that edit other part at load 
 
 ModuleManager is mod that let you write patch file that edit other part at load time. With is you can edit squad (and other mod) part without overwriting their file.
 
-### Installation
+## Installation
 
 To install, place the GameData folder inside your Kerbal Space Program folder. If asked to overwrite files, please do so.
 
 **REMOVE ANY OLD VERSIONS OF THE DLL BEFORE INSTALLING**.
 
-#### Dependencies
+### Dependencies
 
 <!-- * [KSP API Extensions/L](https://github.com/net-lisias-ksp/KSPAPIExtensions) -->
 None at the moment.
