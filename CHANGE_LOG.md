@@ -1,5 +1,9 @@
 # Module Manager :: Change Log
 
+* 2017-0629: 2.8.1 (Sarbian) for KSP 1.3
+	+ Improve some cat related code and add -ncats cmd line option
+	+ Improve logging related to some exceptions
+	+ Update project file
 * 2017-0526: 2.8.0 (Sarbian) for KSP 1.3
 	+ Revert "Temp revert of 1.3 changes to release a 1.2 patch"
 	+ This reverts commit 29df624348391373485a82fec75e273ceed30648.
