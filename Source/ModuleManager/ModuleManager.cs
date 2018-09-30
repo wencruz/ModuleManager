@@ -93,7 +93,7 @@ namespace ModuleManager
             }
             DontDestroyOnLoad(gameObject);
 
-            Version v = Assembly.GetExecutingAssembly().GetName().Version;
+            System.Version v = Assembly.GetExecutingAssembly().GetName().Version;
             version = v.Major + "." + v.Minor + "." + v.Build;
 
             // Subscribe to the RnD center spawn/deSpawn events

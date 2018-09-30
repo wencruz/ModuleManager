@@ -17,8 +17,8 @@ using System.Runtime.CompilerServices;
 // The form "{Major}.{Minor}.*" will automatically update the build and revision,
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
-[assembly: AssemblyVersion("3.0.7")]
-[assembly: KSPAssembly("ModuleManager", 2, 5)]
+[assembly: AssemblyVersion(ModuleManager.Version.Number)]
+[assembly: KSPAssembly("ModuleManager", ModuleManager.Version.major, ModuleManager.Version.minor)]
 
 // The following attributes are used to specify the signing key for the assembly, 
 // if desired. See the Mono documentation for more information about signing.
