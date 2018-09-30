@@ -1,5 +1,29 @@
 # Module Manager :: Change Log
 
+* 2017-0506: 2.7.6 (sarbian) for KSP 1.3
+	+ KSP 1.3 changes (#66)
+		- Add names to dialog windows
+		- Now required
+			- Adjust MMPatchLoaderIndex
+		- A new LoadingSystem was added at the beginning (FontLoader).  This
+	+ change ensures that MM will always be after the GameDatabase regardless.
+			- Fix position of MM info in loading screen
+		- Things seem to have moved
+			- Remove unused field
+			- Press Alt+F11 again to dismiss the menu
+		- Apparently this wasn't a feature before (at least not recently) but
+	+ pretty simple to implement
+	+ Reload PartUpgrade System after patching (#70)
+	+ As the part-upgrade data is initially populated prior to ModuleManager
+	+ patching, this fix allows for the patches that are applied to the
+	+ PARTUPGRADE nodes to be reloaded for use by the PartUpgrade system.
+	+ With this fix in place the tech-nodes, names, descriptions, etc, for the
+	+ part-upgrade parts located on the tech tree will use the proper
+	+ post-patching config data.
+		- This solution has been tested to work properly when used directly from
+	+ a ModuleManagerPostLoad callback.
+		- Fix for problems discovered in KSP-RO/RealismOverhaul/#1628
+	+ Temp revert of 1.3 changes to release a 1.2 patch
 * 2016-1129: 2.7.5 (sarbian) for KSP 1.2.1
 	+ No changelog provided
 * 2016-1114: 2.7.4 (sarbian) for KSP 1.2.1
