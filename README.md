@@ -21,6 +21,11 @@ To install, place the GameData folder inside your Kerbal Space Program folder. I
 
 **REMOVE ANY OLD VERSIONS OF THE DLL BEFORE INSTALLING**.
 
+#### Dependencies
+
+<!-- * [KSP API Extensions/L](https://github.com/net-lisias-ksp/KSPAPIExtensions) -->
+None at the moment.
+
 ### Licensing
 
 [CC-BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/):
