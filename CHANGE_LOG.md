@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2016-0214: 2.6.18 (sarbian) for KSP 1.0.5
+	+ Update README.md
 * 2016-0110: 2.6.17 (sarbian) for KSP 1.0.5
 	+ Prevents nightingale from trying to breaking some stuff. Fix #44
 	+ Add a warning for KSP build 1.0.5.1024
