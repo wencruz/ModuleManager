@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-0829: 2.6.8 (sarbian) for KSP 1.0.4
+	+ Fix a bug with nested :NEEDS when the top node also used a :NEEDS
 * 2015-0804: 2.6.7 (sarbian) for KSP 1.0.4
 	+ No changelog provided
 * 2015-0625: 2.6.6 (sarbian) for KSP 1.0.4
