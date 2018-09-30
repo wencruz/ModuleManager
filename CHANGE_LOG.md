@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-1104: 2.6.12 (sarbian) for KSP 1.0.4
+	+ No changelog provided
 * 2015-0917: 2.6.11 (sarbian) for KSP 1.0.4
 	+ Added try/catch to FileSHA.
 * 2015-0914: 2.6.10 (sarbian) for KSP 1.0.4
