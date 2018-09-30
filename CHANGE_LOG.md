@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-0804: 2.6.7 (sarbian) for KSP 1.0.4
+	+ No changelog provided
 * 2015-0625: 2.6.6 (sarbian) for KSP 1.0.4
 	+ Add a Quick Reload for ALT F11 menu (skip PartDatabase.cfg generation)
 	+ Ignore the cache (and force a PartDatabase.cfg generation) on KSP
