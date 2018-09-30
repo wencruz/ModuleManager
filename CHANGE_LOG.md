@@ -1,5 +1,10 @@
 # Module Manager :: Change Log
 
+* 2016-0110: 2.6.17 (sarbian) for KSP 1.0.5
+	+ Prevents nightingale from trying to breaking some stuff. Fix #44
+	+ Add a warning for KSP build 1.0.5.1024
+	+ Logging the Exception may be smarter
+	+ Store SHA for each cfg and log added/changed/removed cfg
 * 2016-0101: 2.6.16 (sarbian) for KSP 1.0.5
 	+ Added code for !key,* = DEL and fixed group nr. 5
 	+ Bumped Assembly Version
