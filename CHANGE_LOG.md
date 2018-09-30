@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2016-0101: 2.6.16 (sarbian) for KSP 1.0.5
+	+ Added code for !key,* = DEL and fixed group nr. 5
+	+ Bumped Assembly Version
 * 2015-1231: 2.6.15 (sarbian) for KSP 1.0.5
 	+ Fix a bug with #34
 	+ remove some tabs
