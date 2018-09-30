@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-0427: 2.2.0 (sarbian) for KSP 1.0.1
+	+ No changelog provided
 * 2014-0522: 2.1.5 (sarbian) for KSP 0.23.5
 	+ Fix a bug when inserting a name less node
 * 2014-0518: 2.1.4 (Swamp-Ig) for KSP 0.23.5
