@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2018-0208: 3.0.2 (sarbian) for KSP 1.3
+	+ No changelog provided
 * 2017-1206: 3.0.1 (sarbian) for KSP 1.3
 	+ Add a -mm-dump cmd line option and redo the export
 	+ Now uses the same directory sub tree as GameData
