@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-0917: 2.6.11 (sarbian) for KSP 1.0.4
+	+ Added try/catch to FileSHA.
 * 2015-0914: 2.6.10 (sarbian) for KSP 1.0.4
 	+ Return empty string if a character-separated list has fewer than the
 	+ requested number of elements.
