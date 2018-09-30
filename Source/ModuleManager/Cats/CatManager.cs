@@ -49,22 +49,24 @@ namespace ModuleManager.Cats
             for (int i = 0; i < tex.Length; i++)
             {
                 tex[i] = new Texture2D(70, 42, TextureFormat.ARGB32, false);
-            }
-            tex[0].LoadImage(Properties.Resources.cat1);
-            tex[1].LoadImage(Properties.Resources.cat2);
-            tex[2].LoadImage(Properties.Resources.cat3);
-            tex[3].LoadImage(Properties.Resources.cat4);
-            tex[4].LoadImage(Properties.Resources.cat5);
-            tex[5].LoadImage(Properties.Resources.cat6);
-            tex[6].LoadImage(Properties.Resources.cat7);
-            tex[7].LoadImage(Properties.Resources.cat8);
-            tex[8].LoadImage(Properties.Resources.cat9);
-            tex[9].LoadImage(Properties.Resources.cat10);
-            tex[10].LoadImage(Properties.Resources.cat11);
-            tex[11].LoadImage(Properties.Resources.cat12);
-
+			}
+			{
+				int i = 0;
+				tex[i++].LoadRawTextureData(Properties.Resources.cat1);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat2);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat3);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat4);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat5);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat6);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat7);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat8);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat9);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat10);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat11);
+				tex[i++].LoadRawTextureData(Properties.Resources.cat12);
+			}
             rainbow = new Texture2D(39, 36, TextureFormat.ARGB32, false);
-            rainbow.LoadImage(Properties.Resources.rainbow);
+            rainbow.LoadRawTextureData(Properties.Resources.rainbow);
             rainbow.Apply();
 
             catFrames = new Sprite[12];
