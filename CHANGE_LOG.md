@@ -1,5 +1,14 @@
 # Module Manager :: Change Log
 
+* 2015-0325: 2.5.13 (sarbian) for KSP 1.0.1
+	+ DB Corruption check code kept in case of need
+	+ Change for #28
+	+ Bullet proof PrettyPrint
+	+ Remove debug stuff
+	+ Forgot 2 lines
+	+ Reformat
+	+ < and > for value HAS check ( #mass[<100]  ~mass[>100] )
+	+ operator for nodes to copy-paste whole nodes
 * 2015-0223: 2.5.12 (sarbian) for KSP 1.0.1
 	+ No changelog provided
 * 2015-0217: 2.5.10 (sarbian) for KSP 1.0.1
