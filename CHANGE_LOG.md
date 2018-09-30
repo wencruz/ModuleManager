@@ -1,5 +1,9 @@
 # Module Manager :: Change Log
 
+* 2015-0914: 2.6.10 (sarbian) for KSP 1.0.4
+	+ Return empty string if a character-separated list has fewer than the
+	+ requested number of elements.
+	+ Update version so sarbian can merge.
 * 2015-0905: 2.6.9 (sarbian) for KSP 1.0.4
 	+ Prevents NullReferenceException when saving the cache to pause the
 	+ loading
