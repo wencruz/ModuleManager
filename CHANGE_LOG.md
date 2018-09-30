@@ -1,5 +1,11 @@
 # Module Manager :: Change Log
 
+* 2017-1206: 3.0.1 (sarbian) for KSP 1.3
+	+ Add a -mm-dump cmd line option and redo the export
+	+ Now uses the same directory sub tree as GameData
+	+ Fix NEEDS checking for inner nodes/values
+	+ Didn't work if you had both top level NEEDS and NEEDS on a subnode/value
+	+ since it was checking NEEDS on the wrong node in that case
 * 2017-1202: 3.0.0 (sarbian) for KSP 1.3
 	+ Begin splitting files up (#76)
 		- rename file
