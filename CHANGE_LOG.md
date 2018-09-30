@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-1109: 2.6.13 (sarbian) for KSP 1.0.5
+	+ 2.6.13 - let's just change the number and pretend all is fine for 1.0.5
 * 2015-1104: 2.6.12 (sarbian) for KSP 1.0.4
 	+ No changelog provided
 * 2015-0917: 2.6.11 (sarbian) for KSP 1.0.4
