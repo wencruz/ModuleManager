@@ -1,5 +1,10 @@
 # Module Manager :: Change Log
 
+* 2016-0216: 2.6.19 (sarbian) for KSP 1.0.5
+	+ Add a special "*MM_PATCH_LOOP" node that when found tries to apply the
+	+ patch once more on the same NODE
+	+ Fix the patch loop id to "MM_PATCH_LOOP"
+	+ Allow for out of node editing of values Like :  *@TEST[Test]/copy -= 1
 * 2016-0214: 2.6.18 (sarbian) for KSP 1.0.5
 	+ Update README.md
 * 2016-0110: 2.6.17 (sarbian) for KSP 1.0.5
