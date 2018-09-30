@@ -1,5 +1,9 @@
 # Module Manager :: Change Log
 
+* 2015-0514: 2.6.4 (sarbian) for KSP 1.0.2
+	+ Improve the loaded mod listing
+	+ Do not change the Tech & physic file patch if they are already OK
+	+ Make the error messages more consistent
 * 2015-0504: 2.6.3 (sarbian) for KSP 1.0.2
 	+ Count the error for math operations
 * 2015-0429: 2.6.2 (sarbian) for KSP 1.0.2
