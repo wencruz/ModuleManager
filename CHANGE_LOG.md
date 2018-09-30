@@ -1,5 +1,10 @@
 # Module Manager :: Change Log
 
+* 2018-0211: 3.0.4 (sarbian) for KSP 1.3
+	+ Allow operator-like character in value name
+	+ Means that the operator needs a space before it in most cases
+	+ Already was the case with - and * but now also the case for other
+	+ operator-like characters + / ^ !
 * 2018-0209: 3.0.3 (sarbian) for KSP 1.3
 	+ Fix for #92 - non-US Linux decimal separator fix
 * 2018-0208: 3.0.2 (sarbian) for KSP 1.3
