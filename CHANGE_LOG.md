@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2016-0218: 2.6.20 (sarbian) for KSP 1.0.5
+	+ Remove the debug spam of the out of node value edit
+	+ Prevents the creation of a cache if there were errors while patching
 * 2016-0216: 2.6.19 (sarbian) for KSP 1.0.5
 	+ Add a special "*MM_PATCH_LOOP" node that when found tries to apply the
 	+ patch once more on the same NODE
