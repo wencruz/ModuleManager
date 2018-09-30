@@ -1,5 +1,9 @@
 # Module Manager :: Change Log
 
+* 2015-0905: 2.6.9 (sarbian) for KSP 1.0.4
+	+ Prevents NullReferenceException when saving the cache to pause the
+	+ loading
+	+ 30 FPS patching
 * 2015-0829: 2.6.8 (sarbian) for KSP 1.0.4
 	+ Fix a bug with nested :NEEDS when the top node also used a :NEEDS
 * 2015-0804: 2.6.7 (sarbian) for KSP 1.0.4
