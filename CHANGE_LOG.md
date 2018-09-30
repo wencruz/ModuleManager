@@ -1,5 +1,13 @@
 # Module Manager :: Change Log
 
+* 2016-0424: 2.6.23 (sarbian) for KSP 1.1.1
+	+ No point of updating the status outside the loading screen
+	+ Add & operator: insert only if it doesn't already exist
+	+ Doesn't work with root nodes right now, same as insert (%)
+	+ Make the game always load in background
+	+ Fix the insert NODE at position that blowfish found
+	+ Fix nested node constraints only checking the first set
+	+ Test for HAS
 * 2016-0419: 2.6.22 (sarbian) for KSP 1.1
 	+ Fix for #50
 * 2016-0330: 2.6.21 (sarbian) for KSP 1.0.5
