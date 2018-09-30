@@ -1,5 +1,265 @@
 # Module Manager :: Change Log
 
+* 2017-1202: 3.0.0 (sarbian) for KSP 1.3
+	+ Begin splitting files up (#76)
+		- rename file
+		- most of it is MMPatchLoader so that's what it'll be
+			- Remove corrupt #region
+		- It starts in one class and ends in another, I can't tell where it's
+	+ really supposed to go
+			- Move addon to its own file
+			- Put cats in a box
+			- Can has namespace
+			- Promote business cat to manager
+			- Unnecessary now
+			- Old stuff
+	+ Change debug C# version to default
+	+ VS, why u do dis?
+	+ Add ImmutableStack class
+	+ Add PatchContext struct
+	+ Use ImmutableStack and PatchContext in MM
+	+ Remove unused code
+	+ Apparently had to do with texture replacer corruption, but not called
+	+ anywhere
+	+ Implement IEnumerable<T>
+	+ Add Depth property
+	+ Use immutability in CheckNeeds
+	+ Forgot a using directive
+	+ Ged rid of Win64 specific code
+	+ Doesn't matter anymore
+	+ Needs to be included in the project too
+	+ Add logging interface
+	+ Extract progress into its own object
+	+ Use logger and progress
+	+ Make some things static that no longer depend on the patch loader's
+	+ state
+	+ Remove blocking option
+	+ It's no longer used
+	+ Use inline variable declaration
+	+ Make log messages consistent
+	+ Make deletes and copies count toward patch count
+	+ Make names more accurate
+	+ These are called before the patch is applied
+	+ Simplify null check
+	+ move main project to its own directory
+	+ Allows more to be added
+	+ Better output dir for debug
+	+ Do not copy local
+	+ Add test project
+	+ Add MM, Assembly-CSharp, UnityEngine refs
+	+ Add console runner
+	+ Will be needed eventually
+	+ Yo dawg, I heard you like tests
+	+ Add TestConfigNode class
+	+ Makes testing with ConfigNodes by simplifying creating them
+	+ Reference TestUtils
+	+ Don't reference a specific version of System
+	+ Add test for ImmutableStack
+	+ Add test for GetPath
+	+ Add NSubstitute
+	+ Add tests for ModLogger
+	+ Fix an error
+	+ Add UrlBuilder
+	+ Hackily creates UrlDir, UrlFile, UrlConfig for testing purposes
+	+ Progress shouldn't depend on deleted subnodes
+	+ The number of needs unsatisfied nodes it should be counting is the
+	+ number of root nodes that have been removed, not subnodes as well
+	+ These should use actual URLs
+	+ Since all the calls were just using .url anyway
+	+ These too
+	+ Minor logging tweak
+	+ Add tests for PatchProgress
+	+ Replace DeepCopy with ConfigNode.CreateCopy
+	+ It does 100% the same thing (and is recursive)
+	+ Inline out variable declarations
+	+ Yay C#7
+	+ Obey naming conventions
+	+ Pull Command and ParseCommand out of MMPatchLoader
+	+ Would be nice if enums allowed static methods
+	+ Extract ShallowCopy
+		- this" is the node you're copying to so that the extension method is
+	+ only modifying "its" node
+	+ Don't create duplicates in UrlBuilder
+	+ Add ArrayEnumerator
+	+ Enumerates arrays in a garbage-free way
+	+ PatchList
+	+ list of patches, 'nuff said
+	+ Add PatchExtractor
+	+ Extracts patches from the game database and sorts them
+	+ Add SafeUrl extension method for UrlConfig
+	+ Makes sure logging doesn't mess up, and fixes the weird quirk where a
+	+ node with a name value ends up displaying that instead of its actual
+	+ name
+	+ Use SafeUrl in logging
+	+ Remove unused
+	+ Doesn't really have any benefit
+	+ Log when BEFORE or AFTER patch deleted
+	+ This is pretty much equivalent to unsatisfied NEEDS, so it should be
+	+ noted as such.  Also log on an unsatisfied FOR, although this shouldn't
+	+ happen (make it a warning)
+	+ Fix case issues
+	+ Mods may not be lowercase to begin with, need to handle this
+	+ Extract IsBracketBalanced
+	+ Remove bracket unbalanced nodes when sorting
+	+ Unused method
+	+ Bring back DeepCopy
+	+ Apparently KSP's default implementation fails on badly formed nodes
+	+ Fix bad region
+	+ Make sure badly formed mod passes are an error
+	+ That's a bug
+	+ Add some explanatory comments
+	+ Unnecessary using directives
+	+ Use sorted patches when applying
+	+ Improves performance somewhat
+	+ Verified that sorting patches takes almost no time even for a fairly
+	+ large number of patches
+	+ Remove now-unnecessary try-catch
+	+ There's already one around it and we no longer care about removing
+	+ patches from the database at this stage
+	+ Replace big if with guard clause
+	+ Reduces indentation.  Insert nodes shouldn't exist here anyway
+	+ Simplify this
+	+ It no longer has to look in actual passes here, so we can just use the
+	+ name we want it to display.
+	+ It does change the way it displays in the loading screen but that seems
+	+ fine.
+	+ Invalid command = error on the patch extractor
+	+ This seems like the right place to check it
+	+ Extract RemoveWS
+	+ Fix logging
+	+ Extract PrettyPrint
+	+ Get rid of unnecesary using directives
+	+ Don't run PrePatchInit if cache is being used
+	+ Mod list is not necessary
+	+ Eliminate mods instance variable
+	+ Use method param rather than instance var
+	+ Makes things easier to disentagle
+	+ Eliminate Update
+	+ Status will be updated when necessary anyway
+	+ Eliminate redundant logging
+	+ MMPatchLoader logs this info itself
+	+ Keep track of progress fraction independently
+	+ Make StatusUpdate less general
+	+ If cache is used, status only needs to be set once, no need to check it
+	+ every time
+	+ Move this
+	+ What I get for trying to make a bunch of changes and then split them
+	+ into small commits
+	+ Eliminate Progress instance variable
+	+ Make it local, inject where needed
+	+ Make more methods static
+	+ All their instance variable dependencies have been eliminated
+	+ This is no longer necessary
+	+ And will probably result in an error anyway
+	+ Move exception handling outside of PrettyConfig
+	+ Callers really shouldn't be trying to print the result if it resulted in
+	+ an exception anyway
+	+ Tweak test
+	+ This isn't the case it was trying to test
+	+ Allow adding a ConfigNode.Value in initializer
+	+ Not useful yet but maybe at some point
+	+ Extract PrettyConfig (for UrlConfig)
+	+ Add one more test
+	+ Make CheckNeeds static
+	+ Can now be extracted
+	+ This can already be static
+	+ Remove unnecessary Using
+	+ Improve url and node printing
+			- Handle null name explicitly
+			- Include url when printing a UrlConfig
+	+ Extract CheckNeeds
+	+ Equality vs sameness mostly not tested for now, need to determine
+	+ desired behavior
+	+ Ensure that final string printed to the screen is the actual status
+	+ Fix up mod list logging
+			- Use a string builder
+			- Print assemblies in a nicer format (table)
+	+ Use Path.Combine
+	+ It's more concise then concatenating with the separator char
+	+ Unnecessary now
+	+ Improve assembly list
+			- Get rid of unused code
+			- Include KSPAssembly version
+	+ Accidentally removed
+	+ Move tracking number of patches
+	+ from mod list to sorting patches
+	+ Put progress counts in their own object
+	+ Allows the same counts to be used with a different logger.  Also remove
+	+ unused setter for NeedsUnsatisfiedRootCount
+	+ Move exception handling out of FIleSHA
+	+ Callers should be aware of exceptions anyway
+	+ Extract FileSHA
+	+ Interacts with the file system so difficult to test unfortunately
+	+ Fix unassigned variable
+	+ Make this extractable
+	+ Extract GenerateModList
+	+ Unfortunately interacts with AssemblyLoader and the file system so not
+	+ really testable
+	+ Add MessageQueue
+	+ Add QueueLogger and supporting classes
+	+ Allows logging to a queue
+	+ Don't keep track of non-root needs unsatisfied
+	+ Isn't used anywhere
+	+ Add FatalErrorHandler
+	+ Allows us to display a message to the user and quit when an
+	+ unrecoverable error occurs.
+	+ Can't really be tested unfortunately.
+	+ Add background task support
+	+ Allows a background task to be run and monitored, including if it exits
+	+ due to an exception
+	+ Begin creating Progress namespace
+	+ Finish creating Progress namespace
+	+ Unnecessary directives
+	+ Add needs test for and/or and capitalization
+	+ Separate out progress counter
+	+ Make it so that all the values can be incremented but not otherwise
+	+ messed with.
+	+ Allow a new progress tracker to be initialized that shares a counter
+	+ with another but uses a different logger
+	+ Ensure Counter behaves like an int
+	+ More unnecessary using
+	+ Add test for ! (not) in :NEEDS
+	+ More unnecessary using directives
+	+ Extract application of patches to its own thread
+	+ Allows it to not be bound by logging which can be slow
+	+ Test and fix PatchProgress.ProgressFraction
+	+ Patches are now only counted after needs are checked, so this shouldn't
+	+ consider needs unsatisfied nodes
+	+ Tweak
+	+ Only convert to array once per pass
+	+ This is expensive
+	+ Make node matching its own method
+	+ Saves a level of indentation
+	+ Loop only applies to edit patches
+	+ Saves another indentation level.  Also remove MM_PATCH_LOOP {} after
+	+ done
+	+ Don't convert to an array at all
+	+ It's not necessary.  Also don't use switch - makes things cleaner.  It's
+	+ only 3 cases anyway
+	+ Ensure that user gets updates during long passes
+	+ The patcher can potentially generate log messages faster than the main
+	+ thread can log them, causing frames that are noticeably long with no
+	+ updates.  This ensures that yields still happen then.
+	+ Verified that this does not meaningfully affect performance.  Previous
+	+ tests suggest that the time wasted by waiting until the next frame is
+	+ relatively small.
+	+ Without switch, i is valid here
+	+ Ensure time between each check of the log queue
+	+ This prevents the queue from being locked too often, slowing down the
+	+ patching thread
+	+ Convert to an array initially
+	+ Apparently it saves a bit of time, and this won't be changed while
+	+ patches run
+	+ Having an actual array here no longer necessary
+	+ Apparently Linq slows things down
+	+ I guess it matters at scale
+	+ Improve access of name a bit
+	+ Looks like GetValue("name") has a bit of overhead, instead we can check
+	+ if the UrlConfig's type == name
+	+ Move loop out of loop
+	+ This is all a bit loopy
+	+ case should match filename
+	+ matters on some filesystems
 * 2017-0629: 2.8.1 (Sarbian) for KSP 1.3
 	+ Improve some cat related code and add -ncats cmd line option
 	+ Improve logging related to some exceptions
