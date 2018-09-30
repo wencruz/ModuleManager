@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2016-1129: 2.7.5 (sarbian) for KSP 1.2.1
+	+ No changelog provided
 * 2016-1114: 2.7.4 (sarbian) for KSP 1.2.1
 	+ Fix typos (#63)
 	+ Fix #64 - Targeting all values applied the operation more than it should
