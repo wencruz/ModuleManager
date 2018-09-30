@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2018-0313: 3.0.6 (sarbian) for KSP 1.4
+	+ Cats trails fix and better text position
 * 2018-0307: 3.0.5 (sarbian) for KSP 1.4
 	+ Fix :NEEDS clause sometimes not getting removed
 	+ Fixes #94
