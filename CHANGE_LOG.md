@@ -1,5 +1,15 @@
 # Module Manager :: Change Log
 
+* 2018-0307: 3.0.5 (sarbian) for KSP 1.4
+	+ Fix :NEEDS clause sometimes not getting removed
+	+ Fixes #94
+	+ remove ModuleManager.csproj from .gitignore
+	+ It was under version control anyway
+	+ Make post build into a shell script, allowing cross-platform
+	+ compatibility
+	+ Just requires sh to be installed on Windows.  Relies on $PDB2MDB to find
+	+ the pdb2mdb executable, and $KSPDIR to find where to copy to.  If either
+	+ of these are absent, it will be ignored (but the build will still work)
 * 2018-0211: 3.0.4 (sarbian) for KSP 1.3
 	+ Allow operator-like character in value name
 	+ Means that the operator needs a space before it in most cases
