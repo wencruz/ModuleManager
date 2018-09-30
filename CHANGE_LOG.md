@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2015-0429: 2.6.2 (sarbian) for KSP 1.0.2
+	+ No changelog provided
 * 2015-0427: 2.6.1 (sarbian) for KSP 1.0.2
 	+ No changelog provided
 * 2015-0401: 2.6.0 (sarbian) for KSP 1.0.2
