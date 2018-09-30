@@ -1,5 +1,8 @@
 # Module Manager :: Change Log
 
+* 2017-0526: 2.8.0 (Sarbian) for KSP 1.3
+	+ Revert "Temp revert of 1.3 changes to release a 1.2 patch"
+	+ This reverts commit 29df624348391373485a82fec75e273ceed30648.
 * 2017-0506: 2.7.6 (sarbian) for KSP 1.3
 	+ KSP 1.3 changes (#66)
 		- Add names to dialog windows
