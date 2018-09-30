@@ -1,5 +1,7 @@
 # Module Manager :: Change Log
 
+* 2016-1011: 2.7.2 (sarbian) for KSP 1.2
+	+ No changelog provided
 * 2016-1008: 2.7.1 (sarbian) for KSP 1.2
 	+ Fix the problem with setting value name that include comma (unless the
 	+ comma is followed by a number)
