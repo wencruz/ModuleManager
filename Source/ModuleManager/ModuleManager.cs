@@ -307,7 +307,7 @@ namespace ModuleManager
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
 
-            ScreenMessages.PostScreenMessage("Database reloading started", 1, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage(dump ? "Database reload/dumping started" : "Database reloading started", 1, ScreenMessageStyle.UPPER_CENTER);
             yield return null;
 
             GameDatabase.Instance.Recompile = true;
