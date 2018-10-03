@@ -169,7 +169,7 @@ namespace ModuleManager
         {
             GameObject statusGameObject = new GameObject(name);
             TextMeshProUGUI text = statusGameObject.AddComponent<TextMeshProUGUI>();
-            text.text = "STATUS";
+            text.text = name;
             text.fontSize = 18;
             text.autoSizeTextContainer = true;
             text.font = Resources.Load("Fonts/Calibri SDF", typeof(TMP_FontAsset)) as TMP_FontAsset;
