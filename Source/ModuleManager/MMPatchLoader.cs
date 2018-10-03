@@ -28,10 +28,10 @@ namespace ModuleManager
     [SuppressMessage("ReSharper", "StringIndexOfIsCultureSpecific.1")]
     public class MMPatchLoader : LoadingSystem
     {
-        private static readonly PluginConfig SHA_CONFIG = PluginConfig.ForType<ModuleManager>("ConfigSHA");
-        private static readonly PluginConfig CACHE_CONFIG = PluginConfig.ForType<ModuleManager>("ConfigCache");
+        private static readonly PluginConfig SHA_CONFIG = PluginConfig.ForType<ModuleManager>(null, "ConfigSHA.cfg");
+        private static readonly PluginConfig CACHE_CONFIG = PluginConfig.ForType<ModuleManager>(null, "ConfigCache.cfg");
+        internal static readonly PluginConfig PHYSICS_CONFIG = PluginConfig.ForType<ModuleManager>(null, "Physics.cfg");
         internal static readonly PluginConfig TECHTREE_CONFIG = PluginConfig.ForType<ModuleManager>("TechTree");
-        internal static readonly PluginConfig PHYSICS_CONFIG = PluginConfig.ForType<ModuleManager>("Physics");
         internal static readonly KspConfig PHYSICS_DEFAULT = new KspConfig("Physics");
         internal static readonly KspConfig PART_DATABASE = new KspConfig("PartDatabase");
 
@@ -554,19 +554,18 @@ namespace ModuleManager
 
         private void CreateCache(int patchedNodeCount)
         {
-            ConfigNode shaConfigNode = new ConfigNode();
-            shaConfigNode.AddValue("SHA", configSha);
-            shaConfigNode.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            shaConfigNode.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-            ConfigNode filesSHANode = shaConfigNode.AddNode("FilesSHA");
+            SHA_CONFIG.Clear();
+            SHA_CONFIG.Node.AddValue("SHA", configSha);
+            SHA_CONFIG.Node.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            SHA_CONFIG.Node.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
+            ConfigNode filesSHANode = SHA_CONFIG.Node.AddNode("FilesSHA");
 
-            ConfigNode cache = new ConfigNode();
-
-            cache.AddValue("patchedNodeCount", patchedNodeCount.ToString());
+            CACHE_CONFIG.Clear();
+            CACHE_CONFIG.Node.AddValue("patchedNodeCount", patchedNodeCount.ToString());
 
             foreach (UrlDir.UrlConfig config in GameDatabase.Instance.root.AllConfigs)
             {
-                ConfigNode node = cache.AddNode("UrlConfig");
+                ConfigNode node = CACHE_CONFIG.Node.AddNode("UrlConfig");
                 node.AddValue("name", config.name);
                 node.AddValue("type", config.type);
                 node.AddValue("parentUrl", config.parent.url);
@@ -589,7 +588,7 @@ namespace ModuleManager
 
             try
             {
-                SHA_CONFIG.Save(shaConfigNode);
+                SHA_CONFIG.Save();
             }
             catch (Exception e)
             {
@@ -597,7 +596,7 @@ namespace ModuleManager
             }
             try
             {
-                CACHE_CONFIG.Save(cache);
+                CACHE_CONFIG.Save();
                 return;
             }
             catch (NullReferenceException e)
@@ -636,9 +635,9 @@ namespace ModuleManager
                 logger.Info(configs.Length + " TechTree node found. A patch may be wrong. Using the first one");
             }
 
-            ConfigNode techNode = new ConfigNode("TechTree");
-            techNode.AddNode(configs[0].config);
-            techNode.Save(TECHTREE_CONFIG.Path);
+            TECHTREE_CONFIG.Clear();
+            TECHTREE_CONFIG.Node.AddNode(configs[0].config);
+            TECHTREE_CONFIG.Save();
         }
 
         private void LoadCache()
