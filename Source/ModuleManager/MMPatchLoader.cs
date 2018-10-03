@@ -403,19 +403,18 @@ namespace ModuleManager
 
         private void CreateCache(IEnumerable<IProtoUrlConfig> databaseConfigs, int patchedNodeCount)
         {
-            ConfigNode shaConfigNode = new ConfigNode();
-            shaConfigNode.AddValue("SHA", configSha);
-            shaConfigNode.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            shaConfigNode.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-            ConfigNode filesSHANode = shaConfigNode.AddNode("FilesSHA");
+            SHA_CONFIG.Clear();
+            SHA_CONFIG.Node.AddValue("SHA", configSha);
+            SHA_CONFIG.Node.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            SHA_CONFIG.Node.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
+            ConfigNode filesSHANode = SHA_CONFIG.Node.AddNode("FilesSHA");
 
-            ConfigNode cache = new ConfigNode();
-
-            cache.AddValue("patchedNodeCount", patchedNodeCount.ToString());
+            CACHE_CONFIG.Clear();
+            CACHE_CONFIG.Node.AddValue("patchedNodeCount", patchedNodeCount.ToString());
 
             foreach (IProtoUrlConfig urlConfig in databaseConfigs)
             {
-                ConfigNode node = cache.AddNode("UrlConfig");
+                ConfigNode node = CACHE_CONFIG.Node.AddNode("UrlConfig");
                 node.AddValue("parentUrl", urlConfig.UrlFile.url);
                 node.AddNode(urlConfig.Node);
             }
@@ -436,7 +435,7 @@ namespace ModuleManager
 
             try
             {
-                SHA_CONFIG.Save(shaConfigNode);
+                SHA_CONFIG.Save();
             }
             catch (Exception e)
             {
@@ -444,7 +443,7 @@ namespace ModuleManager
             }
             try
             {
-                CACHE_CONFIG.Save(cache);
+                CACHE_CONFIG.Save();
                 return;
             }
             catch (NullReferenceException e)
@@ -484,9 +483,9 @@ namespace ModuleManager
                 logger.Info($"{count} {TECHTREE_CONFIG.Node.name} nodes found. A patch may be wrong. Using the first one");
             }
 
-            ConfigNode techNode = new ConfigNode(TECHTREE_CONFIG.Node.name);
-            techNode.AddData(configs.First().Node);
-            TECHTREE_CONFIG.Save(techNode);
+            TECHTREE_CONFIG.Clear();
+            TECHTREE_CONFIG.Node.AddData(configs.First().Node);
+            TECHTREE_CONFIG.Save();
         }
 
         private IEnumerable<IProtoUrlConfig> LoadCache()
