@@ -6,7 +6,7 @@
 	"CHANGE_LOG_URL":"https://raw.githubusercontent.com/net-lisias-kspu/ModuleManager/master/CHANGES.md",
 	"GITHUB": {
 		"USERNAME": "net-lisias-kspu",
-		"REPOSITORY": "ModuleManager"
+		"REPOSITORY": "ModuleManager",
 		"ALLOW_PRE_RELEASE":false
 		},
 	"VERSION":{
