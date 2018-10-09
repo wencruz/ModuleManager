@@ -18,6 +18,7 @@ using System.Runtime.CompilerServices;
 // and "{Major}.{Minor}.{Build}.*" will update just the revision.
 
 [assembly: AssemblyVersion(ModuleManager.Version.Number)]
+[assembly: AssemblyFileVersion(ModuleManager.Version.Number)]
 [assembly: KSPAssembly("ModuleManager", ModuleManager.Version.major, ModuleManager.Version.minor)]
 
 // The following attributes are used to specify the signing key for the assembly, 
