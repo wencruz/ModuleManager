@@ -40,7 +40,9 @@ cp $VERSIONFILE "./GameData/$TARGETDIR"
 cp CHANGE_LOG.md "./GameData/$TARGETDIR/$PACKAGE.CHANGE_LOG.md"
 cp README.md  "./GameData/$TARGETDIR/$PACKAGE.README.md"
 cp LICENSE "./GameData/$TARGETDIR/$PACKAGE.LICENSE"
-for dll in ModuleManager ; do
+cp NOTICE "./GameData/$TARGETDIR"/$PACKAGE.NOTICE"
+
+for dll in $PACKAGE ; do
     deploy_dev $dll
     deploy $dll
 done
