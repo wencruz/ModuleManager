@@ -9,28 +9,37 @@ namespace ModuleManager
     [KSPAddon(KSPAddon.Startup.SpaceCentre, false)]
     public class CustomConfigsManager : MonoBehaviour
     {
+		internal static bool start_techtree_loaded = false;
+		internal static bool start_physics_loaded = false;
         internal void Start()
         {
-            if (HighLogic.CurrentGame.Parameters.Career.TechTreeUrl != TECHTREE_CONFIG.Path && TECHTREE_CONFIG.IsLoadable)
+#if false
+			Log("Blah");
+            Log(HighLogic.CurrentGame.Parameters.Career.TechTreeUrl);
+			Log(TECHTREE_CONFIG.Path);
+			Log(TECHTREE_CONFIG.IsLoadable.ToString());
+#endif            
+			if (!start_techtree_loaded && TECHTREE_CONFIG.IsLoadable)
             {
                 Log("Setting modded tech tree as the active one");
-                HighLogic.CurrentGame.Parameters.Career.TechTreeUrl = TECHTREE_CONFIG.Path;
+                HighLogic.CurrentGame.Parameters.Career.TechTreeUrl = TECHTREE_CONFIG.KspPath;
+				start_techtree_loaded = true;
             }
 
-            if (PhysicsGlobals.PhysicsDatabaseFilename != PHYSICS_CONFIG.Path && PHYSICS_CONFIG.IsLoadable)
+			if (!start_physics_loaded && PHYSICS_CONFIG.IsLoadable)
             {
                 Log("Setting modded physics as the active one");
-
                 PhysicsGlobals.PhysicsDatabaseFilename = PHYSICS_CONFIG.Path;
-
                 if (!PhysicsGlobals.Instance.LoadDatabase())
                     Log("Something went wrong while setting the active physics config.");
+                start_physics_loaded = true;
             }
         }
 
-        public static void Log(String s)
+		private static readonly KSPe.Util.Log.Logger log = KSPe.Util.Log.Logger.CreateForType<CustomConfigsManager>();
+        private static void Log(String s)
         {
-            print("[CustomConfigsManager] " + s);
+            log.info(s);
         }
 
     }
