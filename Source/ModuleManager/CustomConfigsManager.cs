@@ -24,9 +24,10 @@ namespace ModuleManager
             }
         }
 
-        public static void Log(String s)
+		private static readonly KSPe.Util.Log.Logger log = KSPe.Util.Log.Logger.CreateForType<CustomConfigsManager>();
+        private static void Log(String s)
         {
-            print("[CustomConfigsManager] " + s);
+            log.info(s);
         }
 
     }

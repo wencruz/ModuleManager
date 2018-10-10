@@ -51,11 +51,6 @@ namespace ModuleManager
             inRnDCenter = false;
         }
 
-        public static void Log(String s)
-        {
-            print("[ModuleManager] " + s);
-        }
-
         private Stopwatch totalTime = new Stopwatch();
 
         internal void Awake()
@@ -506,5 +501,12 @@ namespace ModuleManager
 
             return true;
         }
+
+        private static readonly KSPe.Util.Log.Logger log = KSPe.Util.Log.Logger.CreateForType<ModuleManager>();
+        private static void Log(String s)
+        {
+            log.info(s);
+        }
+
     }
 }
