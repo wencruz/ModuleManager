@@ -635,9 +635,9 @@ namespace ModuleManager
                 logger.Info(configs.Length + " TechTree node found. A patch may be wrong. Using the first one");
             }
 
-            TECHTREE_CONFIG.Clear();
-            TECHTREE_CONFIG.Node.AddNode(configs[0].config);
-            TECHTREE_CONFIG.Save();
+			TECHTREE_CONFIG.Clear();
+            TECHTREE_CONFIG.Node.AddData(configs[0].config);
+			TECHTREE_CONFIG.Save();
         }
 
         private void LoadCache()
