@@ -1,14 +1,24 @@
-# Module Manager Unofficial
+# Module Manager /L
 
-ModuleManager is mod that let you write patch file that edit other part at load time. Unofficial fork by Lisias.
+ModuleManager is mod that let you write patch file that edit other part at load time.
+
+This is Lisias' fork for Module Mamager.
 
 
 ## In a Hurry
 
-* [Releases](https://github.com/net-lisias-kspu/ModuleManager/Archive)
-* [Source](https://github.com/net-lisias-kspu/ModuleManager)
-* [Latest Release](https://github.com/net-lisias-kspu/ModuleManager/releases)
-* [Change Log](./CHANGE_LOG.md)
+* [Releases](https://github.com/net-lisias-ksp/ModuleManager/Archive)
+* [Latest Release](https://github.com/net-lisias-ksp/ModuleManager/releases)
+* [Source](https://github.com/net-lisias-ksp/ModuleManager)
+* [Issue Tracker](https://github.com/net-lisias-ksp/ModuleManager/issues)
+* Documentation	
+	+ [Homepage](http://ksp.lisias.net/add-ons/ModuleManager) on L Aerospace KSP Division
+	+ [Project's README](https://github.com/net-lisias-ksp/ModuleManager/blob/master/README.md)
+	+ [Change Log](./CHANGE_LOG.md)
+	+ [TODO](./TODO.md) list
+* Official Distribution Sites:
+	+ [Homepage](http://ksp.lisias.net/add-ons/ModuleManager) on L Aerospace
+	+ [Source and Binaries](https://github.com/net-lisias-ksp/ModuleManager) on GitHub.
 
 
 ## Description
