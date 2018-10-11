@@ -7,8 +7,8 @@ This is Lisias' fork for Module Mamager.
 
 ## In a Hurry
 
-* [Releases](https://github.com/net-lisias-ksp/ModuleManager/Archive)
 * [Latest Release](https://github.com/net-lisias-ksp/ModuleManager/releases)
+    + [Binaries](https://github.com/net-lisias-ksp/ModuleManager/Archive)
 * [Source](https://github.com/net-lisias-ksp/ModuleManager)
 * [Issue Tracker](https://github.com/net-lisias-ksp/ModuleManager/issues)
 * Documentation	
