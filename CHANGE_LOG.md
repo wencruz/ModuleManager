@@ -2,6 +2,10 @@
 *Lasciate ogne speranza, voi ch'intrate*
 - - -
 
+* 2018-1019: 3.1.0.1 (Lisias) for KSP 1.4
+	+  Declaring this thing **EXPERIMENTAL**.
+		- I will properly maintain it, but it still Experimental (and non Standard)
+	+ Syncing source with upstream latest fixes.  
 * 2018-1011: 3.0.7.4 (Lisias) for KSP 1.4
 	+ We have moved to the properly maintained /L Division! :)
 	+ No code changes from the last release.
