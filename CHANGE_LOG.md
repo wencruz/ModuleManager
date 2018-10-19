@@ -1,4 +1,6 @@
-# Module Manager :: Change Log
+# Module Manager /L Experimental :: Change Log
+*Lasciate ogne speranza, voi ch'intrate*
+- - -
 
 * 2018-1011: 3.0.7.4 (Lisias) for KSP 1.4
 	+ We have moved to the properly maintained /L Division! :)

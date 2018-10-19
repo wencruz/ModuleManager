@@ -1,8 +1,10 @@
-# Module Manager /L
+# Module Manager /L Experimental
+*Lasciate ogne speranza, voi ch'intrate*
+- - -
 
 ModuleManager is mod that let you write patch file that edit other part at load time.
 
-This is Lisias' fork for Module Mamager.
+This is Lisias' Experimental fork for Module Mamager.
 
 
 ## In a Hurry
