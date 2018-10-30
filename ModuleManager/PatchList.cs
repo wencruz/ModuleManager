@@ -67,6 +67,7 @@ namespace ModuleManager
             IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
         }
 
+        private readonly Pass insertPatches = new Pass(":INSERT (initial)");
         private readonly Pass firstPatches = new Pass(":FIRST");
         private readonly Pass legacyPatches = new Pass(":LEGACY (default)");
         private readonly Pass finalPatches = new Pass(":FINAL");
@@ -81,7 +82,11 @@ namespace ModuleManager
 
             foreach (IPatch patch in patches)
             {
-                if (patch.PassSpecifier is FirstPassSpecifier)
+                if (patch.PassSpecifier is InsertPassSpecifier)
+                {
+                    insertPatches.Add(patch);
+                }
+                else if (patch.PassSpecifier is FirstPassSpecifier)
                 {
                     firstPatches.Add(patch);
                 }
@@ -123,16 +128,17 @@ namespace ModuleManager
 
         private IPass[] EnumeratePasses()
         {
-            IPass[] result = new IPass[modPasses.Count * 3 + 3];
+            IPass[] result = new IPass[modPasses.Count * 3 + 4];
 
-            result[0] = firstPatches;
-            result[1] = legacyPatches;
+            result[0] = insertPatches;
+            result[1] = firstPatches;
+            result[2] = legacyPatches;
 
             for (int i = 0; i < modPasses.Count; i++)
             {
-                result[i * 3 + 2] = modPasses[i].beforePass;
-                result[i * 3 + 3] = modPasses[i].forPass;
-                result[i * 3 + 4] = modPasses[i].afterPass;
+                result[i * 3 + 3] = modPasses[i].beforePass;
+                result[i * 3 + 4] = modPasses[i].forPass;
+                result[i * 3 + 5] = modPasses[i].afterPass;
             }
 
             result[result.Length - 1] = finalPatches;

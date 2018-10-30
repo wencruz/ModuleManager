@@ -167,9 +167,9 @@ namespace ModuleManager
                 PatchExtractor extractor = new PatchExtractor(progress, logger, needsChecker, tagListParser, protoPatchBuilder, patchCompiler);
 
                 // Have to convert to an array because we will be removing patches
-                UrlDir.UrlConfig[] allConfigs = GameDatabase.Instance.root.AllConfigs.ToArray();
-                IEnumerable<IPatch> extractedPatches = allConfigs.Select(urlConfig => extractor.ExtractPatch(urlConfig));
-                PatchList patchList = new PatchList(mods, extractedPatches.Where(patch => patch != null), progress);
+                IEnumerable<IPatch> extractedPatches =
+                    GameDatabase.Instance.root.AllConfigs.Select(urlConfig => extractor.ExtractPatch(urlConfig)).Where(patch => patch != null);
+                PatchList patchList = new PatchList(mods, extractedPatches, progress);
 
                 #endregion
 
@@ -187,9 +187,11 @@ namespace ModuleManager
 
                 logger.Info("Starting patch thread");
 
+                IEnumerable<IProtoUrlConfig> databaseConfigs = null;
+
                 ITaskStatus patchThread = BackgroundTask.Start(delegate
                 {
-                    applier.ApplyPatches(GameDatabase.Instance.root.AllConfigFiles.ToArray(), patchList);
+                    databaseConfigs = applier.ApplyPatches(patchList);
                 });
 
                 float nextYield = Time.realtimeSinceStartup + yieldInterval;
@@ -235,6 +237,22 @@ namespace ModuleManager
                     progress.Exception("The patch runner threw an exception", patchThread.Exception);
                     FatalErrorHandler.HandleFatalError("The patch runner threw an exception");
                     yield break;
+                }
+                if (databaseConfigs == null)
+                {
+                    progress.Error("The patcher returned a null collection of configs");
+                    FatalErrorHandler.HandleFatalError("The patcher returned a null collection of configs");
+                    yield break;
+                }
+
+                foreach (UrlDir.UrlFile file in GameDatabase.Instance.root.AllConfigFiles)
+                {
+                    file.configs.Clear();
+                }
+
+                foreach (IProtoUrlConfig protoConfig in databaseConfigs)
+                {
+                    protoConfig.UrlFile.AddConfig(protoConfig.Node);
                 }
 
                 logger.Info("Done patching");
@@ -1216,28 +1234,24 @@ namespace ModuleManager
             // @XXXXX
             if (root)
             {
-                IEnumerable<UrlDir.UrlConfig> urlConfigs = context.databaseRoot.GetConfigs(nodeType);
-                if (!urlConfigs.Any())
+                bool foundNodeType = false;
+                foreach (IProtoUrlConfig urlConfig in context.databaseConfigs)
                 {
-                    context.logger.Warning("Can't find nodeType:" + nodeType);
-                    return null;
-                }
+                    ConfigNode node = urlConfig.Node;
 
-                if (nodeName == null)
-                {
-                    nodeStack = new NodeStack(urlConfigs.First().config);
-                }
-                else
-                {
-                    foreach (UrlDir.UrlConfig url in urlConfigs)
+                    if (node.name != nodeType) continue;
+
+                    foundNodeType = true;
+
+                    if (nodeName == null || (node.GetValue("name") is string testNodeName && WildcardMatch(testNodeName, nodeName)))
                     {
-                        if (url.config.HasValue("name") && WildcardMatch(url.config.GetValue("name"), nodeName))
-                        {
-                            nodeStack = new NodeStack(url.config);
-                            break;
-                        }
+                        nodeStack = new NodeStack(node);
+                        break;
                     }
                 }
+
+                if (!foundNodeType) context.logger.Warning("Can't find nodeType:" + nodeType);
+                if (nodeStack == null) return null;
             }
             else
             {
@@ -1302,7 +1316,6 @@ namespace ModuleManager
 
                 string subName = path.Substring(1, nextSep - 1);
                 string nodeType, nodeName;
-                UrlDir.UrlConfig target = null;
 
                 if (subName.Contains("["))
                 {
@@ -1317,29 +1330,26 @@ namespace ModuleManager
                     nodeName = string.Empty;
                 }
 
-                IEnumerable<UrlDir.UrlConfig> urlConfigs = context.databaseRoot.GetConfigs(nodeType);
-                if (!urlConfigs.Any())
-                {
-                    context.logger.Warning("Can't find nodeType:" + nodeType);
-                    return null;
-                }
+                // <<<<<
 
-                if (nodeName == string.Empty)
+                bool foundNodeType = false;
+                foreach (IProtoUrlConfig urlConfig in context.databaseConfigs)
                 {
-                    target = urlConfigs.First();
-                }
-                else
-                {
-                    foreach (UrlDir.UrlConfig url in urlConfigs)
+                    ConfigNode node = urlConfig.Node;
+
+                    if (node.name != nodeType) continue;
+
+                    foundNodeType = true;
+
+                    if (nodeName == null || (node.GetValue("name") is string testNodeName && WildcardMatch(testNodeName, nodeName)))
                     {
-                        if (url.config.HasValue("name") && WildcardMatch(url.config.GetValue("name"), nodeName))
-                        {
-                            target = url;
-                            break;
-                        }
+                        return RecurseVariableSearch(path.Substring(nextSep + 1), new NodeStack(node), context);
                     }
                 }
-                return target != null ? RecurseVariableSearch(path.Substring(nextSep + 1), new NodeStack(target.config), context) : null;
+
+                if (!foundNodeType) context.logger.Warning("Can't find nodeType:" + nodeType);
+
+                return null;
             }
             if (path.StartsWith("../"))
             {
