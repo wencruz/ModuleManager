@@ -8,6 +8,8 @@ using ModuleManager.Extensions;
 using ModuleManager.Logging;
 using ModuleManager.Threading;
 
+using static ModuleManager.FilePathRepository;
+
 namespace ModuleManager
 {
     public class MMPatchRunner
@@ -27,10 +29,8 @@ namespace ModuleManager
         public IEnumerator Run()
         {
             PostPatchLoader.Instance.databaseConfigs = null;
-
-            string logsDirPath = Path.Combine(KSPUtil.ApplicationRootPath, "Logs");
+            
             if (!Directory.Exists(logsDirPath)) Directory.CreateDirectory(logsDirPath);
-            string logPath = Path.Combine(logsDirPath, "ModuleManager.log");
 
             kspLogger.Info("Patching started on a new thread, all output will be directed to " + logPath);
 
