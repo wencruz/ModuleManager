@@ -67,14 +67,14 @@ namespace ModuleManager.Progress
             Counter.needsUnsatisfied.Increment();
         }
 
-        public void NeedsUnsatisfiedNode(UrlDir.UrlConfig url, NodeStack path)
+        public void NeedsUnsatisfiedNode(UrlDir.UrlConfig url, string path)
         {
-            logger.Info($"Deleting node in file {url.parent.url} subnode: {path.GetPath()} as it can't satisfy its NEEDS");
+            logger.Info($"Deleting node in file {url.parent.url} subnode: {path} as it can't satisfy its NEEDS");
         }
 
-        public void NeedsUnsatisfiedValue(UrlDir.UrlConfig url, NodeStack path, string valName)
+        public void NeedsUnsatisfiedValue(UrlDir.UrlConfig url, string path)
         {
-            logger.Info($"Deleting value in file {url.parent.url} subnode: {path.GetPath()} value: {valName} as it can't satisfy its NEEDS");
+            logger.Info($"Deleting value in file {url.parent.url} value: {path} as it can't satisfy its NEEDS");
         }
 
         public void NeedsUnsatisfiedBefore(UrlDir.UrlConfig url)
@@ -95,6 +95,13 @@ namespace ModuleManager.Progress
             Counter.needsUnsatisfied.Increment();
         }
 
+        public void Warning(UrlDir.UrlConfig url, string message)
+        {
+            Counter.warnings.Increment();
+            logger.Warning(message);
+            RecordWarningFile(url);
+        }
+
         public void Error(UrlDir.UrlConfig url, string message)
         {
             Counter.errors.Increment();
@@ -112,6 +119,18 @@ namespace ModuleManager.Progress
         {
             Exception(message, exception);
             RecordErrorFile(url);
+        }
+
+        private void RecordWarningFile(UrlDir.UrlConfig url)
+        {
+            string key = url.parent.url + "." + url.parent.fileExtension;
+            if (key[0] == '/')
+                key = key.Substring(1);
+
+            if (Counter.warningFiles.ContainsKey(key))
+                Counter.warningFiles[key] += 1;
+            else
+                Counter.warningFiles[key] = 1;
         }
 
         private void RecordErrorFile(UrlDir.UrlConfig url)

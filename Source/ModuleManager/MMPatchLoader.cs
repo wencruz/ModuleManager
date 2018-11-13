@@ -16,7 +16,9 @@ using KSPe;
 using ModuleManager.Logging;
 using ModuleManager.Extensions;
 using ModuleManager.Collections;
+using ModuleManager.Tags;
 using ModuleManager.Threading;
+using ModuleManager.Patches;
 using ModuleManager.Progress;
 using NodeStack = ModuleManager.Collections.ImmutableStack<ConfigNode>;
 
@@ -50,10 +52,6 @@ namespace ModuleManager
         private string configSha;
         private Dictionary<string, string> filesSha = new Dictionary<string, string>();
 
-        private bool useCache = false;
-
-        private readonly Stopwatch patchSw = new Stopwatch();
-
         private static readonly List<ModuleManagerPostPatchCallback> postPatchCallbacks = new List<ModuleManagerPostPatchCallback>();
 
         private const float yieldInterval = 1f/30f; // Patch at ~30fps
@@ -81,12 +79,6 @@ namespace ModuleManager
 
         public override bool IsReady()
         {
-            //return false;
-            if (ready)
-            {
-                patchSw.Stop();
-                logger.Info("Ran in " + ((float)patchSw.ElapsedMilliseconds / 1000).ToString("F3") + "s");
-            }
             return ready;
         }
 
@@ -99,9 +91,6 @@ namespace ModuleManager
 
         public override void StartLoad()
         {
-            patchSw.Reset();
-            patchSw.Start();
-
             ready = false;
 
             // DB check used to track the now fixed TextureReplacer corruption
@@ -118,18 +107,21 @@ namespace ModuleManager
 
         private IEnumerator ProcessPatch()
         {
+            Stopwatch patchSw = new Stopwatch();
+            patchSw.Start();
+
             status = "Checking Cache";
             logger.Info(status);
             yield return null;
-            
+
+            bool useCache = false;
             try
             {
-                IsCacheUpToDate();
+                useCache = IsCacheUpToDate();
             }
             catch (Exception ex)
             {
                 logger.Exception("Exception in IsCacheUpToDate", ex);
-                useCache = false;
             }
 
 #if DEBUG
@@ -152,26 +144,24 @@ namespace ModuleManager
 
                 LoadPhysicsConfig();
 
-                #region Check Needs
-
-
-
-                // Do filtering with NEEDS
-                status = "Checking NEEDS.";
-                logger.Info(status);
-                yield return null;
-                NeedsChecker.CheckNeeds(GameDatabase.Instance.root, mods, progress, logger);
-
-                #endregion Check Needs
-
                 #region Sorting Patches
 
-                status = "Sorting patches";
+                status = "Extracting patches";
                 logger.Info(status);
 
                 yield return null;
 
-                PatchList patchList = PatchExtractor.SortAndExtractPatches(GameDatabase.Instance.root, mods, progress);
+                UrlDir gameData = GameDatabase.Instance.root.children.First(dir => dir.type == UrlDir.DirectoryType.GameData && dir.name == "");
+                INeedsChecker needsChecker = new NeedsChecker(mods, gameData, progress, logger);
+                ITagListParser tagListParser = new TagListParser(progress);
+                IProtoPatchBuilder protoPatchBuilder = new ProtoPatchBuilder(progress);
+                IPatchCompiler patchCompiler = new PatchCompiler();
+                PatchExtractor extractor = new PatchExtractor(progress, logger, needsChecker, tagListParser, protoPatchBuilder, patchCompiler);
+
+                // Have to convert to an array because we will be removing patches
+                UrlDir.UrlConfig[] allConfigs = GameDatabase.Instance.root.AllConfigs.ToArray();
+                IEnumerable<IPatch> extractedPatches = allConfigs.Select(urlConfig => extractor.ExtractPatch(urlConfig));
+                PatchList patchList = new PatchList(mods, extractedPatches.Where(patch => patch != null), progress);
 
                 #endregion
 
@@ -185,11 +175,14 @@ namespace ModuleManager
                 MessageQueue<ILogMessage> logQueue = new MessageQueue<ILogMessage>();
                 IBasicLogger patchLogger = new QueueLogger(logQueue);
                 IPatchProgress threadPatchProgress = new PatchProgress(progress, patchLogger);
-                PatchApplier applier = new PatchApplier(patchList, GameDatabase.Instance.root, threadPatchProgress, patchLogger);
+                PatchApplier applier = new PatchApplier(threadPatchProgress, patchLogger);
 
                 logger.Info("Starting patch thread");
 
-                ITaskStatus patchThread = BackgroundTask.Start(applier.ApplyPatches);
+                ITaskStatus patchThread = BackgroundTask.Start(delegate
+                {
+                    applier.ApplyPatches(GameDatabase.Instance.root.AllConfigFiles.ToArray(), patchList);
+                });
 
                 float nextYield = Time.realtimeSinceStartup + yieldInterval;
 
@@ -244,6 +237,11 @@ namespace ModuleManager
                 #endregion Applying patches
 
                 #region Saving Cache
+
+                foreach (KeyValuePair<string, int> item in progress.Counter.warningFiles)
+                {
+                    logger.Warning(item.Value + " warning" + (item.Value > 1 ? "s" : "") + " related to GameData/" + item.Key);
+                }
 
                 if (progress.Counter.errors > 0 || progress.Counter.exceptions > 0)
                 {
@@ -374,6 +372,9 @@ namespace ModuleManager
 
             yield return null;
 
+            patchSw.Stop();
+            logger.Info("Ran in " + ((float)patchSw.ElapsedMilliseconds / 1000).ToString("F3") + "s");
+
             ready = true;
         }
 
@@ -411,8 +412,10 @@ namespace ModuleManager
             configs[0].config.Save(PHYSICS_CONFIG.Path);
         }
 
-        private void IsCacheUpToDate()
+        private bool IsCacheUpToDate()
         {
+            bool useCache;
+
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -496,6 +499,7 @@ namespace ModuleManager
             }
 #endif
             logger.Info("useCache = " + useCache);
+            return useCache;
         }
 
         private bool CheckFilesChange(UrlDir.UrlFile[] files, ConfigNode shaConfigNode)
@@ -685,6 +689,9 @@ namespace ModuleManager
             progressFraction = progress.ProgressFraction;
 
             status = "ModuleManager: " + progress.Counter.patchedNodes + " patch" + (progress.Counter.patchedNodes != 1 ? "es" : "") + " applied";
+
+            if (progress.Counter.warnings > 0)
+                status += ", found <color=yellow>" + progress.Counter.warnings + " warning" + (progress.Counter.warnings != 1 ? "s" : "") + "</yellow>";
 
             if (progress.Counter.errors > 0)
                 status += ", found <color=orange>" + progress.Counter.errors + " error" + (progress.Counter.errors != 1 ? "s" : "") + "</color>";
@@ -1792,7 +1799,7 @@ namespace ModuleManager
         public static bool WildcardMatchValues(ConfigNode node, string type, string value)
         {
             double val = 0;
-            bool compare = value.Length > 1 && (value[0] == '<' || value[0] == '>');
+            bool compare = value != null && value.Length > 1 && (value[0] == '<' || value[0] == '>');
             compare = compare && double.TryParse(value.Substring(1), NumberStyles.Float, CultureInfo.InvariantCulture.NumberFormat, out val);
 
             string[] values = node.GetValues(type);

@@ -1,382 +1,446 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using NSubstitute;
 using TestUtils;
 using ModuleManager;
+using ModuleManager.Logging;
+using ModuleManager.Patches;
+using ModuleManager.Patches.PassSpecifiers;
 using ModuleManager.Progress;
+using ModuleManager.Tags;
 
 namespace ModuleManagerTests
 {
     public class PatchExtractorTest
     {
-        private UrlDir root;
-        private UrlDir.UrlFile file;
+        private readonly UrlDir root;
+        private readonly UrlDir.UrlFile file;
 
-        private IPatchProgress progress;
+        private readonly IPatchProgress progress;
+        private readonly IBasicLogger logger;
+        private readonly INeedsChecker needsChecker;
+        private readonly ITagListParser tagListParser;
+        private readonly IProtoPatchBuilder protoPatchBuilder;
+        private readonly IPatchCompiler patchCompiler;
+        private readonly PatchExtractor patchExtractor;
 
         public PatchExtractorTest()
         {
             root = UrlBuilder.CreateRoot();
             file = UrlBuilder.CreateFile("abc/def.cfg", root);
-
+            
             progress = Substitute.For<IPatchProgress>();
+            logger = Substitute.For<IBasicLogger>();
+            needsChecker = Substitute.For<INeedsChecker>();
+            tagListParser = Substitute.For<ITagListParser>();
+            protoPatchBuilder = Substitute.For<IProtoPatchBuilder>();
+            patchCompiler = Substitute.For<IPatchCompiler>();
+            patchExtractor = new PatchExtractor(progress, logger, needsChecker, tagListParser, protoPatchBuilder, patchCompiler);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches()
+        public void TestConstructor__ProgressNull()
         {
-            UrlDir.UrlConfig[] insertConfigs =
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
             {
-                CreateConfig("NODE"),
-                CreateConfig("NADE"),
-            };
+                new PatchExtractor(null, logger, needsChecker, tagListParser, protoPatchBuilder, patchCompiler);
+            });
 
-            UrlDir.UrlConfig[] legacyConfigs =
-            {
-                CreateConfig("@NODE"),
-                CreateConfig("@NADE[foo]:HAS[#bar]"),
-            };
-
-            UrlDir.UrlConfig[] firstConfigs =
-            {
-                CreateConfig("@NODE:FIRST"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:FIRST"),
-                CreateConfig("@NADE:First"),
-                CreateConfig("@NADE:first"),
-            };
-
-            UrlDir.UrlConfig[] finalConfigs =
-            {
-                CreateConfig("@NODE:FINAL"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:FINAL"),
-                CreateConfig("@NADE:Final"),
-                CreateConfig("@NADE:final"),
-            };
-
-            UrlDir.UrlConfig[] beforeMod1Configs =
-            {
-                CreateConfig("@NODE:BEFORE[mod1]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:BEFORE[mod1]"),
-                CreateConfig("@NADE:before[mod1]"),
-                CreateConfig("@NADE:BEFORE[MOD1]"),
-            };
-
-            UrlDir.UrlConfig[] forMod1Configs =
-            {
-                CreateConfig("@NODE:FOR[mod1]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:FOR[mod1]"),
-                CreateConfig("@NADE:for[mod1]"),
-                CreateConfig("@NADE:FOR[MOD1]"),
-            };
-
-            UrlDir.UrlConfig[] afterMod1Configs =
-            {
-                CreateConfig("@NODE:AFTER[mod1]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:AFTER[mod1]"),
-                CreateConfig("@NADE:after[mod1]"),
-                CreateConfig("@NADE:AFTER[MOD1]"),
-            };
-
-            UrlDir.UrlConfig[] beforeMod2Configs =
-            {
-                CreateConfig("@NODE:BEFORE[mod2]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:BEFORE[mod2]"),
-                CreateConfig("@NADE:before[mod2]"),
-                CreateConfig("@NADE:BEFORE[MOD2]"),
-            };
-
-            UrlDir.UrlConfig[] forMod2Configs =
-            {
-                CreateConfig("@NODE:FOR[mod2]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:FOR[mod2]"),
-                CreateConfig("@NADE:for[mod2]"),
-                CreateConfig("@NADE:FOR[MOD2]"),
-            };
-
-            UrlDir.UrlConfig[] afterMod2Configs =
-            {
-                CreateConfig("@NODE:AFTER[mod2]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:AFTER[mod2]"),
-                CreateConfig("@NADE:after[mod2]"),
-                CreateConfig("@NADE:AFTER[MOD2]"),
-            };
-
-            UrlDir.UrlConfig[] beforeMod3Configs =
-            {
-                CreateConfig("@NODE:BEFORE[mod3]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:BEFORE[mod3]"),
-                CreateConfig("@NADE:before[mod3]"),
-                CreateConfig("@NADE:BEFORE[MOD3]"),
-            };
-
-            UrlDir.UrlConfig[] forMod3Configs =
-            {
-                CreateConfig("@NODE:FOR[mod3]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:FOR[mod3]"),
-                CreateConfig("@NADE:for[mod3]"),
-                CreateConfig("@NADE:FOR[MOD3]"),
-            };
-
-            UrlDir.UrlConfig[] afterMod3Configs =
-            {
-                CreateConfig("@NODE:AFTER[mod3]"),
-                CreateConfig("@NODE[foo]:HAS[#bar]:AFTER[mod3]"),
-                CreateConfig("@NADE:after[mod3]"),
-                CreateConfig("@NADE:AFTER[MOD3]"),
-            };
-
-            string[] modList = { "mod1", "mod2" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
-
-            progress.DidNotReceiveWithAnyArgs().Error(null, null);
-            progress.DidNotReceiveWithAnyArgs().Exception(null, null);
-            progress.DidNotReceiveWithAnyArgs().Exception(null, null, null);
-
-            Assert.True(list.modPasses.HasMod("mod1"));
-            Assert.True(list.modPasses.HasMod("mod2"));
-            Assert.False(list.modPasses.HasMod("mod3"));
-
-            Assert.Equal(insertConfigs, root.AllConfigs);
-
-            Assert.Equal(legacyConfigs, list.legacyPatches);
-
-            List<UrlDir.UrlConfig> currentPatches;
-
-            currentPatches = list.firstPatches;
-            Assert.Equal(firstConfigs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                firstConfigs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", firstConfigs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                firstConfigs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                firstConfigs[3], currentPatches[3]);
-
-            currentPatches = list.finalPatches;
-            Assert.Equal(finalConfigs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                finalConfigs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", finalConfigs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                finalConfigs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                finalConfigs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod1"].beforePatches;
-            Assert.Equal(beforeMod1Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                beforeMod1Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", beforeMod1Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                beforeMod1Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                beforeMod1Configs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod1"].forPatches;
-            Assert.Equal(forMod1Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                forMod1Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", forMod1Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                forMod1Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                forMod1Configs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod1"].afterPatches;
-            Assert.Equal(afterMod1Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                afterMod1Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", afterMod1Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                afterMod1Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                afterMod1Configs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod2"].beforePatches;
-            Assert.Equal(beforeMod2Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                beforeMod2Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", beforeMod2Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                beforeMod2Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                beforeMod2Configs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod2"].forPatches;
-            Assert.Equal(forMod2Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                forMod2Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", forMod2Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                forMod2Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                forMod2Configs[3], currentPatches[3]);
-
-            currentPatches = list.modPasses["mod2"].afterPatches;
-            Assert.Equal(afterMod2Configs.Length, currentPatches.Count);
-            AssertUrlCorrect("@NODE",                afterMod2Configs[0], currentPatches[0]);
-            AssertUrlCorrect("@NODE[foo]:HAS[#bar]", afterMod2Configs[1], currentPatches[1]);
-            AssertUrlCorrect("@NADE",                afterMod2Configs[2], currentPatches[2]);
-            AssertUrlCorrect("@NADE",                afterMod2Configs[3], currentPatches[3]);
-
-            progress.Received(34).PatchAdded();
-
-            progress.Received().NeedsUnsatisfiedBefore(beforeMod3Configs[0]);
-            progress.Received().NeedsUnsatisfiedBefore(beforeMod3Configs[1]);
-            progress.Received().NeedsUnsatisfiedBefore(beforeMod3Configs[2]);
-            progress.Received().NeedsUnsatisfiedBefore(beforeMod3Configs[3]);
-
-            progress.Received().NeedsUnsatisfiedFor(forMod3Configs[0]);
-            progress.Received().NeedsUnsatisfiedFor(forMod3Configs[1]);
-            progress.Received().NeedsUnsatisfiedFor(forMod3Configs[2]);
-            progress.Received().NeedsUnsatisfiedFor(forMod3Configs[3]);
-
-            progress.Received().NeedsUnsatisfiedAfter(afterMod3Configs[0]);
-            progress.Received().NeedsUnsatisfiedAfter(afterMod3Configs[1]);
-            progress.Received().NeedsUnsatisfiedAfter(afterMod3Configs[2]);
-            progress.Received().NeedsUnsatisfiedAfter(afterMod3Configs[3]);
+            Assert.Equal("progress", ex.ParamName);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches__InsertWithPass()
+        public void TestConstructor__LoggerNull()
         {
-            UrlDir.UrlConfig config1 = CreateConfig("NODE");
-            UrlDir.UrlConfig config2 = CreateConfig("NODE:FOR[mod1]");
-            UrlDir.UrlConfig config3 = CreateConfig("NODE:FOR[mod2]");
-            UrlDir.UrlConfig config4 = CreateConfig("NODE:FINAL");
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                new PatchExtractor(progress, null, needsChecker, tagListParser, protoPatchBuilder, patchCompiler);
+            });
 
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            Assert.Equal("logger", ex.ParamName);
+        }
 
-            Assert.Equal(new[] { config1 }, root.AllConfigs);
+        [Fact]
+        public void TestConstructor__NeedsCheckerNull()
+        {
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                new PatchExtractor(progress, logger, null, tagListParser, protoPatchBuilder, patchCompiler);
+            });
 
-            progress.Received().Error(config2, "Error - pass specifier detected on an insert node (not a patch): abc/def/NODE:FOR[mod1]");
-            progress.Received().Error(config3, "Error - pass specifier detected on an insert node (not a patch): abc/def/NODE:FOR[mod2]");
-            progress.Received().Error(config4, "Error - pass specifier detected on an insert node (not a patch): abc/def/NODE:FINAL");
+            Assert.Equal("needsChecker", ex.ParamName);
+        }
 
-            Assert.Empty(list.firstPatches);
-            Assert.Empty(list.legacyPatches);
-            Assert.Empty(list.finalPatches);
-            Assert.Empty(list.modPasses["mod1"].beforePatches);
-            Assert.Empty(list.modPasses["mod1"].forPatches);
-            Assert.Empty(list.modPasses["mod1"].afterPatches);
+        [Fact]
+        public void TestConstructor__TagListParserNull()
+        {
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                new PatchExtractor(progress, logger, needsChecker, null, protoPatchBuilder, patchCompiler);
+            });
+
+            Assert.Equal("tagListParser", ex.ParamName);
+        }
+
+        [Fact]
+        public void TestConstructor__ProtoPatchBuilderNull()
+        {
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                new PatchExtractor(progress, logger, needsChecker, tagListParser, null, patchCompiler);
+            });
+
+            Assert.Equal("protoPatchBuilder", ex.ParamName);
+        }
+
+        [Fact]
+        public void TestConstructor__PatchCompilerNull()
+        {
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                new PatchExtractor(progress, logger, needsChecker, tagListParser, protoPatchBuilder, null);
+            });
+
+            Assert.Equal("patchCompiler", ex.ParamName);
+        }
+
+        [Fact]
+        public void TestExtractPatch__ProtoPatchNull()
+        {
+            UrlDir.UrlConfig patchConfig = UrlBuilder.CreateConfig("abc/def", new ConfigNode("NODE"), root);
+
+            protoPatchBuilder.Build(patchConfig, Command.Insert, Arg.Any<ITagList>()).Returns(null, new ProtoPatch[0]);
+
+            Assert.Null(patchExtractor.ExtractPatch(patchConfig));
+
+            needsChecker.DidNotReceiveWithAnyArgs().CheckNeedsExpression(null);
+
+            AssertNoErrors();
+
+            Assert.Empty(root.AllConfigs);
 
             progress.DidNotReceive().PatchAdded();
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches__MoreThanOnePass()
+        public void TestExtractPatch()
         {
-            UrlDir.UrlConfig config1 = CreateConfig("@NODE:FIRST");
-            UrlDir.UrlConfig config2 = CreateConfig("@NODE:FIRST:FIRST");
-            UrlDir.UrlConfig config3 = CreateConfig("@NODE:FIRST:FOR[mod1]");
+            UrlDir.UrlConfig urlConfig = CreateConfig("@NODE_TYPE");
 
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            ITagList tagList = Substitute.For<ITagList>();
+            tagListParser.Parse("NODE_TYPE", urlConfig).Returns(tagList);
+
+            IPassSpecifier passSpecifier = Substitute.For<IPassSpecifier>();
+            ProtoPatch protoPatch = new ProtoPatch(
+                urlConfig,
+                Command.Edit,
+                "NODE_TYPE",
+                "nodeName",
+                null,
+                "has",
+                passSpecifier
+            );
+
+            protoPatchBuilder.Build(urlConfig, Command.Edit, tagList).Returns(protoPatch);
+            passSpecifier.CheckNeeds(needsChecker, progress).Returns(true);
+
+            IPatch patch = Substitute.For<IPatch>();
+            patchCompiler.CompilePatch(protoPatch).Returns(patch);
+
+            Assert.Same(patch, patchExtractor.ExtractPatch(urlConfig));
+
+            AssertNoErrors();
 
             Assert.Empty(root.AllConfigs);
 
-            progress.Received().Error(config2, "Error - more than one pass specifier on a node: abc/def/@NODE:FIRST:FIRST");
-            progress.Received().Error(config3, "Error - more than one pass specifier on a node: abc/def/@NODE:FIRST:FOR[mod1]");
-
-            Assert.Equal(1, list.firstPatches.Count);
-            AssertUrlCorrect("@NODE", config1, list.firstPatches[0]);
-            Assert.Empty(list.legacyPatches);
-            Assert.Empty(list.finalPatches);
-            Assert.Empty(list.modPasses["mod1"].beforePatches);
-            Assert.Empty(list.modPasses["mod1"].forPatches);
-            Assert.Empty(list.modPasses["mod1"].afterPatches);
-
-            progress.Received(1).PatchAdded();
+            needsChecker.Received().CheckNeedsRecursive(urlConfig.config, urlConfig);
+            needsChecker.DidNotReceiveWithAnyArgs().CheckNeedsExpression(null);
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches__Exception()
+        public void TestExtractPatch__Needs()
         {
-            Exception e = new Exception("an exception was thrown");
-            progress.WhenForAnyArgs(p => p.Error(null, null)).Throw(e);
+            UrlDir.UrlConfig urlConfig = CreateConfig("@NODE_TYPE");
 
-            UrlDir.UrlConfig config1 = CreateConfig("@NODE");
-            UrlDir.UrlConfig config2 = CreateConfig("@NODE:FIRST:FIRST");
-            UrlDir.UrlConfig config3 = CreateConfig("@NADE:FIRST");
+            ITagList tagList = Substitute.For<ITagList>();
+            tagListParser.Parse("NODE_TYPE", urlConfig).Returns(tagList);
 
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            IPassSpecifier passSpecifier = Substitute.For<IPassSpecifier>();
+            ProtoPatch protoPatch = new ProtoPatch(
+                urlConfig,
+                Command.Edit,
+                "NODE_TYPE",
+                "nodeName",
+                "needs",
+                "has",
+                passSpecifier
+            );
 
-            progress.Received().Exception(config2, "Exception while parsing pass for config: abc/def/@NODE:FIRST:FIRST", e);
+            protoPatchBuilder.Build(urlConfig, Command.Edit, tagList).Returns(protoPatch);
+            needsChecker.CheckNeedsExpression("needs").Returns(true);
+            passSpecifier.CheckNeeds(needsChecker, progress).Returns(true);
 
-            Assert.Equal(new[] { config1 }, list.legacyPatches);
-            Assert.Equal(1, list.firstPatches.Count);
-            AssertUrlCorrect("@NADE", config3, list.firstPatches[0]);
+            IPatch patch = Substitute.For<IPatch>();
+            patchCompiler.CompilePatch(protoPatch).Returns(patch);
 
-            progress.Received(2).PatchAdded();
-        }
+            Assert.Same(patch, patchExtractor.ExtractPatch(urlConfig));
 
-        [Fact]
-        public void TestSortAndExtractPatches__NotBracketBalanced()
-        {
-            UrlDir.UrlConfig config1 = CreateConfig("@NODE:FOR[mod1]");
-            UrlDir.UrlConfig config2 = CreateConfig("@NODE:FOR[");
-            UrlDir.UrlConfig config3 = CreateConfig("NODE:HAS[#foo[]");
-
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            AssertNoErrors();
 
             Assert.Empty(root.AllConfigs);
 
-            progress.Received().Error(config2, "Error - node name does not have balanced brackets (or a space - if so replace with ?):\nabc/def/@NODE:FOR[");
-            progress.Received().Error(config3, "Error - node name does not have balanced brackets (or a space - if so replace with ?):\nabc/def/NODE:HAS[#foo[]");
-            
-            Assert.Empty(list.firstPatches);
-            Assert.Empty(list.legacyPatches);
-            Assert.Empty(list.finalPatches);
-            Assert.Empty(list.modPasses["mod1"].beforePatches);
-            Assert.Equal(1, list.modPasses["mod1"].forPatches.Count);
-            AssertUrlCorrect("@NODE", config1, list.modPasses["mod1"].forPatches[0]);
-            Assert.Empty(list.modPasses["mod1"].afterPatches);
-
-            progress.Received(1).PatchAdded();
+            needsChecker.Received().CheckNeedsRecursive(urlConfig.config, urlConfig);
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches__BadlyFormed()
+        public void TestExtractPatch__NeedsUnsatisfied()
         {
-            UrlDir.UrlConfig config1 = CreateConfig("@NODE:FOR[mod1]");
-            UrlDir.UrlConfig config2 = CreateConfig("@NODE:FOR[]");
-            UrlDir.UrlConfig config3 = CreateConfig("@NADE:FIRST:BEFORE");
-            UrlDir.UrlConfig config4 = CreateConfig("@NADE:AFTER");
+            UrlDir.UrlConfig urlConfig = CreateConfig("@NODE_TYPE");
 
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            ITagList tagList = Substitute.For<ITagList>();
+            tagListParser.Parse("NODE_TYPE", urlConfig).Returns(tagList);
+
+            IPassSpecifier passSpecifier = Substitute.For<IPassSpecifier>();
+            ProtoPatch protoPatch = new ProtoPatch(
+                urlConfig,
+                Command.Edit,
+                "NODE_TYPE",
+                "nodeName",
+                "needs",
+                "has",
+                passSpecifier
+            );
+
+            protoPatchBuilder.Build(urlConfig, Command.Edit, tagList).Returns(protoPatch);
+            needsChecker.CheckNeedsExpression("needs").Returns(false);
+
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            AssertNoErrors();
 
             Assert.Empty(root.AllConfigs);
 
-            progress.Received().Error(config2, "Error - malformed :FOR patch specifier detected: abc/def/@NODE:FOR[]");
-            progress.Received().Error(config3, "Error - more than one pass specifier on a node: abc/def/@NADE:FIRST:BEFORE");
-            progress.Received().Error(config3, "Error - malformed :BEFORE patch specifier detected: abc/def/@NADE:FIRST:BEFORE");
-            progress.Received().Error(config4, "Error - malformed :AFTER patch specifier detected: abc/def/@NADE:AFTER");
+            passSpecifier.DidNotReceiveWithAnyArgs().CheckNeeds(null, null);
+            needsChecker.DidNotReceiveWithAnyArgs().CheckNeedsRecursive(null, null);
+            patchCompiler.DidNotReceiveWithAnyArgs().CompilePatch(null);
 
-            Assert.Empty(list.firstPatches);
-            Assert.Empty(list.legacyPatches);
-            Assert.Empty(list.finalPatches);
-            Assert.Empty(list.modPasses["mod1"].beforePatches);
-            Assert.Equal(1, list.modPasses["mod1"].forPatches.Count);
-            AssertUrlCorrect("@NODE", config1, list.modPasses["mod1"].forPatches[0]);
-            Assert.Empty(list.modPasses["mod1"].afterPatches);
-
-            progress.Received(1).PatchAdded();
+            progress.Received().NeedsUnsatisfiedRoot(urlConfig);
         }
 
         [Fact]
-        public void TestSortAndExtractPatches__InvalidCommand()
+        public void TestExtractPatch__NeedsUnsatisfiedPassSpecifier()
         {
-            UrlDir.UrlConfig config1 = CreateConfig("@NODE:FOR[mod1]");
-            UrlDir.UrlConfig config2 = CreateConfig("%NODE:FOR[mod1]");
-            UrlDir.UrlConfig config3 = CreateConfig("&NODE:FOR[mod1]");
-            UrlDir.UrlConfig config4 = CreateConfig("|NODE:FOR[mod1]");
-            UrlDir.UrlConfig config5 = CreateConfig("#NODE:FOR[mod1]");
-            UrlDir.UrlConfig config6 = CreateConfig("*NODE:FOR[mod1]");
+            UrlDir.UrlConfig urlConfig = CreateConfig("@NODE_TYPE");
 
-            string[] modList = { "mod1" };
-            PatchList list = PatchExtractor.SortAndExtractPatches(root, modList, progress);
+            ITagList tagList = Substitute.For<ITagList>();
+            tagListParser.Parse("NODE_TYPE", urlConfig).Returns(tagList);
+
+            IPassSpecifier passSpecifier = Substitute.For<IPassSpecifier>();
+            ProtoPatch protoPatch = new ProtoPatch(
+                urlConfig,
+                Command.Edit,
+                "NODE_TYPE",
+                "nodeName",
+                "needs",
+                "has",
+                passSpecifier
+            );
+
+            protoPatchBuilder.Build(urlConfig, Command.Edit, tagList).Returns(protoPatch);
+            needsChecker.CheckNeedsExpression("needs").Returns(true);
+            passSpecifier.CheckNeeds(needsChecker, progress).Returns(false);
+
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            AssertNoErrors();
 
             Assert.Empty(root.AllConfigs);
 
-            progress.Received().Error(config2, "Error - replace command (%) is not valid on a root node: abc/def/%NODE:FOR[mod1]");
-            progress.Received().Error(config3, "Error - create command (&) is not valid on a root node: abc/def/&NODE:FOR[mod1]");
-            progress.Received().Error(config4, "Error - rename command (|) is not valid on a root node: abc/def/|NODE:FOR[mod1]");
-            progress.Received().Error(config5, "Error - paste command (#) is not valid on a root node: abc/def/#NODE:FOR[mod1]");
-            progress.Received().Error(config6, "Error - special command (*) is not valid on a root node: abc/def/*NODE:FOR[mod1]");
+            needsChecker.DidNotReceiveWithAnyArgs().CheckNeedsRecursive(null, null);
+            patchCompiler.DidNotReceiveWithAnyArgs().CompilePatch(null);
 
-            Assert.Empty(list.firstPatches);
-            Assert.Empty(list.legacyPatches);
-            Assert.Empty(list.finalPatches);
-            Assert.Empty(list.modPasses["mod1"].beforePatches);
-            Assert.Equal(1, list.modPasses["mod1"].forPatches.Count);
-            AssertUrlCorrect("@NODE", config1, list.modPasses["mod1"].forPatches[0]);
-            Assert.Empty(list.modPasses["mod1"].afterPatches);
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
+        }
 
-            progress.Received(1).PatchAdded();
+        [Fact]
+        public void TestExtractPatch__Insert()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("NODE_TYPE");
+
+            ITagList tagList = Substitute.For<ITagList>();
+            tagListParser.Parse("NODE_TYPE", urlConfig).Returns(tagList);
+        
+            IPassSpecifier passSpecifier = Substitute.For<IPassSpecifier>();
+            ProtoPatch protoPatch = new ProtoPatch(
+                urlConfig,
+                Command.Insert,
+                "NODE_TYPE",
+                null,
+                "needs",
+                null,
+                passSpecifier
+            );
+
+            protoPatchBuilder.Build(urlConfig, Command.Insert, tagList).Returns(protoPatch);
+            needsChecker.CheckNeedsExpression("needs").Returns(true);
+            passSpecifier.CheckNeeds(needsChecker, progress).Returns(true);
+
+            ConfigNode needsCheckedNode = null;
+            needsChecker.CheckNeedsRecursive(Arg.Do<ConfigNode>(node => needsCheckedNode = node), urlConfig);
+
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+        
+            AssertNoErrors();
+
+            Received.InOrder(delegate
+            {
+                tagListParser.Parse("NODE_TYPE", urlConfig);
+                protoPatchBuilder.Build(urlConfig, Command.Insert, tagList);
+                needsChecker.CheckNeedsExpression("needs");
+                passSpecifier.CheckNeeds(needsChecker, progress);
+                needsChecker.CheckNeedsRecursive(needsCheckedNode, urlConfig);
+            });
+
+            patchCompiler.DidNotReceiveWithAnyArgs().CompilePatch(null);
+        
+            Assert.Equal(1, root.AllConfigs.Count());
+            UrlDir.UrlConfig newUrlConfig = root.AllConfigs.First();
+            Assert.NotSame(urlConfig, newUrlConfig);
+            Assert.NotSame(urlConfig.config, newUrlConfig.config);
+            AssertConfigNodesEqual(urlConfig.config, newUrlConfig.config);
+            Assert.Same(needsCheckedNode, newUrlConfig.config);
+
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
+        }
+
+        [Fact]
+        public void TestExtractPatch__Null()
+        {
+            ArgumentNullException ex = Assert.Throws<ArgumentNullException>(delegate
+            {
+                patchExtractor.ExtractPatch(null);
+            });
+
+            Assert.Equal("urlConfig", ex.ParamName);
+        }
+
+        [Fact]
+        public void TestExtractPatch__NotBracketBalanced()
+        {
+            UrlDir.UrlConfig config1 = CreateConfig("@NODE:FOR[");
+            UrlDir.UrlConfig config2 = CreateConfig("NODE:HAS[#foo[]");
+
+            patchExtractor.ExtractPatch(config1);
+            patchExtractor.ExtractPatch(config2);
+        
+            Assert.Empty(root.AllConfigs);
+        
+            progress.DidNotReceiveWithAnyArgs().Exception(null, null);
+            progress.DidNotReceiveWithAnyArgs().Exception(null, null, null);
+        
+            Received.InOrder(delegate
+            {
+                progress.Received().Error(config1, "Error - node name does not have balanced brackets (or a space - if so replace with ?):\nabc/def/@NODE:FOR[");
+                progress.Received().Error(config2, "Error - node name does not have balanced brackets (or a space - if so replace with ?):\nabc/def/NODE:HAS[#foo[]");
+            });
+
+            progress.DidNotReceiveWithAnyArgs().NeedsUnsatisfiedRoot(null);
+        }
+
+        [Fact]
+        public void TestExtractPatch__InvalidCommand__Replace()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("%NODE");
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Error - replace command (%) is not valid on a root node: abc/def/%NODE");
+        }
+
+        [Fact]
+        public void TestExtractPatch__InvalidCommand__Create()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("&NODE");
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Error - create command (&) is not valid on a root node: abc/def/&NODE");
+        }
+
+        [Fact]
+        public void TestExtractPatch__InvalidCommand__Rename()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("|NODE");
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Error - rename command (|) is not valid on a root node: abc/def/|NODE");
+        }
+
+        [Fact]
+        public void TestExtractPatch__InvalidCommand__Paste()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("#NODE");
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Error - paste command (#) is not valid on a root node: abc/def/#NODE");
+        }
+
+        [Fact]
+        public void TestExtractPatch__InvalidCommand__Special()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("*NODE");
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Error - special command (*) is not valid on a root node: abc/def/*NODE");
+        }
+
+        [Fact]
+        public void TestExtractPatch__TagListBadlyFormatted()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("badSomehow");
+            tagListParser.When(t => t.Parse("badSomehow", urlConfig)).Throw(new FormatException("badly formatted"));
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Error(urlConfig, "Cannot parse node name as tag list: badly formatted\non: abc/def/badSomehow");
+        }
+
+        [Fact]
+        public void TestExtractPatch__ProtoPatchFailed()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("NODE");
+            protoPatchBuilder.Build(urlConfig, Command.Insert, Arg.Any<ITagList>()).Returns((ProtoPatch)null);
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            AssertNoErrors();
+
+            Assert.Empty(root.AllConfigs);
+        }
+
+        [Fact]
+        public void TestExtractPatch__Exception()
+        {
+            UrlDir.UrlConfig urlConfig = CreateConfig("NODE");
+            Exception ex = new Exception();
+            tagListParser.When(t => t.Parse("NODE", urlConfig)).Throw(ex);
+            Assert.Null(patchExtractor.ExtractPatch(urlConfig));
+
+            Assert.Empty(root.AllConfigs);
+
+            progress.Received().Exception(urlConfig, "Exception while attempting to create patch from config: abc/def/NODE", ex);
         }
 
         private UrlDir.UrlConfig CreateConfig(string name)
@@ -389,38 +453,22 @@ namespace ModuleManagerTests
                 new ConfigNode("wine"),
                 new ConfigNode("fruit"),
             };
-
+        
             node.id = "hungry?";
-
+        
             return UrlBuilder.CreateConfig(node, file);
         }
 
-        private void AssertUrlCorrect(string expectedNodeName, UrlDir.UrlConfig originalUrl, UrlDir.UrlConfig observedUrl)
+        private void AssertNoErrors()
         {
-            Assert.Equal(expectedNodeName, observedUrl.type);
+            progress.DidNotReceiveWithAnyArgs().Error(null, null);
+            progress.DidNotReceiveWithAnyArgs().Exception(null, null);
+            progress.DidNotReceiveWithAnyArgs().Exception(null, null, null);
+        }
 
-            ConfigNode originalNode = originalUrl.config;
-            ConfigNode observedNode = observedUrl.config;
-
-            Assert.Equal(expectedNodeName, observedNode.name);
-
-            if (originalNode.HasValue("name")) Assert.Equal(originalNode.GetValue("name"), observedUrl.name);
-
-            Assert.Same(originalUrl.parent, observedUrl.parent);
-
-            Assert.Equal(originalNode.id, observedNode.id);
-            Assert.Equal(originalNode.values.Count, observedNode.values.Count);
-            Assert.Equal(originalNode.nodes.Count, observedNode.nodes.Count);
-
-            for (int i = 0; i < originalNode.values.Count; i++)
-            {
-                Assert.Same(originalNode.values[i], observedNode.values[i]);
-            }
-
-            for (int i = 0; i < originalNode.nodes.Count; i++)
-            {
-                Assert.Same(originalNode.nodes[i], observedNode.nodes[i]);
-            }
+        private void AssertConfigNodesEqual(ConfigNode expected, ConfigNode observed)
+        {
+            Assert.Equal(expected.ToString(), observed.ToString());
         }
     }
 }
