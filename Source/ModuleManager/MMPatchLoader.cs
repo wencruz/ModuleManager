@@ -72,7 +72,7 @@ namespace ModuleManager
             Instance = this;
             DontDestroyOnLoad(gameObject);
 
-            logger = new ModLogger("ModuleManager", new UnityLogger(Debug.unityLogger));
+            logger = new ModLogger();
         }
 
         private bool ready;

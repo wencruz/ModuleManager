@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+ using K = KSPe.Util.Log;
 
 namespace ModuleManager.Cats
 {
@@ -98,7 +99,7 @@ namespace ModuleManager.Cats
 
             trail.material = new Material(Shader.Find("Particles/Alpha Blended"));
 
-            Debug.Log("material = " + trail.material);
+            LOG.info("material = {0}", trail.material);
             trail.material.mainTexture = rainbow;
             trail.time = 1.5f;
             trail.startWidth = 0.6f * scale * rainbow.height;
@@ -113,5 +114,7 @@ namespace ModuleManager.Cats
             cat.transform.localScale = 70 * scale * Vector3.one;
             return cat;
         }
-    }
+
+        internal static readonly K.Logger LOG = K.Logger.CreateForType<CatAnimator>(true);
+   }
 }

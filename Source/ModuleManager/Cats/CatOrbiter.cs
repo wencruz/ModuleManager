@@ -85,8 +85,7 @@ namespace ModuleManager.Cats
                 double circularVel = Math.Sqrt(G * (Mass + parent.Mass) / dist.magnitude);
                 if (parent == sun)
                     circularVel *= Random.Range(0.9f, 1.1f);
-                Debug.Log("CatOrbiter " + circularVel.ToString("F3") + " " + Mass.ToString("F2") + " " + orbiters[0].Mass.ToString("F2") + " " +
-                          dist.magnitude.ToString("F2"));
+                CatManager.LOG.info("CatOrbiter {0} {1} {2} {3}", circularVel.ToString("F3"), Mass.ToString("F2"), orbiters[0].Mass.ToString("F2"), dist.magnitude.ToString("F2"));
 
                 Vector3d normal = (Random.value >= 0.3) ? Vector3d.back : Vector3d.forward;
 

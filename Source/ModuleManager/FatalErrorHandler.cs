@@ -29,8 +29,7 @@ namespace ModuleManager
             }
             catch(Exception ex)
             {
-                Debug.LogError("Exception while trying to create the fatal exception dialog");
-                Debug.LogException(ex);
+                Logging.ModLogger.LOG.error(ex, "Exception while trying to create the fatal exception dialog");
                 Application.Quit();
             }
         }
