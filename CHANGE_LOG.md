@@ -2,6 +2,10 @@
 *Lasciate ogne speranza, voi ch'intrate*
 - - -
 
+* 2018-1112: 3.1.1.1 (Lisias) for KSP 1.4; 1.5
+	+ Adding KSPe logging facilities
+	+ Syncing source with upstream latest fixes.  
+		- more Internal code improvement by @blowfish  
 * 2018-1019: 3.1.0.1 (Lisias) for KSP 1.4
 	+  Declaring this thing **EXPERIMENTAL**.
 		- I will properly maintain it, but it still Experimental (and non Standard)
