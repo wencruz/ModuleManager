@@ -464,7 +464,7 @@ namespace ModuleManager
             logger.Info("      SHA = " + configSha);
 
             useCache = false;
-            try
+            if (SHA_CONFIG.IsLoadable) try
             {
                 SHA_CONFIG.Load();
                 logger.Info("ConfigSHA loaded");
