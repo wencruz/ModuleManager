@@ -55,6 +55,8 @@ anything the license permits.
 
 The above is a human-readable summary of (and not a substitute for) the [license](./ModuleManager.LICENSE). Visit the link for the legal code.
 
+Please note the copyrights and trademarks in [NOTICE](./NOTICE)
+
 
 ## UPSTREAM
 
