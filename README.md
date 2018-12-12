@@ -16,6 +16,7 @@ This is Lisias' Experimental fork for Module Mamager.
 * Documentation	
 	+ [Homepage](http://ksp.lisias.net/add-ons/ModuleManager) on L Aerospace KSP Division
 	+ [Project's README](https://github.com/net-lisias-ksp/ModuleManager/blob/master/README.md)
+	+ [Install Instructions](https://github.com/net-lisias-ksp/ModuleManager/blob/master/INSTALL.md)
 	+ [Change Log](./CHANGE_LOG.md)
 	+ [TODO](./TODO.md) list
 * Official Distribution Sites:
