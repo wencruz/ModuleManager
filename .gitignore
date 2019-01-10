@@ -2,6 +2,7 @@
 bin
 obj
 GameData/**/*.LICENSE
+GameData/**/*.NOTICE
 GameData/**/*.README.md
 GameData/**/*.version
 GameData/**/*.dll
