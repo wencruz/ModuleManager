@@ -85,6 +85,8 @@ namespace ModuleManager
 
             yield return null;
 
+#if false
+            // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
             if (File.Exists(logPath))
             {
                 logger.Info("Dumping ModuleManager log to main log");
@@ -94,7 +96,7 @@ namespace ModuleManager
             {
                 logger.Error("ModuleManager log does not exist: " + logPath);
             }
-
+#endif
             yield return null;
 
 #if DEBUG

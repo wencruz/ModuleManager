@@ -11,16 +11,19 @@ namespace ModuleManager.Logging
         private readonly Stream stream;
         private readonly StreamWriter streamWriter;
         private bool disposed = false;
+        private readonly ModLogger modLogger;
 
         public StreamLogger(Stream stream)
         {
             this.stream = stream ?? throw new ArgumentNullException(nameof(stream));
             if (!stream.CanWrite) throw new ArgumentException("must be writable", nameof(stream));
             streamWriter = new StreamWriter(stream);
+            this.modLogger = new ModLogger();
         }
 
         public void Log(LogType logType, string message)
         {
+            this.modLogger.Log(logType, message);
             if (disposed) throw new InvalidOperationException("Object has already been disposed");
 
             string prefix;
