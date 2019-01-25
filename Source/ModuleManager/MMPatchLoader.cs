@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using UnityEngine;
 
 using ModuleManager.Collections;
@@ -28,7 +29,6 @@ namespace ModuleManager
     public class MMPatchLoader
     {
         private const string PHYSICS_NODE_NAME = "PHYSICSGLOBALS";
-        private const string TECH_TREE_NODE_NAME = "TechTree";
 
         public string status = "";
 
@@ -102,8 +102,8 @@ namespace ModuleManager
                 IEnumerable<string> mods = ModListGenerator.GenerateModList(progress, patchLogger);
 
                 // If we don't use the cache then it is best to clean the PartDatabase.cfg
-                if (!keepPartDB && File.Exists(partDatabasePath))
-                    File.Delete(partDatabasePath);
+                if (!keepPartDB && PART_DATABASE.IsLoadable)
+                    File.Delete(PART_DATABASE.Path);
 
                 LoadPhysicsConfig();
 
@@ -176,10 +176,8 @@ namespace ModuleManager
                     patchLogger.Warning("Errors in patch prevents the creation of the cache");
                     try
                     {
-                        if (File.Exists(cachePath))
-                            File.Delete(cachePath);
-                        if (File.Exists(shaPath))
-                            File.Delete(shaPath);
+                        CACHE_CONFIG.Destroy();
+                        SHA_CONFIG.Destroy();
                     }
                     catch (Exception e)
                     {
@@ -243,12 +241,11 @@ namespace ModuleManager
             logger.Info("Loading Physics.cfg");
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
+            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_DEFAULT.Path));
             // Since it loaded the default config badly (sub node only) we clear it first
             physicsUrlFile.configs.Clear();
             // And reload it properly
-            ConfigNode physicsContent = ConfigNode.Load(defaultPhysicsPath);
-            physicsContent.name = PHYSICS_NODE_NAME;
+            ConfigNode physicsContent = ConfigNode.Load(PHYSICS_DEFAULT.Path);
             physicsUrlFile.AddConfig(physicsContent);
             gameDataDir.files.Add(physicsUrlFile);
         }
@@ -269,7 +266,7 @@ namespace ModuleManager
                 logger.Info($"{count} {PHYSICS_NODE_NAME} nodes found. A patch may be wrong. Using the first one");
             }
 
-            configs.First().Node.Save(physicsPath);
+            PHYSICS_CONFIG.Save(configs.First().Node);
         }
 
         private bool IsCacheUpToDate()
@@ -325,9 +322,9 @@ namespace ModuleManager
             logger.Info("      SHA = " + configSha);
 
             bool useCache = false;
-            if (File.Exists(shaPath))
+            if (SHA_CONFIG.IsLoadable)
             {
-                ConfigNode shaConfigNode = ConfigNode.Load(shaPath);
+                ConfigNode shaConfigNode = SHA_CONFIG.Node;
                 if (shaConfigNode != null && shaConfigNode.HasValue("SHA") && shaConfigNode.HasValue("version") && shaConfigNode.HasValue("KSPVersion"))
                 {
                     string storedSHA = shaConfigNode.GetValue("SHA");
@@ -338,9 +335,9 @@ namespace ModuleManager
                     useCache = useCache && storedSHA.Equals(configSha);
                     useCache = useCache && version.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString());
                     useCache = useCache && kspVersion.Equals(Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-                    useCache = useCache && File.Exists(cachePath);
-                    useCache = useCache && File.Exists(physicsPath);
-                    useCache = useCache && File.Exists(techTreePath);
+                    useCache = useCache && CACHE_CONFIG.IsLoadable;
+                    useCache = useCache && PHYSICS_CONFIG.IsLoadable;
+                    useCache = useCache && TECHTREE_CONFIG.IsLoadable;
                     logger.Info("Cache SHA = " + storedSHA);
                     logger.Info("useCache = " + useCache);
                 }
@@ -437,7 +434,7 @@ namespace ModuleManager
 
             try
             {
-                shaConfigNode.Save(shaPath);
+                SHA_CONFIG.Save(shaConfigNode);
             }
             catch (Exception e)
             {
@@ -445,7 +442,7 @@ namespace ModuleManager
             }
             try
             {
-                cache.Save(cachePath);
+                CACHE_CONFIG.Save(cache);
                 return;
             }
             catch (NullReferenceException e)
@@ -460,10 +457,8 @@ namespace ModuleManager
             try
             {
                 logger.Error("An error occured while creating the cache. Deleting the cache files to avoid keeping a bad cache");
-                if (File.Exists(cachePath))
-                    File.Delete(cachePath);
-                if (File.Exists(shaPath))
-                    File.Delete(shaPath);
+                CACHE_CONFIG.Destroy();
+                SHA_CONFIG.Destroy();
             }
             catch (Exception e)
             {
@@ -473,28 +468,28 @@ namespace ModuleManager
 
         private void SaveModdedTechTree(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
-            IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == TECH_TREE_NODE_NAME);
+            IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == TECHTREE_CONFIG.Node.name);
             int count = configs.Count(); // FIXME: Why didn't he used .Any()?
 
             if (count == 0)
             {
-                logger.Info($"No {TECH_TREE_NODE_NAME} node found. No custom {TECH_TREE_NODE_NAME} will be saved");
+                logger.Info($"No {TECHTREE_CONFIG.Node.name} node found. No custom {TECHTREE_CONFIG.Node.name} will be saved");
                 return;
             }
 
             if (count > 1)
             {
-                logger.Info($"{count} {TECH_TREE_NODE_NAME} nodes found. A patch may be wrong. Using the first one");
+                logger.Info($"{count} {TECHTREE_CONFIG.Node.name} nodes found. A patch may be wrong. Using the first one");
             }
 
-            ConfigNode techNode = new ConfigNode(TECH_TREE_NODE_NAME);
+            ConfigNode techNode = new ConfigNode(TECHTREE_CONFIG.Node.name);
             techNode.AddNode(configs.First().Node);
-            techNode.Save(techTreePath);
+            TECHTREE_CONFIG.Save(techNode);
         }
 
         private IEnumerable<IProtoUrlConfig> LoadCache()
         {
-            ConfigNode cache = ConfigNode.Load(cachePath);
+            ConfigNode cache = CACHE_CONFIG.Load().Node;
 
             if (cache.HasValue("patchedNodeCount") && int.TryParse(cache.GetValue("patchedNodeCount"), out int patchedNodeCount))
                 status = "ModuleManager: " + patchedNodeCount + " patch" + (patchedNodeCount != 1 ? "es" : "") +  " loaded from cache";
@@ -502,7 +497,7 @@ namespace ModuleManager
             // Create the fake file where we load the physic config cache
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
+            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_CONFIG.KspPath));
             gameDataDir.files.Add(physicsUrlFile);
 
             List<IProtoUrlConfig> databaseConfigs = new List<IProtoUrlConfig>(cache.nodes.Count);

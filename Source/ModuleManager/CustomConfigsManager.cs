@@ -11,17 +11,17 @@ namespace ModuleManager
     {
         internal void Start()
         {
-            if (HighLogic.CurrentGame.Parameters.Career.TechTreeUrl != techTreeFile && File.Exists(techTreePath))
+            if (HighLogic.CurrentGame.Parameters.Career.TechTreeUrl != TECHTREE_CONFIG.Path && TECHTREE_CONFIG.IsLoadable)
             {
                 Log("Setting modded tech tree as the active one");
-                HighLogic.CurrentGame.Parameters.Career.TechTreeUrl = techTreeFile;
+                HighLogic.CurrentGame.Parameters.Career.TechTreeUrl = TECHTREE_CONFIG.Path;
             }
 
-            if (PhysicsGlobals.PhysicsDatabaseFilename != physicsFile && File.Exists(physicsPath))
+            if (PhysicsGlobals.PhysicsDatabaseFilename != PHYSICS_CONFIG.Path && PHYSICS_CONFIG.IsLoadable)
             {
                 Log("Setting modded physics as the active one");
 
-                PhysicsGlobals.PhysicsDatabaseFilename = physicsFile;
+                PhysicsGlobals.PhysicsDatabaseFilename = PHYSICS_CONFIG.Path;
 
                 if (!PhysicsGlobals.Instance.LoadDatabase())
                     Log("Something went wrong while setting the active physics config.");
