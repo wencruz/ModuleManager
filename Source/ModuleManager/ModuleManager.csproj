@@ -108,6 +108,7 @@
     <Compile Include="Properties\Version.cs">
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
+    <Compile Include="Patches\PassSpecifiers\LastPassSpecifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

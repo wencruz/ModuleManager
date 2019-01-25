@@ -9,7 +9,6 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 using ModuleManager.Collections;
 using ModuleManager.Logging;
