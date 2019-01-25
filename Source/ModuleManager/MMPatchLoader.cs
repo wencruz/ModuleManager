@@ -256,7 +256,7 @@ namespace ModuleManager
         private void SaveModdedPhysics(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
             IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == PHYSICS_NODE_NAME);
-            int count = configs.Count();
+            int count = configs.Count(); // FIXME: Why didn't he used .Any()?
 
             if (count == 0)
             {
@@ -474,7 +474,7 @@ namespace ModuleManager
         private void SaveModdedTechTree(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
             IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == TECH_TREE_NODE_NAME);
-            int count = configs.Count();
+            int count = configs.Count(); // FIXME: Why didn't he used .Any()?
 
             if (count == 0)
             {
