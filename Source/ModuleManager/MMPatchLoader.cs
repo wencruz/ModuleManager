@@ -245,7 +245,8 @@ namespace ModuleManager
             // Since it loaded the default config badly (sub node only) we clear it first
             physicsUrlFile.configs.Clear();
             // And reload it properly
-            ConfigNode physicsContent = ConfigNode.Load(PHYSICS_DEFAULT.Path);
+            ConfigNode physicsContent = ConfigNode.Load(PHYSICS_DEFAULT.Path); 
+            physicsContent.name = PHYSICS_NODE_NAME;
             physicsUrlFile.AddConfig(physicsContent);
             gameDataDir.files.Add(physicsUrlFile);
         }
@@ -324,13 +325,14 @@ namespace ModuleManager
             bool useCache = false;
             if (SHA_CONFIG.IsLoadable)
             {
-                ConfigNode shaConfigNode = SHA_CONFIG.Node;
-                if (shaConfigNode != null && shaConfigNode.HasValue("SHA") && shaConfigNode.HasValue("version") && shaConfigNode.HasValue("KSPVersion"))
+                SHA_CONFIG.Load();
+                logger.Info("ConfigSHA loaded");
+                if (SHA_CONFIG.Node != null && SHA_CONFIG.Node.HasValue("SHA") && SHA_CONFIG.Node.HasValue("version") && SHA_CONFIG.Node.HasValue("KSPVersion"))
                 {
-                    string storedSHA = shaConfigNode.GetValue("SHA");
-                    string version = shaConfigNode.GetValue("version");
-                    string kspVersion = shaConfigNode.GetValue("KSPVersion");
-                    ConfigNode filesShaNode = shaConfigNode.GetNode("FilesSHA");
+                    string storedSHA = SHA_CONFIG.Node.GetValue("SHA");
+                    string version = SHA_CONFIG.Node.GetValue("version");
+                    string kspVersion = SHA_CONFIG.Node.GetValue("KSPVersion");
+                    ConfigNode filesShaNode = SHA_CONFIG.Node.GetNode("FilesSHA");
                     useCache = CheckFilesChange(files, filesShaNode);
                     useCache = useCache && storedSHA.Equals(configSha);
                     useCache = useCache && version.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString());
@@ -483,7 +485,7 @@ namespace ModuleManager
             }
 
             ConfigNode techNode = new ConfigNode(TECHTREE_CONFIG.Node.name);
-            techNode.AddNode(configs.First().Node);
+            techNode.AddData(configs.First().Node);
             TECHTREE_CONFIG.Save(techNode);
         }
 
