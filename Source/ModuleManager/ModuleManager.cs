@@ -121,7 +121,7 @@ namespace ModuleManager
                 Log(string.Format("Adding post patch to the loading screen {0}", list.Count));
                 list.Insert(gameDatabaseIndex + 1, aGameObject.AddComponent<PostPatchLoader>());
 
-                patchRunner = new MMPatchRunner(new ModLogger("ModuleManager", new UnityLogger(Debug.unityLogger)));
+                patchRunner = new MMPatchRunner(new ModLogger());
                 StartCoroutine(patchRunner.Run());
 
                 // Workaround for 1.6.0 Editor bug after a PartDatabase rebuild.
@@ -324,7 +324,7 @@ namespace ModuleManager
 
             yield return null;
 
-            patchRunner = new MMPatchRunner(new ModLogger("ModuleManager", new UnityLogger(Debug.unityLogger)));
+            patchRunner = new MMPatchRunner(new ModLogger());
             StartCoroutine(patchRunner.Run());
 
             // wait for it to finish
