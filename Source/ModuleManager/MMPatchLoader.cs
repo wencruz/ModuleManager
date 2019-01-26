@@ -350,9 +350,6 @@ namespace ModuleManager
         private bool CheckFilesChange(UrlDir.UrlFile[] files, ConfigNode shaConfigNode)
         {
             bool noChange = true;
-            StringBuilder changes = new StringBuilder();
-
-            changes.Append("Changes :\n");
 
             for (int i = 0; i < files.Length; i++)
             {
@@ -364,28 +361,29 @@ namespace ModuleManager
 
                 if (fileSha == null || filesSha[files[i].url] != fileSha)
                 {
-                    changes.Append("Changed : " + fileNode.GetValue("filename") + ".cfg\n");
+                    logger.Info("Changed : " + fileNode.GetValue("filename") + ".cfg\n");
                     noChange = false;
                 }
             }
+            
             for (int i = 0; i < files.Length; i++)
             {
                 ConfigNode fileNode = GetFileNode(shaConfigNode, files[i].url);
 
                 if (fileNode == null)
                 {
-                    changes.Append("Added   : " + files[i].url + ".cfg\n");
+                    logger.Info("Added   : " + files[i].url + ".cfg\n");
                     noChange = false;
                 }
                 shaConfigNode.RemoveNode(fileNode);
             }
+            
             foreach (ConfigNode fileNode in shaConfigNode.GetNodes())
             {
-                changes.Append("Deleted : " + fileNode.GetValue("filename") + ".cfg\n");
+                logger.Info("Deleted : " + fileNode.GetValue("filename") + ".cfg\n");
                 noChange = false;
             }
-            if (!noChange)
-                logger.Info(changes.ToString());
+            
             return noChange;
         }
 
