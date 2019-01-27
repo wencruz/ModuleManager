@@ -178,7 +178,7 @@ namespace ModuleManager
                     }
                     catch (Exception e)
                     {
-                        logger.Exception("Exception while calling " + obj.GetType().Name + "." + method.Name + "() :\n", e);
+                        logger.Exception("Exception while calling " + obj.GetType().Name + "." + method.Name + "() :", e);
                     }
                 }
             }

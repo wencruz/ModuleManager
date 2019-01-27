@@ -169,8 +169,9 @@ namespace ModuleManager
                 {
                     foreach (KeyValuePair<string, int> item in progress.Counter.errorFiles)
                     {
-                        errors += item.Value + " error" + (item.Value > 1 ? "s" : "") + " related to GameData/" + item.Key
-                                  + "\n";
+                        string msg = item.Value + " error" + (item.Value > 1 ? "s" : "") + " related to GameData/" + item.Key;
+                        logger.Error(msg);
+                        errors += msg + "\n";
                     }
 
                     patchLogger.Warning("Errors in patch prevents the creation of the cache");
@@ -217,6 +218,8 @@ namespace ModuleManager
                 logger.Info(status);
                 databaseConfigs = LoadCache();
 
+#if false
+                // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
                 if (File.Exists(patchLogPath))
                 {
                     logger.Info("Dumping patch log");
@@ -226,9 +229,10 @@ namespace ModuleManager
                 {
                     logger.Error("Patch log does not exist: " + patchLogPath);
                 }
+#endif
             }
 
-            logger.Info(status + "\n" + errors);
+            logger.Info(status);
 
             patchSw.Stop();
             logger.Info("Ran in " + ((float)patchSw.ElapsedMilliseconds / 1000).ToString("F3") + "s");
@@ -320,7 +324,7 @@ namespace ModuleManager
             sw.Stop();
 
             logger.Info("SHA generated in " + ((float)sw.ElapsedMilliseconds / 1000).ToString("F3") + "s");
-            logger.Info("      SHA = " + configSha);
+            logger.Info("SHA = " + configSha);
 
             bool useCache = false;
             if (SHA_CONFIG.IsLoadable)
@@ -361,7 +365,7 @@ namespace ModuleManager
 
                 if (fileSha == null || filesSha[files[i].url] != fileSha)
                 {
-                    logger.Info("Changed : " + fileNode.GetValue("filename") + ".cfg\n");
+                    logger.Info("Changed : " + fileNode.GetValue("filename") + ".cfg");
                     noChange = false;
                 }
             }
@@ -372,7 +376,7 @@ namespace ModuleManager
 
                 if (fileNode == null)
                 {
-                    logger.Info("Added   : " + files[i].url + ".cfg\n");
+                    logger.Info("Added   : " + files[i].url + ".cfg");
                     noChange = false;
                 }
                 shaConfigNode.RemoveNode(fileNode);
@@ -380,7 +384,7 @@ namespace ModuleManager
             
             foreach (ConfigNode fileNode in shaConfigNode.GetNodes())
             {
-                logger.Info("Deleted : " + fileNode.GetValue("filename") + ".cfg\n");
+                logger.Info("Deleted : " + fileNode.GetValue("filename") + ".cfg");
                 noChange = false;
             }
             

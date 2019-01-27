@@ -7,6 +7,7 @@ namespace ModuleManager
     {
         public static void HandleFatalError(string message)
         {
+            Logging.ModLogger.LOG.error(message);
             try
             {
                 PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f),
