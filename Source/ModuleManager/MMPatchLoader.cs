@@ -8,8 +8,8 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-
 using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 using ModuleManager.Collections;
 using ModuleManager.Logging;
@@ -29,6 +29,7 @@ namespace ModuleManager
     public class MMPatchLoader
     {
         private const string PHYSICS_NODE_NAME = "PHYSICSGLOBALS";
+        private const string TECH_TREE_NODE_NAME = "TechTree";
 
         public string status = "";
 
@@ -45,15 +46,17 @@ namespace ModuleManager
 
         private const float TIME_TO_WAIT_FOR_LOGS = 0.05f;
 
-        private IBasicLogger logger;
+        private readonly IEnumerable<ModListGenerator.ModAddedByAssembly> modsAddedByAssemblies;
+        private readonly IBasicLogger logger;
 
         public static void AddPostPatchCallback(ModuleManagerPostPatchCallback callback)
         {
             PostPatchLoader.AddPostPatchCallback(callback);
         }
 
-        public MMPatchLoader(IBasicLogger logger)
+        public MMPatchLoader(IEnumerable<ModListGenerator.ModAddedByAssembly> modsAddedByAssemblies, IBasicLogger logger)
         {
+            this.modsAddedByAssemblies = modsAddedByAssemblies ?? throw new ArgumentNullException(nameof(modsAddedByAssemblies));
             this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
@@ -99,11 +102,11 @@ namespace ModuleManager
                 IPatchProgress progress = new PatchProgress(patchLogger);
                 status = "Pre patch init";
                 patchLogger.Info(status);
-                IEnumerable<string> mods = ModListGenerator.GenerateModList(progress, patchLogger);
+                IEnumerable<string> mods = ModListGenerator.GenerateModList(modsAddedByAssemblies, progress, patchLogger);
 
                 // If we don't use the cache then it is best to clean the PartDatabase.cfg
-                if (!keepPartDB && PART_DATABASE.IsLoadable)
-                    File.Delete(PART_DATABASE.Path);
+                if (!keepPartDB && File.Exists(partDatabasePath))
+                    File.Delete(partDatabasePath);
 
                 LoadPhysicsConfig();
 
@@ -169,16 +172,17 @@ namespace ModuleManager
                 {
                     foreach (KeyValuePair<string, int> item in progress.Counter.errorFiles)
                     {
-                        string msg = item.Value + " error" + (item.Value > 1 ? "s" : "") + " related to GameData/" + item.Key;
-                        logger.Error(msg);
-                        errors += msg + "\n";
+                        errors += item.Value + " error" + (item.Value > 1 ? "s" : "") + " related to GameData/" + item.Key
+                                  + "\n";
                     }
 
                     patchLogger.Warning("Errors in patch prevents the creation of the cache");
                     try
                     {
-                        CACHE_CONFIG.Destroy();
-                        SHA_CONFIG.Destroy();
+                        if (File.Exists(cachePath))
+                            File.Delete(cachePath);
+                        if (File.Exists(shaPath))
+                            File.Delete(shaPath);
                     }
                     catch (Exception e)
                     {
@@ -218,8 +222,6 @@ namespace ModuleManager
                 logger.Info(status);
                 databaseConfigs = LoadCache();
 
-#if false
-                // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
                 if (File.Exists(patchLogPath))
                 {
                     logger.Info("Dumping patch log");
@@ -229,10 +231,9 @@ namespace ModuleManager
                 {
                     logger.Error("Patch log does not exist: " + patchLogPath);
                 }
-#endif
             }
 
-            logger.Info(status);
+            logger.Info(status + "\n" + errors);
 
             patchSw.Stop();
             logger.Info("Ran in " + ((float)patchSw.ElapsedMilliseconds / 1000).ToString("F3") + "s");
@@ -245,11 +246,11 @@ namespace ModuleManager
             logger.Info("Loading Physics.cfg");
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_DEFAULT.Path));
+            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
             // Since it loaded the default config badly (sub node only) we clear it first
             physicsUrlFile.configs.Clear();
             // And reload it properly
-            ConfigNode physicsContent = ConfigNode.Load(PHYSICS_DEFAULT.Path); 
+            ConfigNode physicsContent = ConfigNode.Load(defaultPhysicsPath);
             physicsContent.name = PHYSICS_NODE_NAME;
             physicsUrlFile.AddConfig(physicsContent);
             gameDataDir.files.Add(physicsUrlFile);
@@ -258,7 +259,7 @@ namespace ModuleManager
         private void SaveModdedPhysics(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
             IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == PHYSICS_NODE_NAME);
-            int count = configs.Count(); // FIXME: Why didn't he used .Any()?
+            int count = configs.Count();
 
             if (count == 0)
             {
@@ -271,7 +272,7 @@ namespace ModuleManager
                 logger.Info($"{count} {PHYSICS_NODE_NAME} nodes found. A patch may be wrong. Using the first one");
             }
 
-            PHYSICS_CONFIG.Save(configs.First().Node);
+            configs.First().Node.Save(physicsPath);
         }
 
         private bool IsCacheUpToDate()
@@ -314,7 +315,13 @@ namespace ModuleManager
                 sha.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
             }
 
-            byte[] godsFinalMessageToHisCreation = Encoding.UTF8.GetBytes("Unofficial fork by Lisias.");
+            foreach (ModListGenerator.ModAddedByAssembly mod in modsAddedByAssemblies)
+            {
+                byte[] modBytes = Encoding.UTF8.GetBytes(mod.modName);
+                sha.TransformBlock(modBytes, 0, modBytes.Length, modBytes, 0);
+            }
+
+            byte[] godsFinalMessageToHisCreation = Encoding.UTF8.GetBytes("We apologize for the inconvenience.");
             sha.TransformFinalBlock(godsFinalMessageToHisCreation, 0, godsFinalMessageToHisCreation.Length);
 
             configSha = BitConverter.ToString(sha.Hash);
@@ -327,23 +334,22 @@ namespace ModuleManager
             logger.Info("SHA = " + configSha);
 
             bool useCache = false;
-            if (SHA_CONFIG.IsLoadable)
+            if (File.Exists(shaPath))
             {
-                SHA_CONFIG.Load();
-                logger.Info("ConfigSHA loaded");
-                if (SHA_CONFIG.Node != null && SHA_CONFIG.Node.HasValue("SHA") && SHA_CONFIG.Node.HasValue("version") && SHA_CONFIG.Node.HasValue("KSPVersion"))
+                ConfigNode shaConfigNode = ConfigNode.Load(shaPath);
+                if (shaConfigNode != null && shaConfigNode.HasValue("SHA") && shaConfigNode.HasValue("version") && shaConfigNode.HasValue("KSPVersion"))
                 {
-                    string storedSHA = SHA_CONFIG.Node.GetValue("SHA");
-                    string version = SHA_CONFIG.Node.GetValue("version");
-                    string kspVersion = SHA_CONFIG.Node.GetValue("KSPVersion");
-                    ConfigNode filesShaNode = SHA_CONFIG.Node.GetNode("FilesSHA");
+                    string storedSHA = shaConfigNode.GetValue("SHA");
+                    string version = shaConfigNode.GetValue("version");
+                    string kspVersion = shaConfigNode.GetValue("KSPVersion");
+                    ConfigNode filesShaNode = shaConfigNode.GetNode("FilesSHA");
                     useCache = CheckFilesChange(files, filesShaNode);
                     useCache = useCache && storedSHA.Equals(configSha);
                     useCache = useCache && version.Equals(Assembly.GetExecutingAssembly().GetName().Version.ToString());
                     useCache = useCache && kspVersion.Equals(Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-                    useCache = useCache && CACHE_CONFIG.IsLoadable;
-                    useCache = useCache && PHYSICS_CONFIG.IsLoadable;
-                    useCache = useCache && TECHTREE_CONFIG.IsLoadable;
+                    useCache = useCache && File.Exists(cachePath);
+                    useCache = useCache && File.Exists(physicsPath);
+                    useCache = useCache && File.Exists(techTreePath);
                     logger.Info("Cache SHA = " + storedSHA);
                     logger.Info("useCache = " + useCache);
                 }
@@ -354,6 +360,9 @@ namespace ModuleManager
         private bool CheckFilesChange(UrlDir.UrlFile[] files, ConfigNode shaConfigNode)
         {
             bool noChange = true;
+            StringBuilder changes = new StringBuilder();
+
+            changes.Append("Changes :\n");
 
             for (int i = 0; i < files.Length; i++)
             {
@@ -365,29 +374,28 @@ namespace ModuleManager
 
                 if (fileSha == null || filesSha[files[i].url] != fileSha)
                 {
-                    logger.Info("Changed : " + fileNode.GetValue("filename") + ".cfg");
+                    changes.Append("Changed : " + fileNode.GetValue("filename") + ".cfg\n");
                     noChange = false;
                 }
             }
-            
             for (int i = 0; i < files.Length; i++)
             {
                 ConfigNode fileNode = GetFileNode(shaConfigNode, files[i].url);
 
                 if (fileNode == null)
                 {
-                    logger.Info("Added   : " + files[i].url + ".cfg");
+                    changes.Append("Added   : " + files[i].url + ".cfg\n");
                     noChange = false;
                 }
                 shaConfigNode.RemoveNode(fileNode);
             }
-            
             foreach (ConfigNode fileNode in shaConfigNode.GetNodes())
             {
-                logger.Info("Deleted : " + fileNode.GetValue("filename") + ".cfg");
+                changes.Append("Deleted : " + fileNode.GetValue("filename") + ".cfg\n");
                 noChange = false;
             }
-            
+            if (!noChange)
+                logger.Info(changes.ToString());
             return noChange;
         }
 
@@ -405,18 +413,19 @@ namespace ModuleManager
 
         private void CreateCache(IEnumerable<IProtoUrlConfig> databaseConfigs, int patchedNodeCount)
         {
-            SHA_CONFIG.Clear();
-            SHA_CONFIG.Node.AddValue("SHA", configSha);
-            SHA_CONFIG.Node.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-            SHA_CONFIG.Node.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
-            ConfigNode filesSHANode = SHA_CONFIG.Node.AddNode("FilesSHA");
+            ConfigNode shaConfigNode = new ConfigNode();
+            shaConfigNode.AddValue("SHA", configSha);
+            shaConfigNode.AddValue("version", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+            shaConfigNode.AddValue("KSPVersion", Versioning.version_major + "." + Versioning.version_minor + "." + Versioning.Revision + "." + Versioning.BuildID);
+            ConfigNode filesSHANode = shaConfigNode.AddNode("FilesSHA");
 
-            CACHE_CONFIG.Clear();
-            CACHE_CONFIG.Node.AddValue("patchedNodeCount", patchedNodeCount.ToString());
+            ConfigNode cache = new ConfigNode();
+
+            cache.AddValue("patchedNodeCount", patchedNodeCount.ToString());
 
             foreach (IProtoUrlConfig urlConfig in databaseConfigs)
             {
-                ConfigNode node = CACHE_CONFIG.Node.AddNode("UrlConfig");
+                ConfigNode node = cache.AddNode("UrlConfig");
                 node.AddValue("parentUrl", urlConfig.UrlFile.url);
                 node.AddNode(urlConfig.Node);
             }
@@ -437,7 +446,7 @@ namespace ModuleManager
 
             try
             {
-                SHA_CONFIG.Save();
+                shaConfigNode.Save(shaPath);
             }
             catch (Exception e)
             {
@@ -445,7 +454,7 @@ namespace ModuleManager
             }
             try
             {
-                CACHE_CONFIG.Save();
+                cache.Save(cachePath);
                 return;
             }
             catch (NullReferenceException e)
@@ -460,8 +469,10 @@ namespace ModuleManager
             try
             {
                 logger.Error("An error occured while creating the cache. Deleting the cache files to avoid keeping a bad cache");
-                CACHE_CONFIG.Destroy();
-                SHA_CONFIG.Destroy();
+                if (File.Exists(cachePath))
+                    File.Delete(cachePath);
+                if (File.Exists(shaPath))
+                    File.Delete(shaPath);
             }
             catch (Exception e)
             {
@@ -471,28 +482,28 @@ namespace ModuleManager
 
         private void SaveModdedTechTree(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
-            IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == TECHTREE_CONFIG.Node.name);
-            int count = configs.Count(); // FIXME: Why didn't he used .Any()?
+            IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == TECH_TREE_NODE_NAME);
+            int count = configs.Count();
 
             if (count == 0)
             {
-                logger.Info($"No {TECHTREE_CONFIG.Node.name} node found. No custom {TECHTREE_CONFIG.Node.name} will be saved");
+                logger.Info($"No {TECH_TREE_NODE_NAME} node found. No custom {TECH_TREE_NODE_NAME} will be saved");
                 return;
             }
 
             if (count > 1)
             {
-                logger.Info($"{count} {TECHTREE_CONFIG.Node.name} nodes found. A patch may be wrong. Using the first one");
+                logger.Info($"{count} {TECH_TREE_NODE_NAME} nodes found. A patch may be wrong. Using the first one");
             }
 
-            TECHTREE_CONFIG.Clear();
-            TECHTREE_CONFIG.Node.AddData(configs.First().Node);
-            TECHTREE_CONFIG.Save();
+            ConfigNode techNode = new ConfigNode(TECH_TREE_NODE_NAME);
+            techNode.AddNode(configs.First().Node);
+            techNode.Save(techTreePath);
         }
 
         private IEnumerable<IProtoUrlConfig> LoadCache()
         {
-            ConfigNode cache = CACHE_CONFIG.Load().Node;
+            ConfigNode cache = ConfigNode.Load(cachePath);
 
             if (cache.HasValue("patchedNodeCount") && int.TryParse(cache.GetValue("patchedNodeCount"), out int patchedNodeCount))
                 status = "ModuleManager: " + patchedNodeCount + " patch" + (patchedNodeCount != 1 ? "es" : "") +  " loaded from cache";
@@ -500,7 +511,7 @@ namespace ModuleManager
             // Create the fake file where we load the physic config cache
             UrlDir gameDataDir = GameDatabase.Instance.root.AllDirectories.First(d => d.path.EndsWith("GameData") && d.name == "" && d.url == "");
             // need to use a file with a cfg extension to get the right fileType or you can't AddConfig on it
-            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(PHYSICS_CONFIG.KspPath));
+            UrlDir.UrlFile physicsUrlFile = new UrlDir.UrlFile(gameDataDir, new FileInfo(defaultPhysicsPath));
             gameDataDir.files.Add(physicsUrlFile);
 
             List<IProtoUrlConfig> databaseConfigs = new List<IProtoUrlConfig>(cache.nodes.Count);
