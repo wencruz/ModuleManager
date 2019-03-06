@@ -234,7 +234,7 @@ namespace ModuleManagerTests.Tags
         {
             ITagList tagList = tagListParser.Parse("abc:def::ghi", urlConfig);
 
-            progress.Received().Warning(urlConfig, "extra : detected");
+            progress.Received().Warning(urlConfig, "extra : detected at {0}".format(urlConfig.SafeUrl()));
 
             Assert.Equal(new Tag("abc", null, null), tagList.PrimaryTag);
             Assert.Equal(new[] {

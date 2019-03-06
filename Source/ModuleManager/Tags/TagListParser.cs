@@ -106,7 +106,7 @@ namespace ModuleManager.Tags
                 else if (c == ':')
                 {
                     if (i == start)
-                        progress.Warning(urlConfig, "extra : detected");
+                        progress.Warning(urlConfig, String.Format("extra : detected at {0}", urlConfig.SafeUrl()));
                     else
                         tags.Add(new Tag(toParse.Substring(start, i - start), null, null));
 
