@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ModuleManager.Progress;
+using ModuleManager.Extensions;
 
 namespace ModuleManager.Tags
 {
