@@ -25,7 +25,7 @@ namespace ModuleManager
 {
     [SuppressMessage("ReSharper", "StringLastIndexOfIsCultureSpecific.1")]
     [SuppressMessage("ReSharper", "StringIndexOfIsCultureSpecific.1")]
-    public class MMPatchLoader
+    public class MMPatchLoader : LoadingSystem
     {
         private const string PHYSICS_NODE_NAME = "PHYSICSGLOBALS";
 
