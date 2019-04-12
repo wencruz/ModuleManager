@@ -1,6 +1,6 @@
 # Module Manager Handbook
 
-This section covers the most basic applications of Module Manager, which tend to be the most asked questions in the [Module Manager Official Thread](http://forum.kerbalspaceprogram.com/threads/55219). It goes through the main operations in a quick and simple way.
+This section covers the most basic applications of Module Manager, which tend to be the most asked questions in the [Module Manager Official Thread](https://forum.kerbalspaceprogram.com/index.php?/topic/50533-140-16x-module-manager-402-february-3rd-2019-right-to-ludicrous-speed/). It goes through the main operations in a quick and simple way.
 For a more detailed description, see [Module Manager Syntax](https://github.com/sarbian/ModuleManager/wiki/Module%20Manager%20Syntax).
 
 Keep in mind the following nomenclatures:
