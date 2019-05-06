@@ -8,6 +8,7 @@ using System.Reflection;
 using TMPro;
 using UnityEngine;
 using ModuleManager.Cats;
+using ModuleManager.Extensions;
 using ModuleManager.Logging;
 
 namespace ModuleManager
@@ -409,8 +410,8 @@ namespace ModuleManager
                                 Directory.CreateDirectory(dirPath);
                             }
 
-                            Log("Exporting " + currentPath + urlFile.name + "." + urlFile.fileExtension);
-                            string filePath = dirPath + urlFile.name + "." + urlFile.fileExtension;
+                            Log("Exporting " + currentPath + urlFile.GetUrlWithExtension());
+                            string filePath = dirPath + urlFile.GetUrlWithExtension();
                             foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
                             {
                                 try

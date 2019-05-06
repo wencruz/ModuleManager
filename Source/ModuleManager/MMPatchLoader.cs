@@ -291,8 +291,9 @@ namespace ModuleManager
 
             for (int i = 0; i < files.Length; i++)
             {
+                string url = files[i].GetUrlWithExtension();
                 // Hash the file path so the checksum change if files are moved
-                byte[] pathBytes = Encoding.UTF8.GetBytes(files[i].url);
+                byte[] pathBytes = Encoding.UTF8.GetBytes(url);
                 sha.TransformBlock(pathBytes, 0, pathBytes.Length, pathBytes, 0);
 
                 // hash the file content
@@ -300,13 +301,13 @@ namespace ModuleManager
                 sha.TransformBlock(contentBytes, 0, contentBytes.Length, contentBytes, 0);
 
                 filesha.ComputeHash(contentBytes);
-                if (!filesSha.ContainsKey(files[i].url))
+                if (!filesSha.ContainsKey(url))
                 {
-                    filesSha.Add(files[i].url, BitConverter.ToString(filesha.Hash));
+                    filesSha.Add(url, BitConverter.ToString(filesha.Hash));
                 }
                 else
                 {
-                    logger.Warning("Duplicate fileSha key. This should not append. The key is " + files[i].url);
+                    logger.Warning("Duplicate fileSha key. This should not append. The key is " + url);
                 }
             }
 
@@ -367,13 +368,14 @@ namespace ModuleManager
 
             for (int i = 0; i < files.Length; i++)
             {
-                ConfigNode fileNode = GetFileNode(shaConfigNode, files[i].url);
+                string url = files[i].GetUrlWithExtension();
+                ConfigNode fileNode = GetFileNode(shaConfigNode, url);
                 string fileSha = fileNode?.GetValue("SHA");
 
                 if (fileNode == null)
                     continue;
 
-                if (fileSha == null || filesSha[files[i].url] != fileSha)
+                if (fileSha == null || filesSha[url] != fileSha)
                 {
                     logger.Info("Changed : " + fileNode.GetValue("filename") + ".cfg");
                     noChange = false;
@@ -382,7 +384,8 @@ namespace ModuleManager
             
             for (int i = 0; i < files.Length; i++)
             {
-                ConfigNode fileNode = GetFileNode(shaConfigNode, files[i].url);
+                string url = files[i].GetUrlWithExtension();
+                ConfigNode fileNode = GetFileNode(shaConfigNode, url);
 
                 if (fileNode == null)
                 {
@@ -427,19 +430,20 @@ namespace ModuleManager
             foreach (IProtoUrlConfig urlConfig in databaseConfigs)
             {
                 ConfigNode node = CACHE_CONFIG.Node.AddNode("UrlConfig");
-                node.AddValue("parentUrl", urlConfig.UrlFile.url);
+                node.AddValue("parentUrl", urlConfig.UrlFile.GetUrlWithExtension());
                 node.AddNode(urlConfig.Node);
             }
 
             foreach (var file in GameDatabase.Instance.root.AllConfigFiles)
             {
+                string url = file.GetUrlWithExtension();
                 // "/Physics" is the node we created manually to loads the PHYSIC config
-                if (file.url != "/Physics" && filesSha.ContainsKey(file.url))
+                if (file.url != "/Physics" && filesSha.ContainsKey(url))
                 {
                     ConfigNode shaNode = filesSHANode.AddNode("FILE");
-                    shaNode.AddValue("filename", file.url);
-                    shaNode.AddValue("SHA", filesSha[file.url]);
-                    filesSha.Remove(file.url);
+                    shaNode.AddValue("filename", url);
+                    shaNode.AddValue("SHA", filesSha[url]);
+                    filesSha.Remove(url);
                 }
             }
 
