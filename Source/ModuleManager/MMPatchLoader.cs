@@ -720,7 +720,7 @@ namespace ModuleManager
                             if (varValue != null)
                             {
                                 newNode.RemoveValues(valName);
-                                newNode.AddValue(valName, varValue);
+                                newNode.AddValueSafe(valName, varValue);
                             }
                             else
                             {
@@ -766,7 +766,7 @@ namespace ModuleManager
                                     if (cmd != Command.Copy)
                                         origVal.value = value;
                                     else
-                                        newNode.AddValue(valName, value);
+                                        newNode.AddValueSafe(valName, value);
                                 }
                             }
                             else
@@ -842,7 +842,7 @@ namespace ModuleManager
                             if (varValue != null)
                             {
                                 if (!newNode.HasValue(valName))
-                                    newNode.AddValue(valName, varValue);
+                                    newNode.AddValueSafe(valName, varValue);
                             }
                             else
                             {
@@ -1005,8 +1005,8 @@ namespace ModuleManager
                             msg += "  Applying subnode " + subMod.name + "\n";
                             #endif
                             ConfigNode newSubNode = ModifyNode(nodeStack.Push(subNodes[0]), subMod, context);
-                            subNodes[0].ClearData();
-                            newSubNode.CopyTo(subNodes[0], newSubNode.name);
+                            subNodes[0].ShallowCopyFrom(newSubNode);
+                            subNodes[0].name = newSubNode.name;
                         }
                         else
                         {
@@ -1018,7 +1018,7 @@ namespace ModuleManager
                             ConfigNode copy = new ConfigNode(nodeType);
 
                             if (nodeName != null)
-                                copy.AddValue("name", nodeName);
+                                copy.AddValueSafe("name", nodeName);
 
                             ConfigNode newSubNode = ModifyNode(nodeStack.Push(copy), subMod, context);
                             newNode.nodes.Add(newSubNode);
@@ -1035,7 +1035,7 @@ namespace ModuleManager
                             ConfigNode copy = new ConfigNode(nodeType);
 
                             if (nodeName != null)
-                                copy.AddValue("name", nodeName);
+                                copy.AddValueSafe("name", nodeName);
 
                             ConfigNode newSubNode = ModifyNode(nodeStack.Push(copy), subMod, context);
                             newNode.nodes.Add(newSubNode);
@@ -1061,8 +1061,8 @@ namespace ModuleManager
 
                                     // Edit in place
                                     newSubNode = ModifyNode(nodeStack.Push(subNode), subMod, context);
-                                    subNode.ClearData();
-                                    newSubNode.CopyTo(subNode, newSubNode.name);
+                                    subNode.ShallowCopyFrom(newSubNode);
+                                    subNode.name = newSubNode.name;
                                     break;
 
                                 case Command.Delete:
@@ -1693,13 +1693,13 @@ namespace ModuleManager
                 newNode.RemoveValues(name);
                 int i = 0;
                 for (; i < index; ++i)
-                    newNode.AddValue(name, oldValues[i]);
-                newNode.AddValue(name, value);
+                    newNode.AddValueSafe(name, oldValues[i]);
+                newNode.AddValueSafe(name, value);
                 for (; i < oldValues.Length; ++i)
-                    newNode.AddValue(name, oldValues[i]);
+                    newNode.AddValueSafe(name, oldValues[i]);
                 return;
             }
-            newNode.AddValue(name, value);
+            newNode.AddValueSafe(name, value);
         }
 
         //FindConfigNodeIn finds and returns a ConfigNode in src of type nodeType.
