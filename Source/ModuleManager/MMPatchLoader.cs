@@ -427,11 +427,30 @@ namespace ModuleManager
             CACHE_CONFIG.Clear();
             CACHE_CONFIG.Node.AddValue("patchedNodeCount", patchedNodeCount.ToString());
 
+            // Undoes escaping done by the localizer
+            void FixValuesRecursive(ConfigNode theNode)
+            {
+                foreach (ConfigNode subNode in theNode.nodes)
+                {
+                    FixValuesRecursive(subNode);
+                }
+
+                foreach (ConfigNode.Value value in theNode.values)
+                {
+                    value.value = value.value.Replace("\n", "\\n");
+                    value.value = value.value.Replace("\t", "\\t");
+                }
+            }
+
             foreach (IProtoUrlConfig urlConfig in databaseConfigs)
             {
                 ConfigNode node = CACHE_CONFIG.Node.AddNode("UrlConfig");
                 node.AddValue("parentUrl", urlConfig.UrlFile.GetUrlWithExtension());
-                node.AddNode(urlConfig.Node);
+
+                ConfigNode urlNode = urlConfig.Node.DeepCopy();
+                FixValuesRecursive(urlNode);
+
+                node.AddNode(urlNode);
             }
 
             foreach (var file in GameDatabase.Instance.root.AllConfigFiles)
@@ -519,6 +538,21 @@ namespace ModuleManager
 
             List<IProtoUrlConfig> databaseConfigs = new List<IProtoUrlConfig>(cache.nodes.Count);
 
+            // Evaluate escape sequences
+            void FixValuesRecursive(ConfigNode theNode)
+            {
+                foreach (ConfigNode subNode in theNode.nodes)
+                {
+                    FixValuesRecursive(subNode);
+                }
+
+                foreach (ConfigNode.Value value in theNode.values)
+                {
+                    value.value = value.value.Replace("\\n", "\n");
+                    value.value = value.value.Replace("\\t", "\t");
+                }
+            }
+
             foreach (ConfigNode node in cache.nodes)
             {
                 string parentUrl = node.GetValue("parentUrl");
@@ -526,6 +560,7 @@ namespace ModuleManager
                 UrlDir.UrlFile parent = gameDataDir.Find(parentUrl);
                 if (parent != null)
                 {
+                    FixValuesRecursive(node.nodes[0]);
                     databaseConfigs.Add(new ProtoUrlConfig(parent, node.nodes[0]));
                 }
                 else
