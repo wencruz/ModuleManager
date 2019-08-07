@@ -2,6 +2,17 @@
 *Lasciate ogne speranza, voi ch'intrate*
 - - -
 
+* 2019-0807: 4.0.3.1 (Lisias) for KSP >= 1.3.1
+	+ Updating code to the latest KSPe API
+		- Getting rid of deprecated warnings
+	+ Getting rid of the overcomplicated logging code
+		- Relying on KSPe to that
+		- Logging into a file will be implemented later on KSPe itself. Place holders were kept.
+	+ Merging upstream updates:
+		- Improvements on thread safety
+		- Small improvements on performance (regex caching and preserving config cache when just whitespaces were changed)
+		- Better handling of Escape Chars, SHAs and URLs
+		- Some code cleaning and better test cases
 * 2019-0405: 4.0.2.1 (Lisias) for KSP >= 1.3.1
 	+ Reverting change on MMPatchLoader to allow it to be findable by `UnityEngine.Object.FindObjectOfType`
 	+ Merging upstream updates:
