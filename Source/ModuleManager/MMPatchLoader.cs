@@ -82,18 +82,7 @@ namespace ModuleManager
 
             if (!useCache)
             {
-                if (!Directory.Exists(logsDirPath)) Directory.CreateDirectory(logsDirPath);
-                MessageQueue<ILogMessage> patchLogQueue = new MessageQueue<ILogMessage>();
-                QueueLogRunner logRunner = new QueueLogRunner(patchLogQueue);
-                ITaskStatus loggingThreadStatus = BackgroundTask.Start(delegate
-                {
-                    using (StreamLogger streamLogger = new StreamLogger(new FileStream(patchLogPath, FileMode.Create)))
-                    {
-                        logRunner.Run(streamLogger);
-                        streamLogger.Info("Done!");
-                    }
-                });
-                IBasicLogger patchLogger = new LogSplitter(logger, new QueueLogger(patchLogQueue));
+                IBasicLogger patchLogger = ModLogger.Instance;
 
                 IPatchProgress progress = new PatchProgress(patchLogger);
                 status = "Pre patch init";
@@ -202,19 +191,6 @@ namespace ModuleManager
 
                 SaveModdedTechTree(databaseConfigs);
                 SaveModdedPhysics(databaseConfigs);
-
-                logRunner.RequestStop();
-
-                while (loggingThreadStatus.IsRunning)
-                {
-                    System.Threading.Thread.Sleep(100);
-                }
-
-                if (loggingThreadStatus.IsExitedWithError)
-                {
-                    logger.Error("The patching thread threw an exception");
-                    throw loggingThreadStatus.Exception;
-                }
             }
             else
             {

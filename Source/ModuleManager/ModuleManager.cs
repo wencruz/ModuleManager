@@ -98,7 +98,6 @@ namespace ModuleManager
             GameEvents.onGUIRnDComplexSpawn.Add(OnRnDCenterSpawn);
             GameEvents.onGUIRnDComplexDespawn.Add(OnRnDCenterDeSpawn);
 
-
             LoadingScreen screen = FindObjectOfType<LoadingScreen>();
             if (screen == null)
             {
@@ -119,10 +118,10 @@ namespace ModuleManager
                 GameObject aGameObject = new GameObject("ModuleManager");
                 DontDestroyOnLoad(aGameObject);
 
-                Log(string.Format("Adding post patch to the loading screen {0}", list.Count));
+                Log("Adding post patch to the loading screen {0}", list.Count);
                 list.Insert(gameDatabaseIndex + 1, aGameObject.AddComponent<PostPatchLoader>());
 
-                patchRunner = new MMPatchRunner(new ModLogger());
+                patchRunner = new MMPatchRunner(ModLogger.Instance);
                 StartCoroutine(patchRunner.Run());
 
                 // Workaround for 1.6.0 Editor bug after a PartDatabase rebuild.
@@ -325,7 +324,7 @@ namespace ModuleManager
 
             yield return null;
 
-            patchRunner = new MMPatchRunner(new ModLogger());
+            patchRunner = new MMPatchRunner(ModLogger.Instance);
             StartCoroutine(patchRunner.Run());
 
             // wait for it to finish
@@ -518,11 +517,14 @@ namespace ModuleManager
             return true;
         }
 
-        private static readonly KSPe.Util.Log.Logger log = KSPe.Util.Log.Logger.CreateForType<ModuleManager>();
         private static void Log(String s)
         {
-            log.info(s);
+            ModLogger.LOG.info(s);
         }
 
+        private static void Log(String format, params object[] p)
+        {
+            ModLogger.LOG.info(format, p);
+        }
     }
 }

@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using UnityEngine;
-using ModuleManager.Collections;
 using ModuleManager.Extensions;
 using ModuleManager.Logging;
 using ModuleManager.Threading;
@@ -14,8 +12,6 @@ namespace ModuleManager
 {
     public class MMPatchRunner
     {
-        private const float TIME_TO_WAIT_FOR_LOGS = 0.05f;
-
         private readonly IBasicLogger kspLogger;
 
         public string Status { get; private set; } = "";
@@ -30,32 +26,14 @@ namespace ModuleManager
         {
             PostPatchLoader.Instance.databaseConfigs = null;
 
-            if (!Directory.Exists(logsDirPath)) Directory.CreateDirectory(logsDirPath);
-
-            kspLogger.Info("Patching started on a new thread, all output will be directed to " + logPath);
-
-            MessageQueue<ILogMessage> mmLogQueue = new MessageQueue<ILogMessage>();
-            QueueLogRunner logRunner = new QueueLogRunner(mmLogQueue);
-            ITaskStatus loggingThreadStatus = BackgroundTask.Start(delegate
-            {
-                using (StreamLogger streamLogger = new StreamLogger(new FileStream(logPath, FileMode.Create)))
-                {
-                    logRunner.Run(streamLogger);
-                    streamLogger.Info("Done!");
-                }
-            });
-
             // Wait for game database to be initialized for the 2nd time and wait for any plugins to initialize
             yield return null;
             yield return null;
 
-            IBasicLogger mmLogger = new QueueLogger(mmLogQueue);
-
-            IEnumerable<ModListGenerator.ModAddedByAssembly> modsAddedByAssemblies = ModListGenerator.GetAdditionalModsFromStaticMethods(mmLogger);
+            IEnumerable<ModListGenerator.ModAddedByAssembly> modsAddedByAssemblies = ModListGenerator.GetAdditionalModsFromStaticMethods(ModLogger.Instance);
 
             IEnumerable<IProtoUrlConfig> databaseConfigs = null;
-
-            MMPatchLoader patchLoader = new MMPatchLoader(modsAddedByAssemblies, mmLogger);
+            MMPatchLoader patchLoader = new MMPatchLoader(modsAddedByAssemblies, ModLogger.Instance);
 
             ITaskStatus patchingThreadStatus = BackgroundTask.Start(delegate
             {
@@ -66,25 +44,16 @@ namespace ModuleManager
             {
                 yield return null;
 
-                if (!patchingThreadStatus.IsRunning)
-                    logRunner.RequestStop();
-
                 Status = patchLoader.status;
                 Errors = patchLoader.errors;
 
-                if (!patchingThreadStatus.IsRunning && !loggingThreadStatus.IsRunning) break;
+                if (!patchingThreadStatus.IsRunning) break;
             }
 
             if (patchingThreadStatus.IsExitedWithError)
             {
                 kspLogger.Exception("The patching thread threw an exception", patchingThreadStatus.Exception);
                 FatalErrorHandler.HandleFatalError("The patching thread threw an exception");
-            }
-
-            if (loggingThreadStatus.IsExitedWithError)
-            {
-                kspLogger.Exception("The logging thread threw an exception", loggingThreadStatus.Exception);
-                FatalErrorHandler.HandleFatalError("The logging thread threw an exception");
             }
 
             if (databaseConfigs == null)

@@ -13,8 +13,5 @@ namespace ModuleManager
         internal static readonly KspConfig PHYSICS_DEFAULT = new KspConfig("Physics");
         internal static readonly KspConfig PART_DATABASE = new KspConfig("PartDatabase");
 
-        internal static readonly string logsDirPath = Path.Combine(Path.Combine(KSPUtil.ApplicationRootPath, "Logs"), "ModuleManager");
-        internal static readonly string logPath = Path.Combine(logsDirPath, "ModuleManager.log");
-        internal static readonly string patchLogPath = Path.Combine(logsDirPath, "MMPatch.log");
     }
 }
