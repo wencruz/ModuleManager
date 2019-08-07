@@ -366,15 +366,14 @@ namespace ModuleManager
 
         public static void OutputAllConfigs()
         {
-            string path = KSPUtil.ApplicationRootPath + "/_MMCfgOutput/";
             try
             {
-                Directory.CreateDirectory(path);
-                foreach (string file in Directory.GetFiles(path))
+                Directory.CreateDirectory(FilePathRepository.MMCfgOutputPath);
+                foreach (string file in Directory.GetFiles(FilePathRepository.MMCfgOutputPath))
                 {
                     File.Delete(file);
                 }
-                foreach (string dir in Directory.GetDirectories(path))
+                foreach (string dir in Directory.GetDirectories(FilePathRepository.MMCfgOutputPath))
                 {
                     Directory.Delete(dir, true);
                 }
@@ -396,14 +395,14 @@ namespace ModuleManager
             {
                 while (dirs.Count > 0)
                 {
-                    var currentDir = dirs.Pop();
+                    UrlDir currentDir = dirs.Pop();
                     string currentPath = paths.Pop();
                 
                     foreach (UrlDir.UrlFile urlFile in currentDir.files)
                     {
                         if (urlFile.fileType == UrlDir.FileType.Config)
                         {
-                            string dirPath = path + currentPath;
+                            string dirPath = Path.Combine(FilePathRepository.MMCfgOutputPath, currentPath);
                             if (!Directory.Exists(dirPath))
                             {
                                 Directory.CreateDirectory(dirPath);
