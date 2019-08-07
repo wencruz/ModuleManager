@@ -5,11 +5,11 @@ VisualStudioVersion = 15.0.26730.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleManager", "Source\ModuleManager\ModuleManager.csproj", "{02C8E3AF-69F9-4102-AB60-DD6DE60662D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModuleManagerTests", "Source\ModuleManagerTests\ModuleManagerTests.csproj", "{BC2A08C8-64EF-4823-A40B-8889C1CCFD75}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "ModuleManagerTests", "Source\ModuleManagerTests\ModuleManagerTests.csproj", "{1614BB5A-84EA-4F06-A0BF-4F7806E07AA7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtils", "Source\TestUtils\TestUtils.csproj", "{20EAAFE6-510D-4374-8D2F-6B52D0178E85}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "TestUtils", "Source\TestUtils\TestUtils.csproj", "{5F830DF6-87AE-449D-AA6C-41ACFF3ABA75}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestUtilsTests", "Source\TestUtilsTests\TestUtilsTests.csproj", "{E695C11F-4217-4014-9B51-7232A654C205}"
+Project("{9344BDBB-3E7F-41FC-A0DD-8665D75EE146}") = "TestUtilsTests", "Source\TestUtilsTests\TestUtilsTests.csproj", "{8D236572-6A92-476B-BF39-322EA2C0605C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +21,18 @@ Global
 		{02C8E3AF-69F9-4102-AB60-DD6DE60662D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02C8E3AF-69F9-4102-AB60-DD6DE60662D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02C8E3AF-69F9-4102-AB60-DD6DE60662D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{BC2A08C8-64EF-4823-A40B-8889C1CCFD75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{BC2A08C8-64EF-4823-A40B-8889C1CCFD75}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{BC2A08C8-64EF-4823-A40B-8889C1CCFD75}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{BC2A08C8-64EF-4823-A40B-8889C1CCFD75}.Release|Any CPU.Build.0 = Release|Any CPU
-		{20EAAFE6-510D-4374-8D2F-6B52D0178E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{20EAAFE6-510D-4374-8D2F-6B52D0178E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{20EAAFE6-510D-4374-8D2F-6B52D0178E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{20EAAFE6-510D-4374-8D2F-6B52D0178E85}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E695C11F-4217-4014-9B51-7232A654C205}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E695C11F-4217-4014-9B51-7232A654C205}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E695C11F-4217-4014-9B51-7232A654C205}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E695C11F-4217-4014-9B51-7232A654C205}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1614BB5A-84EA-4F06-A0BF-4F7806E07AA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1614BB5A-84EA-4F06-A0BF-4F7806E07AA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1614BB5A-84EA-4F06-A0BF-4F7806E07AA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1614BB5A-84EA-4F06-A0BF-4F7806E07AA7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F830DF6-87AE-449D-AA6C-41ACFF3ABA75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F830DF6-87AE-449D-AA6C-41ACFF3ABA75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F830DF6-87AE-449D-AA6C-41ACFF3ABA75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F830DF6-87AE-449D-AA6C-41ACFF3ABA75}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8D236572-6A92-476B-BF39-322EA2C0605C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8D236572-6A92-476B-BF39-322EA2C0605C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8D236572-6A92-476B-BF39-322EA2C0605C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8D236572-6A92-476B-BF39-322EA2C0605C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -55,5 +55,25 @@ Global
 		$3.NoTabsAfterNonTabs = True
 		$3.EolMarker = Unix
 		$3.scope = text/plain
+		$0.TextStylePolicy = $4
+		$4.inheritsSet = null
+		$4.scope = text/microsoft-resx
+		$0.XmlFormattingPolicy = $5
+		$5.inheritsSet = null
+		$5.scope = text/microsoft-resx
+		$0.TextStylePolicy = $6
+		$6.inheritsSet = null
+		$6.scope = application/xml
+		$0.XmlFormattingPolicy = $7
+		$7.scope = application/xml
+		$0.TextStylePolicy = $8
+		$8.inheritsSet = null
+		$8.scope = application/config+xml
+		$0.XmlFormattingPolicy = $9
+		$9.inheritsSet = null
+		$9.scope = application/config+xml
+		$0.TextStylePolicy = $10
+		$10.inheritsSet = null
+		$10.scope = application/t4-template
 	EndGlobalSection
 EndGlobal
