@@ -68,14 +68,14 @@ namespace ModuleManager
             // More cool loading screen. Less 4 stoke logo.
             for (int i = 0; i < LoadingScreen.Instance.Screens.Count; i++)
             {
-                var state = LoadingScreen.Instance.Screens[i];
+				LoadingScreen.LoadingScreenState state = LoadingScreen.Instance.Screens[i];
                 state.fadeInTime = i < 3 ? 0.1f : 1;
                 state.displayTime = i < 3 ? 1 : 3;
                 state.fadeOutTime = i < 3 ? 0.1f : 1;
             }
 
             TextMeshProUGUI[] texts = LoadingScreen.Instance.gameObject.GetComponentsInChildren<TextMeshProUGUI>();
-            foreach (var text in texts)
+            foreach (TextMeshProUGUI text in texts)
             {
                 textPos = Mathf.Min(textPos, text.rectTransform.localPosition.y);
             }

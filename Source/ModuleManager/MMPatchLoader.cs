@@ -429,7 +429,7 @@ namespace ModuleManager
                 node.AddNode(urlNode);
             }
 
-            foreach (var file in GameDatabase.Instance.root.AllConfigFiles)
+            foreach (UrlDir.UrlFile file in GameDatabase.Instance.root.AllConfigFiles)
             {
                 string url = file.GetUrlWithExtension();
                 // "/Physics" is the node we created manually to loads the PHYSIC config
