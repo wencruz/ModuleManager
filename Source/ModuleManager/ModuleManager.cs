@@ -338,7 +338,7 @@ namespace ModuleManager
                             {
                                 progressFraction = 0f;
                             }
-                            else if (!GameDatabase.Instance.IsReady())
+                            else if (!GameDatabase.Instance.IsReady() || !PostPatchLoader.Instance.IsReady())
                             {
                                 progressFraction = GameDatabase.Instance.ProgressFraction() * GameDatabase.Instance.LoadWeight();
                                 progressFraction /= totalLoadWeight;
