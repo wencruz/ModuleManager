@@ -13,14 +13,12 @@ using ModuleManager.Logging;
 
 namespace ModuleManager
 {
-    [KSPAddon(KSPAddon.Startup.Instantly, false)]
+    [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class ModuleManager : MonoBehaviour
     {
         #region state
 
         private bool inRnDCenter;
-
-        private bool reloading;
 
         public bool showUI = false;
 
@@ -35,6 +33,7 @@ namespace ModuleManager
         private bool nyan = false;
         private bool nCats = false;
         public static bool dumpPostPatch = false;
+        public static bool DontCopyLogs { get; private set; } = false;
 
         private PopupDialog menu;
 
@@ -58,6 +57,22 @@ namespace ModuleManager
 
         internal void Awake()
         {
+            if (LoadingScreen.Instance == null)
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            // Ensure that only one copy of the service is run per scene change.
+            if (loadedInScene || !ElectionAndCheck())
+            {
+                Assembly currentAssembly = Assembly.GetExecutingAssembly();
+                Log("Multiple copies of current version. Using the first copy. Version: " +
+                    currentAssembly.GetName().Version);
+                Destroy(gameObject);
+                return;
+            }
+
             totalTime.Start();
 
             // Allow loading the background in the laoding screen
@@ -79,16 +94,6 @@ namespace ModuleManager
             {
                 textPos = Mathf.Min(textPos, text.rectTransform.localPosition.y);
             }
-            
-            // Ensure that only one copy of the service is run per scene change.
-            if (loadedInScene || !ElectionAndCheck())
-            {
-                Assembly currentAssembly = Assembly.GetExecutingAssembly();
-                Log("Multiple copies of current version. Using the first copy. Version: " +
-                    currentAssembly.GetName().Version);
-                Destroy(gameObject);
-                return;
-            }
             DontDestroyOnLoad(gameObject);
 
             System.Version v = Assembly.GetExecutingAssembly().GetName().Version;
@@ -97,6 +102,7 @@ namespace ModuleManager
             // Subscribe to the RnD center spawn/deSpawn events
             GameEvents.onGUIRnDComplexSpawn.Add(OnRnDCenterSpawn);
             GameEvents.onGUIRnDComplexDespawn.Add(OnRnDCenterDeSpawn);
+
 
             LoadingScreen screen = FindObjectOfType<LoadingScreen>();
             if (screen == null)
@@ -141,6 +147,8 @@ namespace ModuleManager
                 || Environment.GetCommandLineArgs().Contains("-ncats");
 
             dumpPostPatch = Environment.GetCommandLineArgs().Contains("-mm-dump");
+
+            DontCopyLogs = Environment.GetCommandLineArgs().Contains("-mm-dont-copy-logs");
 
             loadedInScene = true;
         }
@@ -284,19 +292,6 @@ namespace ModuleManager
                     errors.transform.localPosition = new Vector3(0, offsetY);
                 }
             }
-
-            if (reloading)
-            {
-                float percent = 0;
-                if (!GameDatabase.Instance.IsReady())
-                    percent = GameDatabase.Instance.ProgressFraction();
-                else if (!PartLoader.Instance.IsReady())
-                    percent = 2f + PartLoader.Instance.ProgressFraction();
-
-                int intPercent = Mathf.CeilToInt(percent * 100f / 3f);
-                ScreenMessages.PostScreenMessage("Database reloading " + intPercent + "%", Time.deltaTime,
-                    ScreenMessageStyle.UPPER_CENTER);
-            }
         }
 
         #region GUI stuff.
@@ -311,20 +306,83 @@ namespace ModuleManager
 
         private IEnumerator DataBaseReloadWithMM(bool dump = false)
         {
-            reloading = true;
-
             QualitySettings.vSyncCount = 0;
             Application.targetFrameRate = -1;
 
-            ScreenMessages.PostScreenMessage(dump ? "Database reload/dumping started" : "Database reloading started", 1, ScreenMessageStyle.UPPER_CENTER);
+            patchRunner = new MMPatchRunner(ModLogger.Instance);
+
+            float totalLoadWeight = GameDatabase.Instance.LoadWeight() + PartLoader.Instance.LoadWeight();
+            bool startedReload = false;
+
+            UISkinDef skinDef = HighLogic.UISkin;
+            UIStyle centeredTextStyle = new UIStyle(skinDef.label)
+            {
+                alignment = TextAnchor.UpperCenter
+            };
+
+            PopupDialog reloadingDialog = PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f),
+                new Vector2(0.5f, 0.5f),
+                new MultiOptionDialog(
+                    "ModuleManagerReloading",
+                    "",
+                    "ModuleManager - Reloading Database",
+                    skinDef,
+                    new Rect(0.5f, 0.5f, 600f, 60f),
+                    new DialogGUIFlexibleSpace(),
+                    new DialogGUIVerticalLayout(
+                        new DialogGUIFlexibleSpace(),
+                        new DialogGUILabel(delegate ()
+                        {
+                            float progressFraction;
+                            if (!startedReload)
+                            {
+                                progressFraction = 0f;
+                            }
+                            else if (!GameDatabase.Instance.IsReady())
+                            {
+                                progressFraction = GameDatabase.Instance.ProgressFraction() * GameDatabase.Instance.LoadWeight();
+                                progressFraction /= totalLoadWeight;
+                            }
+                            else if (!PartLoader.Instance.IsReady())
+                            {
+                                progressFraction = GameDatabase.Instance.LoadWeight() + (PartLoader.Instance.ProgressFraction() * GameDatabase.Instance.LoadWeight());
+                                progressFraction /= totalLoadWeight;
+                            }
+                            else
+                            {
+                                progressFraction = 1f;
+                            }
+
+                            return $"Overall progress: {progressFraction:P0}";
+                        }, centeredTextStyle, expandW: true),
+                        new DialogGUILabel(delegate ()
+                        {
+                            if (!startedReload)
+                                return "Starting";
+                            else if (!GameDatabase.Instance.IsReady())
+                                return GameDatabase.Instance.ProgressTitle();
+                            else if (!PostPatchLoader.Instance.IsReady())
+                                return PostPatchLoader.Instance.ProgressTitle();
+                            else if (!PartLoader.Instance.IsReady())
+                                return PartLoader.Instance.ProgressTitle();
+                            else
+                                return "";
+                        }),
+                        new DialogGUISpace(5f),
+                        new DialogGUILabel(() => patchRunner.Status)
+                    )
+                ),
+                false,
+                skinDef);
+
             yield return null;
 
             GameDatabase.Instance.Recompile = true;
             GameDatabase.Instance.StartLoad();
 
-            yield return null;
+            startedReload = true;
 
-            patchRunner = new MMPatchRunner(ModLogger.Instance);
+            yield return null;
             StartCoroutine(patchRunner.Run());
 
             // wait for it to finish
@@ -360,8 +418,8 @@ namespace ModuleManager
 
             QualitySettings.vSyncCount = GameSettings.SYNC_VBL;
             Application.targetFrameRate = GameSettings.FRAMERATE_LIMIT;
-            reloading = false;
-            ScreenMessages.PostScreenMessage("Database reloading finished", 1, ScreenMessageStyle.UPPER_CENTER);
+
+            reloadingDialog.Dismiss();
         }
 
         public static void OutputAllConfigs()
@@ -386,50 +444,51 @@ namespace ModuleManager
             {
                 Log("Exception while cleaning the export dir\n" + unauthorizedAccessException);
             }
-            Stack<UrlDir> dirs = new Stack<UrlDir>();
-            dirs.Push(GameDatabase.Instance.root);
-            Stack<String> paths = new Stack<string>();
-            paths.Push("");
 
-            try
+            void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
             {
-                while (dirs.Count > 0)
-                {
-                    UrlDir currentDir = dirs.Pop();
-                    string currentPath = paths.Pop();
-                
-                    foreach (UrlDir.UrlFile urlFile in currentDir.files)
-                    {
-                        if (urlFile.fileType == UrlDir.FileType.Config)
-                        {
-                            string dirPath = Path.Combine(FilePathRepository.MMCfgOutputPath, currentPath);
-                            if (!Directory.Exists(dirPath))
-                            {
-                                Directory.CreateDirectory(dirPath);
-                            }
+                if (currentDir.files.Count > 0) Directory.CreateDirectory(dirPath);
 
-                            Log("Exporting " + currentPath + urlFile.GetUrlWithExtension());
-                            string filePath = dirPath + urlFile.GetUrlWithExtension();
-                            foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
+                foreach (UrlDir.UrlFile urlFile in currentDir.files)
+                {
+                    if (urlFile.fileType != UrlDir.FileType.Config) continue;
+
+                    Log("Exporting " + urlFile.GetUrlWithExtension());
+                    string filePath = Path.Combine(dirPath, urlFile.GetNameWithExtension());
+
+                    bool first = true;
+
+                    using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                    using (StreamWriter writer = new StreamWriter(stream))
+                    {
+                        foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
+                        {
+                            try
                             {
-                                try
-                                {
-                                    File.AppendAllText(filePath, urlConfig.config.ToString());
-                                }
-                                catch (Exception e)
-                                {
-                                    Log("Exception while trying to write the file " + filePath + "\n" + e);
-                                }
+                                if (first) first = false;
+                                else writer.Write("\n");
+
+                                ConfigNode copy = urlConfig.config.DeepCopy();
+                                copy.EscapeValuesRecursive();
+                                writer.Write(copy.ToString());
+                            }
+                            catch (Exception e)
+                            {
+                                Log("Exception while trying to write the file " + filePath + "\n" + e);
                             }
                         }
                     }
-
-                    foreach (UrlDir urlDir in currentDir.children)
-                    {
-                        dirs.Push(urlDir);
-                        paths.Push(currentPath + urlDir.name + "/");
-                    }
                 }
+
+                foreach (UrlDir urlDir in currentDir.children)
+                {
+                    WriteDirectoryRecursive(urlDir, Path.Combine(dirPath, urlDir.name));
+                }
+            }
+
+            try
+            {
+                WriteDirectoryRecursive(GameDatabase.Instance.root, FilePathRepository.MMCfgOutputPath);
             }
             catch (DirectoryNotFoundException directoryNotFoundException)
             {
