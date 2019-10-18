@@ -106,6 +106,7 @@
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
     <Compile Include="Patches\PassSpecifiers\LastPassSpecifier.cs" />
+    <Compile Include="Startup.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
