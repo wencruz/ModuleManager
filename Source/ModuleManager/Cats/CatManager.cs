@@ -97,7 +97,11 @@ namespace ModuleManager.Cats
 
             sr.sprite = catFrames[0];
 
-            trail.material = new Material(Shader.Find("Legacy Shaders/Particles/Alpha Blended"));
+            trail.material = new Material(Shader.Find(
+                2019 == KSPe.Util.UnityTools.UnityVersion
+                    ? "Legacy Shaders/Particles/Alpha Blended"
+                    : "Particles/Alpha Blended"
+                ));
 
             LOG.info("material = {0}", trail.material);
             trail.material.mainTexture = rainbow;
