@@ -315,9 +315,24 @@ namespace ModuleManager
             bool startedReload = false;
 
             UISkinDef skinDef = HighLogic.UISkin;
-            UIStyle centeredTextStyle = new UIStyle(skinDef.label)
+            UIStyle centeredTextStyle = new UIStyle() // FIXME: There must be a smarter way to do that on Unity5, right?
             {
-                alignment = TextAnchor.UpperCenter
+                name = skinDef.label.name,
+                normal = skinDef.label.normal,
+                highlight = skinDef.label.highlight,
+                disabled = skinDef.label.disabled,
+                font = skinDef.label.font,
+                fontSize = skinDef.label.fontSize,
+                fontStyle = skinDef.label.fontStyle,
+                wordWrap = skinDef.label.wordWrap,
+                richText = skinDef.label.richText,
+                alignment = TextAnchor.UpperCenter,
+                clipping = skinDef.label.clipping,
+                lineHeight = skinDef.label.lineHeight,
+                stretchHeight = skinDef.label.stretchHeight,
+                stretchWidth = skinDef.label.stretchWidth,
+                fixedHeight = skinDef.label.fixedHeight,
+                fixedWidth = skinDef.label.fixedWidth
             };
 
             PopupDialog reloadingDialog = PopupDialog.SpawnPopupDialog(new Vector2(0.5f, 0.5f),
