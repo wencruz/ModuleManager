@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+#if CATS
 namespace ModuleManager.Cats
 {
     public class CatMover : MonoBehaviour
@@ -77,3 +78,4 @@ namespace ModuleManager.Cats
         
     }
 }
+#endif

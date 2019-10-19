@@ -7,7 +7,9 @@ using System.Linq;
 using System.Reflection;
 using TMPro;
 using UnityEngine;
+#if CATS
 using ModuleManager.Cats;
+#endif
 using ModuleManager.Extensions;
 using ModuleManager.Logging;
 
@@ -157,14 +159,14 @@ namespace ModuleManager
         private TextMeshProUGUI errors;
         private TextMeshProUGUI warning;
 
-
         private void Start()
         {
+#if CATS
             if (nCats)
                 CatManager.LaunchCats();
             else if (nyan)
                 CatManager.LaunchCat();
-
+#endif
             Canvas canvas = LoadingScreen.Instance.GetComponentInChildren<Canvas>();
 
             status = CreateTextObject(canvas, "MMStatus");

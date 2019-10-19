@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using UnityEngine;
 
+#if CATS
 namespace ModuleManager.Cats
 {
     class CatAnimator : MonoBehaviour
@@ -36,3 +37,4 @@ namespace ModuleManager.Cats
         }
     }
 }
+#endif

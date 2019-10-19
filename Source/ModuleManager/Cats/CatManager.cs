@@ -2,6 +2,7 @@
 using UnityEngine;
 using K = KSPe.Util.Log;
 
+#if CATS
 namespace ModuleManager.Cats
 {
     public static class CatManager
@@ -122,3 +123,4 @@ namespace ModuleManager.Cats
         internal static readonly K.Logger LOG = K.Logger.CreateForType<CatAnimator>(true);
    }
 }
+#endif

@@ -4,6 +4,7 @@ using KSP.UI;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+#if CATS
 namespace ModuleManager.Cats
 {
     class CatOrbiter : MonoBehaviour
@@ -134,3 +135,4 @@ namespace ModuleManager.Cats
         }
     }
 }
+#endif
