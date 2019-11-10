@@ -459,7 +459,7 @@ namespace ModuleManager
                 Log("Exception {0}, while cleaning the export dir!", e);
             }
 
-            void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
+            static void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
             {
                 if (currentDir.files.Count > 0) Directory.CreateDirectory(dirPath);
 
