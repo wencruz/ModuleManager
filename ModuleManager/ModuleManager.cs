@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -22,11 +23,7 @@ namespace ModuleManager
         private bool inRnDCenter;
 
         public bool showUI = false;
-
-        private Rect windowPos = new Rect(80f, 60f, 240f, 40f);
         private float textPos = 0;
-
-        private string version = "";
 
         //private Texture2D tex;
         //private Texture2D tex2;
@@ -59,7 +56,7 @@ namespace ModuleManager
             print("[ModuleManager] " + s);
         }
 
-        private Stopwatch totalTime = new Stopwatch();
+        private readonly Stopwatch totalTime = new Stopwatch();
 
         internal void Awake()
         {
@@ -101,9 +98,6 @@ namespace ModuleManager
                 textPos = Mathf.Min(textPos, text.rectTransform.localPosition.y);
             }
             DontDestroyOnLoad(gameObject);
-
-            Version v = Assembly.GetExecutingAssembly().GetName().Version;
-            version = v.Major + "." + v.Minor + "." + v.Build;
 
             // Subscribe to the RnD center spawn/deSpawn events
             GameEvents.onGUIRnDComplexSpawn.Add(OnRnDCenterSpawn);
@@ -163,7 +157,7 @@ namespace ModuleManager
         private TextMeshProUGUI errors;
         private TextMeshProUGUI warning;
 
-
+        [SuppressMessage("Code Quality", "IDE0051", Justification = "Called by Unity")]
         private void Start()
         {
             if (nCats)
@@ -290,7 +284,7 @@ namespace ModuleManager
                 if (warning)
                 {
                     h = warning.text.Length > 0 ? warning.textBounds.size.y : 0;
-                    offsetY = offsetY + h;
+                    offsetY += h;
                     warning.rectTransform.localPosition = new Vector3(0, offsetY);
                 }
 
@@ -298,7 +292,7 @@ namespace ModuleManager
                 {
                     status.text = patchRunner.Status;
                     h = status.text.Length > 0 ? status.textBounds.size.y : 0;
-                    offsetY = offsetY + h;
+                    offsetY += h;
                     status.transform.localPosition = new Vector3(0, offsetY);
                 }
 
@@ -306,7 +300,7 @@ namespace ModuleManager
                 {
                     errors.text = patchRunner.Errors;
                     h = errors.text.Length > 0 ? errors.textBounds.size.y : 0;
-                    offsetY = offsetY + h;
+                    offsetY += h;
                     errors.transform.localPosition = new Vector3(0, offsetY);
                 }
             }
@@ -464,7 +458,7 @@ namespace ModuleManager
                 Log("Exception while cleaning the export dir\n" + unauthorizedAccessException);
             }
 
-            void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
+            static void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
             {
                 if (currentDir.files.Count > 0) Directory.CreateDirectory(dirPath);
 
@@ -477,24 +471,22 @@ namespace ModuleManager
 
                     bool first = true;
 
-                    using (FileStream stream = new FileStream(filePath, FileMode.Create))
-                    using (StreamWriter writer = new StreamWriter(stream))
+                    using FileStream stream = new FileStream(filePath, FileMode.Create);
+                    using StreamWriter writer = new StreamWriter(stream);
+                    foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
                     {
-                        foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
+                        try
                         {
-                            try
-                            {
-                                if (first) first = false;
-                                else writer.Write("\n");
+                            if (first) first = false;
+                            else writer.Write("\n");
 
-                                ConfigNode copy = urlConfig.config.DeepCopy();
-                                copy.EscapeValuesRecursive();
-                                writer.Write(copy.ToString());
-                            }
-                            catch (Exception e)
-                            {
-                                Log("Exception while trying to write the file " + filePath + "\n" + e);
-                            }
+                            ConfigNode copy = urlConfig.config.DeepCopy();
+                            copy.EscapeValuesRecursive();
+                            writer.Write(copy.ToString());
+                        }
+                        catch (Exception e)
+                        {
+                            Log("Exception while trying to write the file " + filePath + "\n" + e);
                         }
                     }
                 }
