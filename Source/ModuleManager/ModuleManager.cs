@@ -13,6 +13,7 @@ using ModuleManager.Cats;
 #endif
 using ModuleManager.Extensions;
 using ModuleManager.Logging;
+using ModuleManager.UnityLogHandle;
 
 namespace ModuleManager
 {
@@ -37,6 +38,8 @@ namespace ModuleManager
         private PopupDialog menu;
 
         private MMPatchRunner patchRunner;
+
+        private InterceptLogHandler interceptLogHandler;
 
         #endregion state
 
@@ -175,6 +178,7 @@ namespace ModuleManager
             //    //if (GUI.Button(new Rect(Screen.width / 2f - 100, offsetY, 200, 20), "Click to open the Forum thread"))
             //    //    Application.OpenURL("http://forum.kerbalspaceprogram.com/index.php?/topic/124998-silent-patch-for-ksp-105-published/");
             //}
+            interceptLogHandler = new InterceptLogHandler();
         }
 
         private TextMeshProUGUI CreateTextObject(Canvas canvas, string name)
@@ -268,6 +272,7 @@ namespace ModuleManager
             {
                 if (warning)
                 {
+                    warning.text = InterceptLogHandler.Warnings;
                     h = warning.text.Length > 0 ? warning.textBounds.size.y : 0;
                     offsetY += h;
                     warning.rectTransform.localPosition = new Vector3(0, offsetY);

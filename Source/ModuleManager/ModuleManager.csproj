@@ -107,6 +107,7 @@
     </Compile>
     <Compile Include="Patches\PassSpecifiers\LastPassSpecifier.cs" />
     <Compile Include="Startup.cs" />
+    <Compile Include="ExceptionIntercept\InterceptLogHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
