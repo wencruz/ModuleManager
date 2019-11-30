@@ -76,6 +76,8 @@ namespace ModuleManager
             }
 
             totalTime.Start();
+            
+            interceptLogHandler = new InterceptLogHandler();
 
             // Allow loading the background in the loading screen
             Application.runInBackground = true;
@@ -178,7 +180,6 @@ namespace ModuleManager
             //    //if (GUI.Button(new Rect(Screen.width / 2f - 100, offsetY, 200, 20), "Click to open the Forum thread"))
             //    //    Application.OpenURL("http://forum.kerbalspaceprogram.com/index.php?/topic/124998-silent-patch-for-ksp-105-published/");
             //}
-            interceptLogHandler = new InterceptLogHandler();
         }
 
         private TextMeshProUGUI CreateTextObject(Canvas canvas, string name)
