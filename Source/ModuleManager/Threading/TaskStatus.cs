@@ -42,7 +42,7 @@ namespace ModuleManager.Threading
             }
         }
 
-        public void Error(Exception exception)
+        public void Finished(Exception exception)
         {
             lock(lockObject)
             {

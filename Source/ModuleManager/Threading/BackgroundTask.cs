@@ -20,7 +20,7 @@ namespace ModuleManager.Threading
                 }
                 catch (Exception ex)
                 {
-                    status.Error(ex);
+                    status.Finished(ex);
                 }
             }
 

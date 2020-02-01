@@ -8,7 +8,7 @@ namespace ModuleManager.Collections
     {
         public struct Enumerator : IEnumerator<T>
         {
-            private ImmutableStack<T> head;
+            private readonly ImmutableStack<T> head;
             private ImmutableStack<T> currentStack;
 
             public Enumerator(ImmutableStack<T> stack)
@@ -29,15 +29,14 @@ namespace ModuleManager.Collections
                     currentStack = head;
                     return true;
                 }
-                else if (!currentStack.IsRoot)
+
+                if (!currentStack.IsRoot)
                 {
                     currentStack = currentStack.parent;
                     return true;
                 }
-                else
-                {
-                    return false;
-                }
+
+                return false;
             }
 
             public void Reset() => currentStack = null;
