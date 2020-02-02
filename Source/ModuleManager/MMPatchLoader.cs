@@ -197,20 +197,20 @@ namespace ModuleManager
                 status = "Loading from Cache";
                 logger.Info(status);
                 databaseConfigs = LoadCache();
+            }
 
 #if false
-                // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
-                if (File.Exists(patchLogPath))
-                {
-                    logger.Info("Dumping patch log");
-                    logger.Info("\n#### BEGIN PATCH LOG ####\n\n\n" + File.ReadAllText(patchLogPath) + "\n\n\n#### END PATCH LOG ####");
-                }
-                else
-                {
-                    logger.Error("Patch log does not exist: " + patchLogPath);
-                }
-#endif
+            // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
+            if (File.Exists(patchLogPath))
+            {
+                logger.Info("Dumping patch log");
+                logger.Info("\n#### BEGIN PATCH LOG ####\n\n\n" + File.ReadAllText(patchLogPath) + "\n\n\n#### END PATCH LOG ####");
             }
+            else
+            {
+                logger.Error("Patch log does not exist: " + patchLogPath);
+            }
+#endif
 
             logger.Info(status);
 
