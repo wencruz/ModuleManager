@@ -448,13 +448,9 @@ namespace ModuleManager
                     Directory.Delete(dir, true);
                 }
             }
-            catch (IOException ioException)
+            catch (Exception e) when (e is IOException || e is UnauthorizedAccessException)
             {
-                Log("Exception while cleaning the export dir\n" + ioException);
-            }
-            catch (UnauthorizedAccessException unauthorizedAccessException)
-            {
-                Log("Exception while cleaning the export dir\n" + unauthorizedAccessException);
+                Log("Exception {0}, while cleaning the export dir!", e);
             }
 
             static void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
