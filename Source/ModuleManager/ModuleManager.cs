@@ -453,7 +453,7 @@ namespace ModuleManager
                 Log("Exception {0}, while cleaning the export dir!", e);
             }
 
-            static void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
+            void WriteDirectoryRecursive(UrlDir currentDir, string dirPath)
             {
                 if (currentDir.files.Count > 0) Directory.CreateDirectory(dirPath);
 
@@ -466,22 +466,24 @@ namespace ModuleManager
 
                     bool first = true;
 
-                    using FileStream stream = new FileStream(filePath, FileMode.Create);
-                    using StreamWriter writer = new StreamWriter(stream);
-                    foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
+                    using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                    using (StreamWriter writer = new StreamWriter(stream))
                     {
-                        try
+                        foreach (UrlDir.UrlConfig urlConfig in urlFile.configs)
                         {
-                            if (first) first = false;
-                            else writer.Write("\n");
+                            try
+                            {
+                                if (first) first = false;
+                                else writer.Write("\n");
 
-                            ConfigNode copy = urlConfig.config.DeepCopy();
-                            copy.EscapeValuesRecursive();
-                            writer.Write(copy.ToString());
-                        }
-                        catch (Exception e)
-                        {
-                            Log("Exception while trying to write the file " + filePath + "\n" + e);
+                                ConfigNode copy = urlConfig.config.DeepCopy();
+                                copy.EscapeValuesRecursive();
+                                writer.Write(copy.ToString());
+                            }
+                            catch (Exception e)
+                            {
+                                Log("Exception while trying to write the file " + filePath + "\n" + e);
+                            }
                         }
                     }
                 }
