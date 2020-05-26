@@ -18,8 +18,8 @@ namespace ModuleManager.UnityLogHandle
 
         public InterceptLogHandler()
         {
-            baseLogHandler = Debug.unityLogger.logHandler;
-            Debug.unityLogger.logHandler = this;
+            baseLogHandler = Debug.logger.logHandler;
+            Debug.logger.logHandler = this;
             gamePathLength = Path.GetFullPath(KSPUtil.ApplicationRootPath).Length;
         }
 
@@ -58,7 +58,7 @@ namespace ModuleManager.UnityLogHandle
                 {
                     message += "Exception " + e.GetType().Name + " while handling the exception...";
                 }
-                ModuleManager.Log(message);
+                Logging.ModLogger.LOG.info(message);
             }
         }
     }
