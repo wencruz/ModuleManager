@@ -42,7 +42,7 @@ namespace ModuleManager.UnityLogHandle
                     {
                         if (Warnings == "")
                         {
-                            Warnings = "Mod(s) DLL that are not compatible with this version of KSP\n";
+                            Warnings = "Add'On(s) DLL that have failed to be dynamically linked on loading\n";
                         }
                         string modInfo = assembly.GetName().Name + " " + assembly.GetName().Version + " " +
                                          assembly.Location.Remove(0, gamePathLength) + "\n";
