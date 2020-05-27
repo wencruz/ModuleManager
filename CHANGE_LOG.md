@@ -28,6 +28,14 @@
 		- Allow assemblies to add to mod list (Fix for Kerbalism compatibility)
 		- Add -mm-dont-copy-logs command line flag if you do not want to copy MM log back into the game log
 		- Fix for KSP runs in debug mode.
+* 2019-0203: 4.0.2.0 (sarbian) for KSP 1.3 & 1.4
+	+ Fix datetime format
+	+ Use KSP's directory listing rather than file system
+	+ Better status updates in post patch
+	+ Add -mm-dont-copy-logs command line flag
+	+ Allow assemblies to add to mod list
+	+ wait another frame for plugins to finish initializing
+	+ Don't use Unity's time since startup in thread
 * 2019-0125: 4.0.1.0 (sarbian) for KSP 1.3 & 1.4
 	+ Delete unnecessary space
 	+ Fix modded physics and tech treegithubweb)
