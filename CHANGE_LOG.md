@@ -43,6 +43,12 @@
 	+ Merging 1.6.0 DragCube workaround from uptream
 	+ Certifying for use on 1.5.x and 1.6.x series
 	+ Bumping up version to catch upstream's
+* 2018-1125: 3.1.2.0 (sarbian) for KSP 1.4
+	+ Fix color tag
+	+ Clear filesSha before generating sha
+	+ Move election check up
+	+ Make MM a once addon
+	+ Get rid of unnecessary using
 * 2018-1112: 3.1.1.1 (Lisias) for KSP 1.4; 1.5
 	+ Adding KSPe logging facilities
 	+ Syncing source with upstream latest fixes.  
