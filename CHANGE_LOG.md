@@ -43,6 +43,10 @@
 	+ Merging 1.6.0 DragCube workaround from uptream
 	+ Certifying for use on 1.5.x and 1.6.x series
 	+ Bumping up version to catch upstream's
+* 2019-0108: 3.1.3.0 (sarbian) for KSP 1.4
+	+ Implement :LAST[mod] pass
+	+ return iterator rather than array
+	+ Workaround for 1.6.0 PartDatabase rebuild
 * 2018-1125: 3.1.2.0 (sarbian) for KSP 1.4
 	+ Fix color tag
 	+ Clear filesSha before generating sha
