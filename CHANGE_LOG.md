@@ -11,6 +11,8 @@
 		- Fixing the reload dialog
 		- Making Cats compatible to Unity 2019
 	+ These things were reworked to keep them compatible with previous KSP versions.
+* 2019-1027: 4.1.1.0 (sarbian) for KSP 1.8
+	+ Outdated Firespitter warning
 * 2019-1016: 4.1.0.0 (sarbian) for KSP 1.8
 	+ Extract escaping/unescaping of node values
 	+ Fix dump database to files
