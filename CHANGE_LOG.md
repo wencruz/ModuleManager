@@ -47,6 +47,23 @@
 	+ Adding KSPe logging facilities
 	+ Syncing source with upstream latest fixes.  
 		- more Internal code improvement by @blowfish  
+* 2018-1112: 3.1.1.0 (sarbian) for KSP 1.4
+	+ Make patch stopwatch local
+	+ Make useCache local
+	+ Make Patch an object
+	+ Simplify a bit
+	+ Extra semicolon
+	+ Extract interface for PatchList, modify PatchExtractor
+	+ Allow null value in wildcard match
+	+ Extract node matcher
+	+ Extract IPatch interface, split up root patches
+	+ Fix tests depending on line endings
+	+ Whitespace
+	+ Allow warnings
+	+ Make ArrayEnumerator more versatile
+	+ Tag, TagList, TagListParser
+	+ Restructure patch building
+	+ Make extra colons a warning rather than an error 
 * 2018-1019: 3.1.0.1 (Lisias) for KSP 1.4
 	+  Declaring this thing **EXPERIMENTAL**.
 		- I will properly maintain it, but it still Experimental (and non Standard)
