@@ -22,6 +22,36 @@
 		- Small improvements on performance (regex caching and preserving config cache when just whitespaces were changed)
 		- Better handling of Escape Chars, SHAs and URLs
 		- Some code cleaning and better test cases
+* 2019-0807: 4.0.3.0 (sarbian) for 1.4 <= KSP <= 1.7.3
+	+ add thread-safe KeyValueCache
+	+ use new KeyValueCache class as regex cache
+	+ add test for ProtoUrlConfig
+	+ Add name value to applying patch messages
+	+ Fix StreamLogger ignoring messages
+	+ Redo logging interface
+	+ Initialize LogMessage from old LogMessage
+	+ Don't put date on every log message
+	+ Initialize timestamp with log message
+	+ ModLogger -> PrefixLogger
+	+ Unnecessary using
+	+ Use better assertion
+	+ Mark disposables as sealed
+	+ Another unnecessary using
+	+ Use custom code to lookup file by url
+	+ Put extension on cache URLs
+	+ Alphabetize .csproj files
+	+ improve file sha generator
+	+ Convert UrlBuilder cfg test to theory
+	+ Set FileType based on common types
+	+ unnecessary using
+	+ make StreamLoggerTest.TestLog work on \n platforms
+	+ Improve TestConfigNodeTest
+	+ Remove redundant parent class
+	+ Fix TestConfigNode's handling of escaped chars
+	+ Clean up test a bit
+	+ Fix DeepCopy handling of escaped values
+	+ Fix ModifyNode handling of escaped characters
+	+ Ensure tabs and newlines don't break cache
 * 2019-0405: 4.0.2.1 (Lisias) for KSP >= 1.3.1
 	+ Reverting change on MMPatchLoader to allow it to be findable by `UnityEngine.Object.FindObjectOfType`
 	+ Merging upstream updates:
