@@ -40,7 +40,7 @@ namespace ModuleManager.UnityLogHandle
                     var assemblies = ex.Types.Where(x => x != null).Select(x => x.Assembly).Distinct();
                     foreach (Assembly assembly in assemblies)
                     {
-                        if (Warnings == "")
+                        if (string.IsNullOrEmpty(Warnings))
                         {
                             Warnings = "Add'On(s) DLL that have failed to be dynamically linked on loading\n";
                         }
@@ -58,7 +58,8 @@ namespace ModuleManager.UnityLogHandle
                 {
                     message += "Exception " + e.GetType().Name + " while handling the exception...";
                 }
-                Logging.ModLogger.LOG.info(message);
+                Logging.ModLogger.LOG.error("**FATAL** {0}", message);
+                GUI.ShowStopperAlertBox.Show(message);
             }
         }
     }

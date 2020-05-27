@@ -108,6 +108,7 @@
     <Compile Include="Patches\PassSpecifiers\LastPassSpecifier.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="ExceptionIntercept\InterceptLogHandler.cs" />
+    <Compile Include="GUI\ShowStopperAlertBox.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -123,6 +124,9 @@
     </Reference>
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\..\..\..\LIB\managed\1.3.1\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="KSPe.UI">
+      <HintPath>..\..\..\..\..\..\LIB\plugins\KSPe.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
