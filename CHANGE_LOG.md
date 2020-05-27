@@ -39,6 +39,35 @@
 		- Preventing hijacking them when another Add'On changes them.
 			- They are set up only **one** at first time Space Center is loaded. From there, it only logs if they were changed.
 	+ Stating **Official** support for KSP 1.3.1 :)
+* 2019-0124: 4.0.0.0 (sarbian) for KSP 1.3 & 1.4
+	+ Update NuGet packages where available
+	+ Accessory projects on .NET 4.7.1
+	+ Update NSubstitute to latest
+	+ Update Xunit
+	+ Fix Xunit warnings
+	+ implement stream logger
+	+ Unnecessary using
+	+ These are already run by MMPatchLoader
+	+ Extract post patch
+	+ Operate on a copy of the game database then apply
+	+ Move path initialization to static initializer
+	+ Make sure cache also uses copy of game db
+	+ Extract paths to their own class
+	+ patch in background
+	+ Remove PurgeUnused
+	+ Put log paths in path repository
+	+ Rename file to reflect class name
+	+ Dump ModuleManager log to main log after patching
+	+ Don't count insert nodes as patches
+	+ Only display whole percentages
+	+ Add subdir under Logs
+	+ Replace reloading screen messages with dialog
+	+ add LogSplitter
+	+ Save patch log and dump when loading from cache
+	+ Get rid of stream logger's exception logger
+	+ Get rid of trailing whitespace
+	+ use international date format
+	+ extract common parts of reading logs from queue to its own class
 * 2019-0110: 3.1.3.1 (Lisias) for KSP >= 1.4.1
 	+ Merging 1.6.0 DragCube workaround from uptream
 	+ Certifying for use on 1.5.x and 1.6.x series
