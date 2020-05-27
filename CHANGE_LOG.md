@@ -11,6 +11,11 @@
 		- Fixing the reload dialog
 		- Making Cats compatible to Unity 2019
 	+ These things were reworked to keep them compatible with previous KSP versions.
+* 2019-1016: 4.1.0.0 (sarbian) for KSP 1.8
+	+ Extract escaping/unescaping of node values
+	+ Fix dump database to files
+	+ Fix reload dialog showing 100% when it shouldn't
+	+ KSP 1.8 ! With less cat bugs
 * 2019-0807: 4.0.3.1 (Lisias) for KSP >= 1.3.1
 	+ Updating code to the latest KSPe API
 		- Getting rid of deprecated warnings
