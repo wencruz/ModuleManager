@@ -2,14 +2,10 @@
 *Lasciate ogne speranza, voi ch'intrate*
 - - -
 
-* 2019-1018: 4.1.0.1 (Lisias) for KSP >= 1.3.1
-	+ Updating code to the latest KSPe API
-		- New KSPUnity facilities
+* 2020-0526: 4.1.3.1 (Lisias) for KSP >= 1.3.1
+	+ Adding a nice 'Houston' GUI message
 	+ Merging upstream updates:
-		- escaping/unescaping control chars on node values 
-		- Fixing database dumping to files
-		- Fixing the reload dialog
-		- Making Cats compatible to Unity 2019
+		- Adding an Exception interceptor to catch `ReflectionTypeLoadException` and properly blame DLLs
 	+ These things were reworked to keep them compatible with previous KSP versions.
 * 2019-0807: 4.0.3.1 (Lisias) for KSP >= 1.3.1
 	+ Updating code to the latest KSPe API
