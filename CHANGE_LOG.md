@@ -28,6 +28,10 @@
 		- Allow assemblies to add to mod list (Fix for Kerbalism compatibility)
 		- Add -mm-dont-copy-logs command line flag if you do not want to copy MM log back into the game log
 		- Fix for KSP runs in debug mode.
+* 2019-0125: 4.0.1.0 (sarbian) for KSP 1.3 & 1.4
+	+ Delete unnecessary space
+	+ Fix modded physics and tech treegithubweb)
+	+ Make physics and tech tree node names constant
 * 2019-0125: 4.0.0.2 (Lisias) for KSP >= 1.3.1
 	+ Merging upstream updates:
 		- [blowfish](https://forum.kerbalspaceprogram.com/index.php?/profile/119688-blowfish/) worked his magic once more and now MM does the patching while the game loads the models and textures.
