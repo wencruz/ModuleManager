@@ -37,7 +37,7 @@ namespace ModuleManager.UnityLogHandle
                 string message = "Intercepted a ReflectionTypeLoadException. List of broken DLLs:\n";
                 try
                 {
-                    var assemblies = ex.Types.Where(x => x != null).Select(x => x.Assembly).Distinct();
+					IEnumerable<Assembly> assemblies = ex.Types.Where(x => x != null).Select(x => x.Assembly).Distinct();
                     foreach (Assembly assembly in assemblies)
                     {
                         if (string.IsNullOrEmpty(Warnings))
