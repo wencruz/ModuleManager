@@ -30,7 +30,19 @@ namespace ModuleManager.UnityLogHandle
 
         public void LogException(Exception exception, Object context)
         {
-            baseLogHandler.LogException(exception, context);
+            try
+            {
+                baseLogHandler.LogException(exception, context);
+            }
+            catch (Exception e)
+            {
+                Logging.ModLogger.LOG.trace("**GOTCHA** {0}", e.GetType().ToString());
+                if (null != context)
+                    Logging.ModLogger.LOG.trace("context type {0}, toString {1}", context.GetType(), context.ToString());
+                Logging.ModLogger.LOG.error(this, exception);
+                Logging.ModLogger.LOG.error(this, e);
+                return;
+            }
 
             if (exception is ReflectionTypeLoadException ex)
             {
