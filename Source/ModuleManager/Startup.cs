@@ -10,7 +10,7 @@ namespace ModuleManager
 	{
         private void Start()
         {
-            ModLogger.LOG.force("Version {0}", Version.Text);
+            ModLogger.LOG.force("Version {0} - for ISSUE #3 , not to be widely distributed!", Version.Text);
         }
 	}
 

@@ -4,7 +4,7 @@
 
 ModuleManager is mod that let you write patch file that edit other part at load time.
 
-This is Lisias' Experimental fork for Module Mamager.
+This thing is **EXCLUSIVE** to debugging Issue [#3](https://github.com/net-lisias-ksp/ModuleManager/issues/3)! Not to be widely distributed!
 
 
 ## In a Hurry
