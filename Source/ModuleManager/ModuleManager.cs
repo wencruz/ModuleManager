@@ -36,7 +36,13 @@ namespace ModuleManager
         public static bool DontCopyLogs { get; private set; } = false;
 
         public static bool IgnoreCache  { get { return _IgnoreCache; }}
-        private static bool _IgnoreCache = false;
+            //useCache = false;
+        private static bool _IgnoreCache
+#if DEBUG
+            = true;
+#else
+            = false;
+#endif
 
         private PopupDialog menu;
 

@@ -67,16 +67,12 @@ namespace ModuleManager
             bool useCache = false;
             try
             {
-                useCache = IsCacheUpToDate();
+                useCache = !ModuleManager.IgnoreCache && IsCacheUpToDate();
             }
             catch (Exception ex)
             {
                 logger.Exception("Exception in IsCacheUpToDate", ex);
             }
-
-#if DEBUG
-            //useCache = false;
-#endif
 
             IEnumerable<IProtoUrlConfig> databaseConfigs = null;
 
