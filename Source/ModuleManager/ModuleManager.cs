@@ -35,6 +35,9 @@ namespace ModuleManager
         public static bool dumpPostPatch = false;
         public static bool DontCopyLogs { get; private set; } = false;
 
+        public static bool IgnoreCache  { get { return _IgnoreCache; }}
+        private static bool _IgnoreCache = false;
+
         private PopupDialog menu;
 
         private MMPatchRunner patchRunner;
@@ -149,6 +152,8 @@ namespace ModuleManager
             dumpPostPatch = Environment.GetCommandLineArgs().Contains("-mm-dump");
 
             DontCopyLogs = Environment.GetCommandLineArgs().Contains("-mm-dont-copy-logs");
+
+            _IgnoreCache = Environment.GetCommandLineArgs().Contains("-ignore-cache");
 
             loadedInScene = true;
         }
