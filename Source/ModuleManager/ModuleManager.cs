@@ -69,8 +69,7 @@ namespace ModuleManager
             if (loadedInScene || !ElectionAndCheck())
             {
                 Assembly currentAssembly = Assembly.GetExecutingAssembly();
-                Log("Multiple copies of current version. Using the first copy. Version: " +
-                    currentAssembly.GetName().Version);
+                Log("Multiple copies of current version. Using the first copy. Version: {0}", currentAssembly.GetName().Version);
                 Destroy(gameObject);
                 return;
             }
@@ -567,8 +566,7 @@ namespace ModuleManager
             if (eligible.First().assembly != currentAssembly)
             {
                 //loaded = true;
-                Log("version " + currentAssembly.GetName().Version + " at " + currentAssembly.Location +
-                    " lost the election");
+                Log("version {0} at {1} lost the election", currentAssembly.GetName().Version, currentAssembly.Location);
                 Destroy(gameObject);
                 return false;
             }
@@ -576,12 +574,11 @@ namespace ModuleManager
             foreach (AssemblyLoader.LoadedAssembly a in eligible)
             {
                 if (currentAssembly.Location != a.path)
-                    candidates += "Version " + a.assembly.GetName().Version + " " + a.path + " " + "\n";
+                    candidates += string.Format("Version {0} {1} \n", a.assembly.GetName().Version, a.path);
             }
             if (candidates.Length > 0)
             {
-                Log("version " + currentAssembly.GetName().Version + " at " + currentAssembly.Location +
-                    " won the election against\n" + candidates);
+                Log("version {0} at {1} won the election against\n{2}", currentAssembly.GetName().Version, currentAssembly.Location, candidates);
             }
 
             #endregion Type election
