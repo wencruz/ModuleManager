@@ -9,7 +9,20 @@
 	+ Adding a nice 'Houston' GUI message
 	+ Merging upstream updates:
 		- Adding an Exception interceptor to catch `ReflectionTypeLoadException` and properly blame DLLs
+		- Cleanup the InterceptLogHandler, remove double logging and avoid any risk of throwing more
 	+ These things were reworked to keep them compatible with previous KSP versions.
+* 2019-1130: 4.1.3.0 (sarbian) for KSP 1.8
+	+ Cleanup the InterceptLogHandler, remove double logging and avoid any risk of throwing more and improve the badly worded warning
+	+ Start the Handler earlier
+* 2019-1115: 4.1.2.0 (sarbian) for KSP 1.8
+	+ Add an Exception interceptor to catch ReflectionTypeLoadException and properly blame broken DLLs
+* 2019-1027: 4.1.1.0 (sarbian) for KSP 1.8
+	+ Outdated Firespitter warning
+* 2019-1016: 4.1.0.0 (sarbian) for KSP 1.8
+	+ Extract escaping/unescaping of node values
+	+ Fix dump database to files
+	+ Fix reload dialog showing 100% when it shouldn't
+	+ KSP 1.8 ! With less cat bugs
 * 2019-0807: 4.0.3.1 (Lisias) for KSP >= 1.3.1
 	+ Updating code to the latest KSPe API
 		- Getting rid of deprecated warnings
@@ -21,12 +34,54 @@
 		- Small improvements on performance (regex caching and preserving config cache when just whitespaces were changed)
 		- Better handling of Escape Chars, SHAs and URLs
 		- Some code cleaning and better test cases
+* 2019-0807: 4.0.3.0 (sarbian) for 1.4 <= KSP <= 1.7.3
+	+ add thread-safe KeyValueCache
+	+ use new KeyValueCache class as regex cache
+	+ add test for ProtoUrlConfig
+	+ Add name value to applying patch messages
+	+ Fix StreamLogger ignoring messages
+	+ Redo logging interface
+	+ Initialize LogMessage from old LogMessage
+	+ Don't put date on every log message
+	+ Initialize timestamp with log message
+	+ ModLogger -> PrefixLogger
+	+ Unnecessary using
+	+ Use better assertion
+	+ Mark disposables as sealed
+	+ Another unnecessary using
+	+ Use custom code to lookup file by url
+	+ Put extension on cache URLs
+	+ Alphabetize .csproj files
+	+ improve file sha generator
+	+ Convert UrlBuilder cfg test to theory
+	+ Set FileType based on common types
+	+ unnecessary using
+	+ make StreamLoggerTest.TestLog work on \n platforms
+	+ Improve TestConfigNodeTest
+	+ Remove redundant parent class
+	+ Fix TestConfigNode's handling of escaped chars
+	+ Clean up test a bit
+	+ Fix DeepCopy handling of escaped values
+	+ Fix ModifyNode handling of escaped characters
+	+ Ensure tabs and newlines don't break cache
 * 2019-0405: 4.0.2.1 (Lisias) for KSP >= 1.3.1
 	+ Reverting change on MMPatchLoader to allow it to be findable by `UnityEngine.Object.FindObjectOfType`
 	+ Merging upstream updates:
 		- Allow assemblies to add to mod list (Fix for Kerbalism compatibility)
 		- Add -mm-dont-copy-logs command line flag if you do not want to copy MM log back into the game log
 		- Fix for KSP runs in debug mode.
+* 2019-0203: 4.0.2.0 (sarbian) for KSP 1.3 & 1.4
+	+ Fix datetime format
+	+ Use KSP's directory listing rather than file system
+	+ Better status updates in post patch
+	+ Add -mm-dont-copy-logs command line flag
+	+ Allow assemblies to add to mod list
+	+ wait another frame for plugins to finish initializing
+	+ Don't use Unity's time since startup in thread
+* 2019-0125: 4.0.1.0 (sarbian) for KSP 1.3 & 1.4
+	+ Delete unnecessary space
+	+ Fix modded physics and tech treegithubweb)
+	+ Make physics and tech tree node names constant
 * 2019-0125: 4.0.0.2 (Lisias) for KSP >= 1.3.1
 	+ Merging upstream updates:
 		- [blowfish](https://forum.kerbalspaceprogram.com/index.php?/profile/119688-blowfish/) worked his magic once more and now MM does the patching while the game loads the models and textures.
@@ -38,18 +93,79 @@
 		- Preventing hijacking them when another Add'On changes them.
 			- They are set up only **one** at first time Space Center is loaded. From there, it only logs if they were changed.
 	+ Stating **Official** support for KSP 1.3.1 :)
+* 2019-0124: 4.0.0.0 (sarbian) for KSP 1.3 & 1.4
+	+ Update NuGet packages where available
+	+ Accessory projects on .NET 4.7.1
+	+ Update NSubstitute to latest
+	+ Update Xunit
+	+ Fix Xunit warnings
+	+ implement stream logger
+	+ Unnecessary using
+	+ These are already run by MMPatchLoader
+	+ Extract post patch
+	+ Operate on a copy of the game database then apply
+	+ Move path initialization to static initializer
+	+ Make sure cache also uses copy of game db
+	+ Extract paths to their own class
+	+ patch in background
+	+ Remove PurgeUnused
+	+ Put log paths in path repository
+	+ Rename file to reflect class name
+	+ Dump ModuleManager log to main log after patching
+	+ Don't count insert nodes as patches
+	+ Only display whole percentages
+	+ Add subdir under Logs
+	+ Replace reloading screen messages with dialog
+	+ add LogSplitter
+	+ Save patch log and dump when loading from cache
+	+ Get rid of stream logger's exception logger
+	+ Get rid of trailing whitespace
+	+ use international date format
+	+ extract common parts of reading logs from queue to its own class
 * 2019-0110: 3.1.3.1 (Lisias) for KSP >= 1.4.1
 	+ Merging 1.6.0 DragCube workaround from uptream
 	+ Certifying for use on 1.5.x and 1.6.x series
 	+ Bumping up version to catch upstream's
+* 2019-0108: 3.1.3.0 (sarbian) for KSP 1.4
+	+ Implement :LAST[mod] pass
+	+ return iterator rather than array
+	+ Workaround for 1.6.0 PartDatabase rebuild
+* 2018-1125: 3.1.2.0 (sarbian) for KSP 1.4
+	+ Fix color tag
+	+ Clear filesSha before generating sha
+	+ Move election check up
+	+ Make MM a once addon
+	+ Get rid of unnecessary using
 * 2018-1112: 3.1.1.1 (Lisias) for KSP 1.4; 1.5
 	+ Adding KSPe logging facilities
 	+ Syncing source with upstream latest fixes.  
 		- more Internal code improvement by @blowfish  
+* 2018-1112: 3.1.1.0 (sarbian) for KSP 1.4
+	+ Make patch stopwatch local
+	+ Make useCache local
+	+ Make Patch an object
+	+ Simplify a bit
+	+ Extra semicolon
+	+ Extract interface for PatchList, modify PatchExtractor
+	+ Allow null value in wildcard match
+	+ Extract node matcher
+	+ Extract IPatch interface, split up root patches
+	+ Fix tests depending on line endings
+	+ Whitespace
+	+ Allow warnings
+	+ Make ArrayEnumerator more versatile
+	+ Tag, TagList, TagListParser
+	+ Restructure patch building
+	+ Make extra colons a warning rather than an error 
 * 2018-1019: 3.1.0.1 (Lisias) for KSP 1.4
 	+  Declaring this thing **EXPERIMENTAL**.
 		- I will properly maintain it, but it still Experimental (and non Standard)
 	+ Syncing source with upstream latest fixes.  
+* 2018-1015: 3.1.0.0 (sarbian) for KSP 1.4
+	+ Stupid typo
+	+ Remove unused variable
+	+ Make const stuff const
+	+ Fix typo in test 
 * 2018-1011: 3.0.7.4 (Lisias) for KSP 1.4
 	+ We have moved to the properly maintained /L Division! :)
 	+ No code changes from the last release.
