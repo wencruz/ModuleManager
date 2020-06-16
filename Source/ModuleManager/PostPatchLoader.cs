@@ -22,7 +22,7 @@ namespace ModuleManager
 
         private static readonly List<ModuleManagerPostPatchCallback> postPatchCallbacks = new List<ModuleManagerPostPatchCallback>();
 
-        private readonly IBasicLogger logger = new PrefixLogger("ModuleManager", new UnityLogger(UnityEngine.Debug.unityLogger));
+        private readonly IBasicLogger logger = ModLogger.Instance;
 
         private bool ready = false;
 
@@ -90,24 +90,19 @@ namespace ModuleManager
 
             yield return null;
 
+#if false
+            // Using an dedicated external log is nice. Dumping it into KSP.log breaking the known formats is not.
             if (File.Exists(logPath))
             {
-                if (ModuleManager.DontCopyLogs)
-                {
-                    logger.Info("Not dumping log because -mm-dont-copy-logs was set");
-                }
-                else
-                {
-                    progressTitle = "ModuleManager: Dumping log to KSP log";
-                    logger.Info("Dumping ModuleManager log to main log");
-                    logger.Info("\n#### BEGIN MODULEMANAGER LOG ####\n\n\n" + File.ReadAllText(logPath) + "\n\n\n#### END MODULEMANAGER LOG ####");
-                }
+                progressTitle = "ModuleManager: Dumping log to KSP log";
+                logger.Info("Dumping ModuleManager log to main log");
+                logger.Info("\n#### BEGIN MODULEMANAGER LOG ####\n\n\n" + File.ReadAllText(logPath) + "\n\n\n#### END MODULEMANAGER LOG ####");
             }
             else
             {
                 logger.Error("ModuleManager log does not exist: " + logPath);
             }
-
+#endif
             yield return null;
 
 #if DEBUG
@@ -192,7 +187,7 @@ namespace ModuleManager
                     }
                     catch (Exception e)
                     {
-                        logger.Exception("Exception while calling " + obj.GetType().Name + "." + method.Name + "() :\n", e);
+                        logger.Exception("Exception while calling " + obj.GetType().Name + "." + method.Name + "() :", e);
                     }
                 }
             }

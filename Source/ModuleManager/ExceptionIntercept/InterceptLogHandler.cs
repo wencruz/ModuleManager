@@ -18,8 +18,8 @@ namespace ModuleManager.UnityLogHandle
 
         public InterceptLogHandler()
         {
-            baseLogHandler = Debug.unityLogger.logHandler;
-            Debug.unityLogger.logHandler = this;
+            baseLogHandler = Debug.logger.logHandler;
+            Debug.logger.logHandler = this;
             gamePathLength = Path.GetFullPath(KSPUtil.ApplicationRootPath).Length;
         }
 
@@ -37,12 +37,12 @@ namespace ModuleManager.UnityLogHandle
                 string message = "Intercepted a ReflectionTypeLoadException. List of broken DLLs:\n";
                 try
                 {
-                    var assemblies = ex.Types.Where(x => x != null).Select(x => x.Assembly).Distinct();
+					IEnumerable<Assembly> assemblies = ex.Types.Where(x => x != null).Select(x => x.Assembly).Distinct();
                     foreach (Assembly assembly in assemblies)
                     {
-                        if (Warnings == "")
+                        if (string.IsNullOrEmpty(Warnings))
                         {
-                            Warnings = "Mod(s) DLL that are not compatible with this version of KSP\n";
+                            Warnings = "Add'On(s) DLL that have failed to be dynamically linked on loading\n";
                         }
                         string modInfo = assembly.GetName().Name + " " + assembly.GetName().Version + " " +
                                          assembly.Location.Remove(0, gamePathLength) + "\n";
@@ -58,7 +58,8 @@ namespace ModuleManager.UnityLogHandle
                 {
                     message += "Exception " + e.GetType().Name + " while handling the exception...";
                 }
-                ModuleManager.Log(message);
+                Logging.ModLogger.LOG.error("**FATAL** {0}", message);
+                GUI.ShowStopperAlertBox.Show(message);
             }
         }
     }
