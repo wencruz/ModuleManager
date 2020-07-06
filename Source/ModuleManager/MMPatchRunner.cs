@@ -54,6 +54,7 @@ namespace ModuleManager
             {
                 kspLogger.Exception("The patching thread threw an exception", patchingThreadStatus.Exception);
                 FatalErrorHandler.HandleFatalError("The patching thread threw an exception");
+                yield break;
             }
 
             if (databaseConfigs == null)
