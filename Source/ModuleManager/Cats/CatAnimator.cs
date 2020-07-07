@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 #if CATS
@@ -13,6 +14,7 @@ namespace ModuleManager.Cats
         private SpriteRenderer spriteRenderer;
         private int spriteIdx;
 
+        [SuppressMessage("CodeQuality", "IDE0051", Justification = "Called by Unity")]
         void Start()
         {
             spriteRenderer = this.GetComponent<SpriteRenderer>();
