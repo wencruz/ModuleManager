@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System.Diagnostics.CodeAnalysis;
 using UnityEngine;
 
 #if CATS
@@ -25,6 +25,7 @@ namespace ModuleManager.Cats
         private bool clearTrail = false;
 
         // Use this for initialization
+        [SuppressMessage("CodeQuality", "IDE0051", Justification = "Called by Unity")]
         void Start()
         {
             trail = this.GetComponent<TrailRenderer>();
@@ -42,6 +43,7 @@ namespace ModuleManager.Cats
             clearTrail = true;
         }
 
+        [SuppressMessage("CodeQuality", "IDE0051", Justification = "Called by Unity")]
         void Update()
         {
             if (trail.time <= 0f)

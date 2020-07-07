@@ -8,7 +8,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using UnityEngine;
 
 using ModuleManager.Collections;
 using ModuleManager.Logging;
@@ -352,7 +351,6 @@ namespace ModuleManager
                     noChange = false;
                 }
             }
-            
             for (int i = 0; i < files.Length; i++)
             {
                 string url = files[i].GetUrlWithExtension();

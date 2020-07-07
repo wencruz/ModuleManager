@@ -6,7 +6,7 @@ namespace ModuleManager.Logging
 {
     public class UnityLogger : IBasicLogger
     {
-        private ILogger logger;
+        private readonly ILogger logger;
 
         public UnityLogger(ILogger logger)
         {
