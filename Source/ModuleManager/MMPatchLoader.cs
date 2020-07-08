@@ -233,7 +233,7 @@ namespace ModuleManager
         private void SaveModdedPhysics(IEnumerable<IProtoUrlConfig> databaseConfigs)
         {
             IEnumerable<IProtoUrlConfig> configs = databaseConfigs.Where(config => config.NodeType == PHYSICS_NODE_NAME);
-            int count = configs.Count(); // FIXME: Why didn't he used .Any()?
+            int count = configs.Count();
 
             if (count == 0)
             {
