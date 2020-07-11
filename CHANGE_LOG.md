@@ -2,11 +2,15 @@
 *Lasciate ogne speranza, voi ch'intrate*
 - - -
 
+* 2020-0711: 4.1.4.1 (Lisias) for KSP >= 1.3.1
+	+ Merging upstream updates:
+		- Fix a bug with LAST[modx] when modx is not present
+		- some code cleanups
 * 2020-0707: 4.1.4.0 (sarbian) for KSP >= 1.8
 	+ Fix a bug with LAST[modx] when modx is not present
 	+ some code cleanups
 * 2020-0616: 4.1.3.2 (Lisias) for KSP >= 1.3.1
-	+ A nasty mishap from a old merge (dated 2018-11) was detected and fixed.
+	+ A nasty mishap from an old merge (dated 2018-11) was detected and fixed.
 		- See Issue [#4](https://github.com/net-lisias-ksp/ModuleManager/issues/4). 
 * 2020-0526: 4.1.3.1 (Lisias) for KSP >= 1.3.1
 	+ Adding a nice 'Houston' GUI message
